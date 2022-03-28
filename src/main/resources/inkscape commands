@@ -1,0 +1,7 @@
+
+inkscape --export-pdf-version=1.5 --export-filename=test2.pdf --export-type=pdf 'Secret Fighting Art - Beast of Caratosis.svg'
+
+inkscape --pdf-poppler --export-filename=test.pdf --export-type=pdf bone.svg
+
+--export-pdf-version=1.5
+--export-text-to-path
