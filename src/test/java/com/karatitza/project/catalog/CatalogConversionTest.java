@@ -15,9 +15,9 @@ import java.util.Optional;
 
 class CatalogConversionTest {
 
-    public static final String TEST_PROJECT_PATH = "./src/test/resources/testProject";
-    public static final String TEST_SOURCE_PATH = "./src/test/resources/testProject/source";
-    public static final String TEST_TEMP_PATH = "./src/test/resources/testProject/print/temp/pdf";
+    public static final String TEST_PROJECT_PATH = "./src/test/resources/test-project";
+    public static final String TEST_SOURCE_PATH = "./src/test/resources/test-project/source";
+    public static final String TEST_TEMP_PATH = "./src/test/resources/test-project/print/temp/pdf";
 
     @Test
     void acceptSourceToPdfConversion() {

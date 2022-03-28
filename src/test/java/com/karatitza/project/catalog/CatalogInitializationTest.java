@@ -12,44 +12,48 @@ public class CatalogInitializationTest {
 
     @Test
     void acceptInitSvgCatalog() {
-        String svgCatalogPath = "./src/test/resources/testProject/source";
+        String svgCatalogPath = "./src/test/resources/svg-project/source";
         DecksCatalog svgCatalog = new DecksCatalog(new File(svgCatalogPath), ImageFormat.SVG);
         List<Deck> decks = svgCatalog.getDecks();
-        Assertions.assertEquals(4, decks.size());
+        Assertions.assertEquals(5, decks.size());
 
-        Deck blueDeck = searchDeckByName(decks, "deck-blue");
+        Deck blueDeck = searchDeckByName(decks, "blue-deck");
         List<Card> blueCards = blueDeck.getCards();
         Assertions.assertEquals(2, blueCards.size());
-        Card card5 = searchCardByName(blueCards, "card5.svg");
-        Assertions.assertEquals("back-blue.svg", card5.getBackSide().get().getName());
-        Card card6 = searchCardByName(blueCards, "card6.svg");
-        Assertions.assertEquals("back-blue.svg", card6.getBackSide().get().getName());
+        Card bird = searchCardByName(blueCards, "bird.svg");
+        Assertions.assertEquals("blue-back.svg", bird.getBackSide().get().getName());
+        Card elemental = searchCardByName(blueCards, "elemental.svg");
+        Assertions.assertEquals("blue-back.svg", elemental.getBackSide().get().getName());
 
-        Deck greenDeck = searchDeckByName(decks, "deck-green");
+        Deck greenDeck = searchDeckByName(decks, "green-deck");
         List<Card> greenCards = greenDeck.getCards();
         Assertions.assertEquals(2, greenDeck.getCards().size());
-        Card card1 = searchCardByName(greenCards, "card1.svg");
-        Assertions.assertEquals("back-green.svg", card1.getBackSide().get().getName());
-        Card card2 = searchCardByName(greenCards, "card2.svg");
-        Assertions.assertEquals("back-green.svg", card2.getBackSide().get().getName());
+        Card wolf = searchCardByName(greenCards, "wolf.svg");
+        Assertions.assertEquals("green-back.svg", wolf.getBackSide().get().getName());
+        Card spider = searchCardByName(greenCards, "spider.svg");
+        Assertions.assertEquals("green-back.svg", spider.getBackSide().get().getName());
 
-        Deck redDeck = searchDeckByName(decks, "deck-red");
+        Deck redDeck = searchDeckByName(decks, "red-deck");
         List<Card> redCards = redDeck.getCards();
         Assertions.assertEquals(2, redDeck.getCards().size());
-        Card card3 = searchCardByName(redCards, "card3.svg");
-        Assertions.assertEquals("back-red.svg", card3.getBackSide().get().getName());
-        Card card4 = searchCardByName(redCards, "card4.svg");
-        Assertions.assertEquals("back-red.svg", card4.getBackSide().get().getName());
+        Card goblin = searchCardByName(redCards, "goblin.svg");
+        Assertions.assertEquals("red-back.svg", goblin.getBackSide().get().getName());
+        Card dragon = searchCardByName(redCards, "dragon.svg");
+        Assertions.assertEquals("red-back.svg", dragon.getBackSide().get().getName());
 
-        Deck yellowDeck = searchDeckByName(decks, "deck-yellow");
+        Deck blackDeck = searchDeckByName(decks, "black-deck");
+        List<Card> blackCards = blackDeck.getCards();
+        Assertions.assertEquals(2, blackDeck.getCards().size());
+        Card zombie = searchCardByName(blackCards, "zombie.svg");
+        Assertions.assertEquals("black-back.svg", zombie.getBackSide().get().getName());
+        Card skeleton = searchCardByName(blackCards, "skeleton.svg");
+        Assertions.assertEquals("black-back.svg", skeleton.getBackSide().get().getName());
+
+        Deck yellowDeck = searchDeckByName(decks, "white-deck");
         List<Card> yellowCards = yellowDeck.getCards();
-        Assertions.assertEquals(3, yellowDeck.getCards().size());
-        Card card7 = searchCardByName(yellowCards, "card7.svg");
-        Assertions.assertEquals("back-yellow.svg", card7.getBackSide().get().getName());
-        Card card8 = searchCardByName(yellowCards, "card8.svg");
-        Assertions.assertEquals("back-yellow.svg", card8.getBackSide().get().getName());
-        Card card9 = searchCardByName(yellowCards, "card9.svg");
-        Assertions.assertEquals("back-yellow.svg", card9.getBackSide().get().getName());
+        Assertions.assertEquals(1, yellowDeck.getCards().size());
+        Card knight = searchCardByName(yellowCards, "knight.svg");
+        Assertions.assertEquals("white-back.svg", knight.getBackSide().get().getName());
     }
 
     private Deck searchDeckByName(List<Deck> decks, String name) {

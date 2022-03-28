@@ -12,8 +12,8 @@ import java.io.File;
 
 public class DocumentLayoutTest {
 
-    public static final String PDF_CATALOG_PATH = "C:/GitRepo/EasyCardsPrint/src/test/resources/testProject/print/temp/PDF";
-    public static final String PROJECT_PATH = "C:/GitRepo/EasyCardsPrint/src/test/resources/testProject";
+    public static final String PDF_CATALOG_PATH = "C:/GitRepo/EasyCardsPrint/src/test/resources/test-project/print/temp/PDF";
+    public static final String PROJECT_PATH = "C:/GitRepo/EasyCardsPrint/src/test/resources/test-project";
 
     @Test
     void acceptPdfPagesCompile() {
