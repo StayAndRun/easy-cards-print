@@ -1,7 +1,6 @@
 package com.karatitza.project;
 
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -79,7 +78,14 @@ public class PdfPagesComposerByIText extends PdfPagesComposer {
     }
 
     private String buildTempPdfPageFileName(int pageNumber) {
-        return projectPath + Main.TEMP_FILES_RELATE_PATH + File.separator + "page-" + pageNumber + ".pdf";
+        String tempDirPath = projectPath + Main.TEMP_FILES_RELATE_PATH;
+        File tempDir = new File(tempDirPath);
+        if (!tempDir.exists()) {
+            if (!tempDir.mkdirs()) {
+                throw new RuntimeException("Failed temp dir creation: " + tempDir);
+            }
+        }
+        return String.format("%s%spage-%d.pdf", tempDirPath, File.separator, pageNumber);
     }
 
     private PdfReader createPdfReader(String filename) {

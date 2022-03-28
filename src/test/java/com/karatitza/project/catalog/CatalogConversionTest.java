@@ -1,19 +1,17 @@
 package com.karatitza.project.catalog;
 
-import com.karatitza.converters.ConversionTask;
 import com.karatitza.converters.TempImageFactory;
 import com.karatitza.converters.itext.ITextSvgToPdfConverter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.TestInstantiationException;
 import org.opentest4j.AssertionFailedError;
 
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
-class CatalogConversionTest {
+class CatalogConversionTest extends ProjectTempTest {
 
     public static final String TEST_PROJECT_PATH = "./src/test/resources/svg-project";
     public static final String TEST_SOURCE_PATH = "./src/test/resources/svg-project/source";
@@ -75,21 +73,7 @@ class CatalogConversionTest {
 
     @BeforeEach
     void setUp() {
-        File tempDir = new File(TEST_PROJECT_PATH + ConversionTask.TEMP_FILES_RELATE_PATH);
-        deleteSubDirs(tempDir);
-        if (tempDir.exists() && !tempDir.delete()) {
-            throw new TestInstantiationException("Failed to remove temp files: " + tempDir);
-        }
-    }
-
-    private void deleteSubDirs(File tempDir) {
-        File[] subFiles = tempDir.listFiles();
-        if (subFiles != null) {
-            for (File subFile : subFiles) {
-                deleteSubDirs(subFile);
-                subFile.delete();
-            }
-        }
+        cleanTempDirectory(TEST_PROJECT_PATH);
     }
 
     private Deck searchDeckByName(List<Deck> decks, String name) {
