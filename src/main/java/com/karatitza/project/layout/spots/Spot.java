@@ -23,6 +23,14 @@ public class Spot {
         return y;
     }
 
+    public float getCenterAlignX(float xSize) {
+        return getX() - xSize / 2;
+    }
+
+    public float getCenterAlignY(float ySize) {
+        return getY() - ySize / 2;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null)

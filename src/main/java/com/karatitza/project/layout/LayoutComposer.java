@@ -1,18 +1,16 @@
 package com.karatitza.project.layout;
 
-import com.itextpdf.kernel.geom.PageSize;
 import com.karatitza.project.catalog.Card;
 import com.karatitza.project.catalog.Deck;
 import com.karatitza.project.catalog.DecksCatalog;
 import com.karatitza.project.layout.cards.CardsLayout;
-import com.karatitza.project.layout.spots.SpotSize;
 
 public class LayoutComposer {
 
     private final DocumentLayout documentLayout;
 
-    public LayoutComposer(PageSize pageSize, SpotSize spotSize) {
-        this.documentLayout = new DocumentLayout(pageSize, spotSize);
+    public LayoutComposer(DocumentLayout documentLayout) {
+        this.documentLayout = documentLayout;
     }
 
     public DocumentLayout compose(DecksCatalog decksCatalog) {

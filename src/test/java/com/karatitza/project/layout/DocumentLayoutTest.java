@@ -14,14 +14,17 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
 public class DocumentLayoutTest extends ProjectTempTest {
 
     public static final String PDF_CATALOG_PATH = "./src/test/resources/pdf-project/source";
     public static final String PDF_PROJECT_PATH = "./src/test/resources/pdf-project";
     public static final String PROJECT_TEMP_PATH = "./src/test/resources/pdf-project/print/temp";
-    public static final String EXPECTED_PDF = "./src/test/resources/pdf-project/expected/spot-91x59/page-1.pdf";
+    public static final String EXPECTED_PDF_PAGE_1 = "./src/test/resources/pdf-project/expected/spot-91x59/page-1.pdf";
+    public static final String EXPECTED_PDF_PAGE_2 = "./src/test/resources/pdf-project/expected/spot-91x59/page-2.pdf";
 
 
     @BeforeEach
@@ -37,17 +40,21 @@ public class DocumentLayoutTest extends ProjectTempTest {
         PdfPagesComposer pdfPagesComposer = createPdfPagesLayout();
         pdfPagesComposer.composeByLayout(pages);
 
-        File pdfPageTemp = searchTempPdfFile("page-1.pdf");
-        assertPdfFilesEquals(pdfPageTemp.getPath(), EXPECTED_PDF);
+        File tempPdfPage1 = searchTempPdfFile("page-1.pdf");
+        assertPdfFilesEquals(tempPdfPage1.getPath(), EXPECTED_PDF_PAGE_1);
+
+        File tempPdfPage2 = searchTempPdfFile("page-2.pdf");
+        assertPdfFilesEquals(tempPdfPage2.getPath(), EXPECTED_PDF_PAGE_2);
     }
 
     private File searchTempPdfFile(String expected) {
         File tempDir = new File(PROJECT_TEMP_PATH);
         File[] tempFiles = Objects.requireNonNull(tempDir.listFiles());
-        Assertions.assertEquals(1, tempFiles.length);
-        File pdfPageTemp = tempFiles[0];
-        Assertions.assertEquals(expected, pdfPageTemp.getName());
-        return pdfPageTemp;
+        Optional<File> foundFile = Arrays.stream(tempFiles).filter(file -> file.getName().equals(expected)).findFirst();
+        if (!foundFile.isPresent()) {
+            Assertions.fail("Not found expected file: " + expected);
+        }
+        return foundFile.get();
     }
 
     private void assertPdfFilesEquals(String expectedPdf, String actualPdf) throws InterruptedException, IOException {
@@ -61,6 +68,6 @@ public class DocumentLayoutTest extends ProjectTempTest {
     }
 
     private LayoutComposer createComposer(PageSize pageSize, SpotSize millimeters) {
-        return new LayoutComposer(pageSize, millimeters);
+        return new LayoutComposer(new DocumentLayout(pageSize, millimeters));
     }
 }

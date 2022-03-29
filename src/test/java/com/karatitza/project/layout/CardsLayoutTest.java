@@ -10,7 +10,8 @@ import com.karatitza.project.layout.spots.SpotSize;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Optional;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -91,7 +92,7 @@ class CardsLayoutTest {
     }
 
     private LayoutComposer createComposer(PageSize pageSize, SpotSize millimeters) {
-        return new LayoutComposer(pageSize, millimeters);
+        return new LayoutComposer(new DocumentLayout(pageSize, millimeters));
     }
 
     private DecksCatalog mockDecksCatalog() {
