@@ -1,8 +1,7 @@
 package com.karatitza.project.layout.spots;
 
-import com.karatitza.project.MeasureUtils;
-
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 
 import static com.karatitza.project.MeasureUtils.pointsToMillimeters;
 import static com.karatitza.project.MeasureUtils.round;
@@ -33,7 +32,14 @@ public class Spot {
         if (!(obj instanceof Spot))
             return false;
         Spot spot = (Spot) obj;
+        if (!equalsAtFloatPoints(spot, this)) {
+            System.out.println(MessageFormat.format("Not equal at points:\n{0}\n{1}", spot, this));
+        }
         return equalsAtRoundedMillimeters(spot, this);
+    }
+
+    private boolean equalsAtFloatPoints(Spot left, Spot right) {
+        return left.x == right.x && left.y == right.y;
     }
 
     private boolean equalsAtRoundedMillimeters(Spot left, Spot right) {
