@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 
+import static java.lang.String.format;
+
 public class DocumentLayoutTest extends ProjectTempTest {
 
     public static final String PDF_CATALOG_PATH = "./src/test/resources/pdf-project/source";
@@ -26,14 +28,13 @@ public class DocumentLayoutTest extends ProjectTempTest {
     public static final String EXPECTED_PDF_PAGE_1 = "./src/test/resources/pdf-project/expected/spot-91x59/page-1.pdf";
     public static final String EXPECTED_PDF_PAGE_2 = "./src/test/resources/pdf-project/expected/spot-91x59/page-2.pdf";
 
-
     @BeforeEach
     void setUp() {
         cleanTempDirectory(PDF_PROJECT_PATH);
     }
 
     @Test
-    void acceptPdfPagesCompile() throws IOException, InterruptedException {
+    void acceptPdfPagesCompileWithSpot91x59() throws IOException, InterruptedException {
         LayoutComposer composer = createComposer(PageSize.A4, SpotSize.millimeters(91, 59));
         DecksCatalog pdfCatalog = new DecksCatalog(new File(PDF_CATALOG_PATH), ImageFormat.PDF);
         DocumentLayout pages = composer.compose(pdfCatalog);
@@ -45,6 +46,21 @@ public class DocumentLayoutTest extends ProjectTempTest {
 
         File tempPdfPage2 = searchTempPdfFile("page-2.pdf");
         assertPdfFilesEquals(tempPdfPage2.getPath(), EXPECTED_PDF_PAGE_2);
+    }
+
+    @Test
+    void acceptPdfPagesCompileWithSpot100x80() throws IOException, InterruptedException {
+        LayoutComposer composer = createComposer(PageSize.A4, SpotSize.millimeters(100, 80));
+        DecksCatalog pdfCatalog = new DecksCatalog(new File(PDF_CATALOG_PATH), ImageFormat.PDF);
+        DocumentLayout pages = composer.compose(pdfCatalog);
+        PdfPagesComposer pdfPagesComposer = createPdfPagesLayout();
+        pdfPagesComposer.composeByLayout(pages);
+        for (int pageNumber = 1; pageNumber <= 6; pageNumber++) {
+            assertPdfFilesEquals(
+                    searchTempPdfFile(format("page-%d.pdf", pageNumber)).getPath(),
+                    format("./src/test/resources/pdf-project/expected/spot-100x80/page-%d.pdf", pageNumber)
+            );
+        }
     }
 
     private File searchTempPdfFile(String expected) {

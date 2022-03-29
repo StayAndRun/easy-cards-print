@@ -42,6 +42,9 @@ public class PdfPagesComposerByIText extends PdfPagesComposer {
         for (AbstractMap.SimpleImmutableEntry<Spot, Image> imageSpot : pageLayout) {
             Image image = imageSpot.getValue();
             Spot spot = imageSpot.getKey();
+            if (image == null) {
+                continue;
+            }
             try (PdfDocument pdfImage = new PdfDocument(createPdfReader(image.getLocation().getPath()))) {
                 PdfFormXObject imageObject = pasteImageToPdfDocument(pdfDocument, pdfImage);
                 new PdfCanvas(newPdfPage).addXObjectAt(
