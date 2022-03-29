@@ -12,6 +12,7 @@ import com.karatitza.Main;
 import com.karatitza.project.catalog.Image;
 import com.karatitza.project.layout.DocumentLayout;
 import com.karatitza.project.layout.spots.Spot;
+import com.karatitza.project.layout.spots.SpotSize;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -47,11 +48,15 @@ public class PdfPagesComposerByIText extends PdfPagesComposer {
             }
             try (PdfDocument pdfImage = new PdfDocument(createPdfReader(image.getLocation().getPath()))) {
                 PdfFormXObject imageObject = pasteImageToPdfDocument(pdfDocument, pdfImage);
-                new PdfCanvas(newPdfPage).addXObjectAt(
+                PdfCanvas canvas = new PdfCanvas(newPdfPage).addXObjectAt(
                         imageObject,
                         spot.getCenterAlignX(imageObject.getWidth()),
                         spot.getCenterAlignY(imageObject.getHeight())
                 );
+                if (isDrawDebugMesh) {
+                    drawDebugMesh(canvas, pageLayout.getSpotSize(), spot);
+                }
+                canvas.release();
             }
         }
     }
@@ -94,10 +99,24 @@ public class PdfPagesComposerByIText extends PdfPagesComposer {
         }
     }
 
-    private void drawBorder(float pageSizeWidth, float pageSizeHeight, PdfCanvas canvas) {
-        Rectangle rectangle = new Rectangle(0, 0, pageSizeWidth, pageSizeHeight);
-        canvas.setStrokeColor(ColorConstants.BLACK)
-                .rectangle(rectangle)
-                .stroke();
+    private void drawDebugMesh(PdfCanvas canvas, SpotSize spotSize, Spot spot) {
+        Rectangle pageBorder = canvas.getDocument().getDefaultPageSize();
+        Rectangle spotRectangle = new Rectangle(
+                spot.getCenterAlignX(spotSize.getWidth()),
+                spot.getCenterAlignY(spotSize.getHeight()),
+                spotSize.getWidth(), spotSize.getHeight()
+        );
+        canvas.setStrokeColor(ColorConstants.RED)
+                .rectangle(pageBorder)
+                .closePathStroke();
+        canvas.setStrokeColor(ColorConstants.GREEN)
+                .rectangle(spotRectangle)
+                .closePathStroke();
+        canvas.setStrokeColor(ColorConstants.BLUE)
+                .moveTo(spot.getX(), 0)
+                .lineTo(spot.getX(), pageBorder.getHeight())
+                .moveTo(0, spot.getY())
+                .lineTo(pageBorder.getWidth(), spot.getY())
+                .closePathStroke();
     }
 }

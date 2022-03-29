@@ -8,6 +8,8 @@ import java.util.List;
 
 public abstract class PdfPagesComposer {
 
+    public static boolean isDrawDebugMesh = false;
+
     protected final List<File> pdfFiles = new ArrayList<>();
     protected final File projectPath;
 

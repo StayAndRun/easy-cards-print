@@ -63,6 +63,10 @@ public class DocumentLayout implements Iterable<DocumentLayout.PageLayout> {
             return spotsLayout.getPageSize();
         }
 
+        public SpotSize getSpotSize() {
+            return spotsLayout.getSpotSize();
+        }
+
         @Override
         public Iterator<AbstractMap.SimpleImmutableEntry<Spot, Image>> iterator() {
             return new Iterator<AbstractMap.SimpleImmutableEntry<Spot, Image>>() {
