@@ -10,16 +10,16 @@ public abstract class PdfPagesComposer {
 
     public static boolean isDrawDebugMesh = false;
 
-    protected final List<File> pdfFiles = new ArrayList<>();
+    protected final List<File> pdfPageFiles = new ArrayList<>();
     protected final File projectPath;
 
     public PdfPagesComposer(File projectPath) {
         this.projectPath = projectPath;
     }
 
-    public abstract void composeByLayout(DocumentLayout layout);
+    public abstract List<File> composeByLayout(DocumentLayout layout);
 
     public List<File> getFiles() {
-        return new ArrayList<>(pdfFiles);
+        return new ArrayList<>(pdfPageFiles);
     }
 }

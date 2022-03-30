@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.AbstractMap;
+import java.util.List;
 
 public class PdfPagesComposerByIText extends PdfPagesComposer {
 
@@ -26,16 +27,19 @@ public class PdfPagesComposerByIText extends PdfPagesComposer {
     }
 
     @Override
-    public void composeByLayout(DocumentLayout layout) {
+    public List<File> composeByLayout(DocumentLayout layout) {
         int pageNumber = 1;
         for (DocumentLayout.PageLayout pageLayout : layout) {
-            PdfWriter pdfWriter = createPdfWriter(buildTempPdfPageFileName(pageNumber));
+            String pdfPageFilePath = buildTempPdfPageFileName(pageNumber);
+            PdfWriter pdfWriter = createPdfWriter(pdfPageFilePath);
             try (PdfDocument pdfDocument = new PdfDocument(pdfWriter)) {
                 pdfDocument.setDefaultPageSize(pageLayout.getPageSize());
                 placeLayoutToPdfDocument(pageLayout, pdfDocument);
             }
             pageNumber++;
+            pdfPageFiles.add(new File(pdfPageFilePath));
         }
+        return pdfPageFiles;
     }
 
     private void placeLayoutToPdfDocument(DocumentLayout.PageLayout pageLayout, PdfDocument pdfDocument) {
