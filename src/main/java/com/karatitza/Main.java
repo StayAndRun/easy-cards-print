@@ -3,9 +3,8 @@ package com.karatitza;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
-import com.itextpdf.kernel.pdf.*;
+import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
@@ -25,29 +24,19 @@ public class Main {
     public static final String SOURCE_FILES_RELATE_PATH = format("{0}source", File.separator);
 
     public static void main(String[] args) throws IOException {
-        PdfWriter pdfWriter = new PdfWriter("test-page.pdf");
-        PdfDocument pdfDocument = new PdfDocument(pdfWriter);
-        pdfDocument.setDefaultPageSize(PageSize.A4);
-        PdfPage pdfPage = pdfDocument.addNewPage();
-        Rectangle rectangle = new Rectangle(105, 105);
-        rectangle.setX(0);
-        rectangle.setY(0);
-        PdfCanvas pdfCanvas = new PdfCanvas(pdfPage)
-                .setStrokeColor(ColorConstants.BLACK)
-                .setFillColor(ColorConstants.YELLOW)
-                .rectangle(rectangle)
-                .moveTo(20, 20)
-                .stroke();
-        pdfDocument.close();
+        PipedOutputStream pipedOutputStream = new PipedOutputStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        DataOutputStream dataOutputStream = new DataOutputStream(pipedOutputStream);
+        PipedInputStream pipedInputStream = new PipedInputStream(pipedOutputStream);
+        dataOutputStream.writeLong(42);
+        dataOutputStream.close();
 
-        PdfReader reader = new PdfReader("test-page.pdf");
-        PdfDocument document = new PdfDocument(reader);
-        PdfPage firstPage = document.getFirstPage();
-        System.out.println();
-    }
+        byte[] bytes = out.toByteArray();
 
-    private static void composePdfWithCards() throws IOException {
-
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+        DataInputStream dataInputStream = new DataInputStream(pipedInputStream);
+        long resultLong = dataInputStream.readLong();
+        System.out.println(resultLong);
     }
 
     private static void convertSvgFileToPdf(Document document) throws IOException {

@@ -10,17 +10,30 @@ import com.karatitza.project.layout.spots.Spot;
 import com.karatitza.project.layout.spots.SpotSize;
 import com.karatitza.project.layout.spots.SpotsLayout;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 
 public class DebugSpotsComposer {
 
     private static final float LINE_LENGTH = 20;
 
     public File composeToFile(PageSize pageSize, SpotSize spotSize) {
-        SpotsLayout spotsLayout = new SpotsLayout(pageSize, spotSize);
         File debugFile = createDebugFile("./src/test/resources/pdf-project/print/temp");
-        try (PdfDocument debugPdf = new PdfDocument(getWriter(debugFile))) {
+        createPdfDocument(pageSize, spotSize, getPdfWriterToFile(debugFile));
+        return debugFile;
+    }
+
+    public ByteArrayInputStream composeToStream(PageSize pageSize, SpotSize spotSize) {
+        try (ByteArrayOutputStream outStream = new ByteArrayOutputStream()) {
+            createPdfDocument(pageSize, spotSize, new PdfWriter(outStream));
+            return new ByteArrayInputStream(outStream.toByteArray());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void createPdfDocument(PageSize pageSize, SpotSize spotSize, PdfWriter writer) {
+        SpotsLayout spotsLayout = new SpotsLayout(pageSize, spotSize);
+        try (PdfDocument debugPdf = new PdfDocument(writer)) {
             PdfCanvas canvas = new PdfCanvas(debugPdf.addNewPage());
             canvas.setStrokeColor(ColorConstants.BLACK)
                     .setLineWidth(3)
@@ -45,10 +58,9 @@ public class DebugSpotsComposer {
                         .closePathStroke();
             }
         }
-        return debugFile;
     }
 
-    private PdfWriter getWriter(File debugFile) {
+    private PdfWriter getPdfWriterToFile(File debugFile) {
         try {
             return new PdfWriter(debugFile);
         } catch (FileNotFoundException e) {
