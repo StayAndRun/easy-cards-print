@@ -1,4 +1,4 @@
-package com.karatitza.project.gui;
+package com.karatitza.gui;
 
 import com.itextpdf.kernel.geom.PageSize;
 import com.karatitza.project.compose.DebugSpotsComposer;

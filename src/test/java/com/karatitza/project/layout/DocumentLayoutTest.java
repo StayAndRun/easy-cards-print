@@ -2,11 +2,11 @@ package com.karatitza.project.layout;
 
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.utils.CompareTool;
-import com.karatitza.project.PdfPagesComposer;
-import com.karatitza.project.PdfPagesComposerByIText;
 import com.karatitza.project.catalog.DecksCatalog;
 import com.karatitza.project.catalog.ImageFormat;
 import com.karatitza.project.catalog.ProjectTempTest;
+import com.karatitza.project.compose.PdfPagesComposer;
+import com.karatitza.project.compose.PdfPagesComposerByIText;
 import com.karatitza.project.layout.spots.SpotSize;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

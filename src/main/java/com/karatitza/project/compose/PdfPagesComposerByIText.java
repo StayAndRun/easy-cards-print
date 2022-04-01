@@ -1,4 +1,4 @@
-package com.karatitza.project;
+package com.karatitza.project.compose;
 
 import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.Rectangle;

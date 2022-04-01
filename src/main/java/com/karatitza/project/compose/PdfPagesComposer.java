@@ -1,4 +1,4 @@
-package com.karatitza.project;
+package com.karatitza.project.compose;
 
 import com.karatitza.project.layout.DocumentLayout;
 

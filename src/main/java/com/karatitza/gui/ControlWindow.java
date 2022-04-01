@@ -1,4 +1,4 @@
-package com.karatitza.project.gui;
+package com.karatitza.gui;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -22,7 +22,7 @@ public class ControlWindow implements ChangeListener {
 
     public JPanel packToPanel() {
         JPanel controlPanel = new JPanel();
-        controlPanel.setLayout(new GridLayout(0, 1, 10, 10));
+        controlPanel.setLayout(new GridLayout(0, 2, 10, 10));
         spotHeight.addChangeListener(this);
         spotWidth.addChangeListener(this);
         spotSpace.addChangeListener(this);

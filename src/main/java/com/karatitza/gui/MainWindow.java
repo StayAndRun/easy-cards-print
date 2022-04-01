@@ -1,4 +1,4 @@
-package com.karatitza.project.gui;
+package com.karatitza.gui;
 
 import javax.swing.*;
 import java.awt.*;

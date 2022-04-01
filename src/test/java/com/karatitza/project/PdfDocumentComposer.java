@@ -5,6 +5,7 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.PdfMerger;
 import com.karatitza.project.catalog.ImageFormat;
+import com.karatitza.project.compose.PdfPagesComposer;
 import com.karatitza.project.layout.DocumentLayout;
 
 import java.io.File;
