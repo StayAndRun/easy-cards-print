@@ -17,7 +17,7 @@ public class DebugSpotsComposer {
     private static final float LINE_LENGTH = 20;
 
     public File composeToFile(PageSize pageSize, SpotSize spotSize) {
-        File debugFile = createDebugFile("./src/test/resources/pdf-project/print/temp");
+        File debugFile = createDebugFile("./src/test/resources");
         createPdfDocument(pageSize, spotSize, getPdfWriterToFile(debugFile));
         return debugFile;
     }
@@ -34,6 +34,7 @@ public class DebugSpotsComposer {
     private void createPdfDocument(PageSize pageSize, SpotSize spotSize, PdfWriter writer) {
         SpotsLayout spotsLayout = new SpotsLayout(pageSize, spotSize);
         try (PdfDocument debugPdf = new PdfDocument(writer)) {
+            debugPdf.setDefaultPageSize(pageSize);
             PdfCanvas canvas = new PdfCanvas(debugPdf.addNewPage());
             canvas.setStrokeColor(ColorConstants.BLACK)
                     .setLineWidth(3)

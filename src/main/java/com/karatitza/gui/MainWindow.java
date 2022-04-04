@@ -18,7 +18,15 @@ public class MainWindow {
 
         PreviewWindow previewWindow = new PreviewWindow();
         JPanel previewPanel = previewWindow.packToPanel();
-        JPanel controlPanel = new ControlWindow(previewWindow).packToPanel();
+        JPanel spotControlPanel = new SpotControlWindow(previewWindow).packToPanel();
+
+        JPanel catalogControlPanel = new JPanel(new GridLayout(0, 1));
+        catalogControlPanel.add(new Button("Build PDF"));
+
+        JPanel controlPanel = new JPanel(new GridLayout(2,1));
+
+        controlPanel.add(spotControlPanel);
+        controlPanel.add(catalogControlPanel);
 
         mainPanel.add(previewPanel);
         mainPanel.add(controlPanel);

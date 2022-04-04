@@ -7,6 +7,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -21,13 +22,31 @@ public class PreviewWindow {
 
     public JPanel packToPanel() {
         JPanel previewPanel = new JPanel();
+        preview.setPreferredSize(new Dimension(600, 900));
+        preview.setVerticalAlignment(JLabel.CENTER);
+        preview.setHorizontalAlignment(JLabel.CENTER);
         previewPanel.add(preview);
         return previewPanel;
     }
 
-    public void refresh(Integer height, Integer width, Integer space) {
-        ImageIcon imageIcon = buildImageFromStream(PageSize.A4, SpotSize.millimeters(height, width, space));
-        preview.setIcon(imageIcon);
+    public void refresh(Integer height, Integer width, Integer space, PageSize pageSize) {
+        ImageIcon imageIcon = buildImageFromStream(pageSize, SpotSize.millimeters(height, width, space));
+        System.out.println("Image size: " + imageIcon.getIconWidth() + " " + imageIcon.getIconHeight());
+        preview.setIcon(resizeImageIcon(imageIcon));
+    }
+
+    private ImageIcon resizeImageIcon(ImageIcon imageIcon) {
+        System.out.println("Previes size: " + preview.getSize());
+        float scaleFactor = (float) (imageIcon.getIconWidth() / preview.getPreferredSize().getWidth());
+        System.out.println("Scale factor: " + scaleFactor);
+        if (scaleFactor < 1) {
+            return imageIcon;
+        }
+        int scaledHeight = Math.round(imageIcon.getIconHeight() / scaleFactor);
+        int scaledWidth = Math.round(imageIcon.getIconWidth() / scaleFactor);
+        return new ImageIcon(
+                imageIcon.getImage().getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH)
+        );
     }
 
     private ImageIcon buildImageFromFile(PageSize pagesize, SpotSize millimeters) {
