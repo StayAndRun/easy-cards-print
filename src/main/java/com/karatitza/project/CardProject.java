@@ -4,6 +4,7 @@ import com.itextpdf.kernel.geom.PageSize;
 import com.karatitza.converters.ConverterType;
 import com.karatitza.project.catalog.DecksCatalog;
 import com.karatitza.project.catalog.ImageFormat;
+import com.karatitza.project.compose.SpotsPreview;
 import com.karatitza.project.layout.spots.SpotSize;
 import com.karatitza.project.layout.spots.SpotsLayout;
 
@@ -22,8 +23,9 @@ public class CardProject {
 
     }
 
-    public void initSpots(PageSize pageSize, SpotSize spotSize) {
+    public SpotsPreview initSpots(PageSize pageSize, SpotSize spotSize) {
         spots = new SpotsLayout(pageSize, spotSize);
+        return new SpotsPreview(spots);
     }
 
     public void finish() {

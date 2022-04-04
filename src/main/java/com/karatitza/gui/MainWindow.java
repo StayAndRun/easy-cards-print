@@ -1,12 +1,20 @@
 package com.karatitza.gui;
 
+import com.karatitza.project.CardProject;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class MainWindow {
 
+    private final CardProject cardProject;
+
+    public MainWindow(CardProject cardProject) {
+        this.cardProject = cardProject;
+    }
+
     public static void main(String[] args) {
-        new MainWindow().open();
+        new MainWindow(new CardProject()).open();
     }
 
     public void open() {
@@ -16,7 +24,7 @@ public class MainWindow {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
         mainPanel.setLayout(new GridLayout(1, 2));
 
-        PreviewWindow previewWindow = new PreviewWindow();
+        PreviewWindow previewWindow = new PreviewWindow(cardProject);
         JPanel previewPanel = previewWindow.packToPanel();
         JPanel spotControlPanel = new SpotControlWindow(previewWindow).packToPanel();
 

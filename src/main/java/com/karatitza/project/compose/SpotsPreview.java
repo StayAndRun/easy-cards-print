@@ -1,7 +1,6 @@
 package com.karatitza.project.compose;
 
 import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -12,35 +11,41 @@ import com.karatitza.project.layout.spots.SpotsLayout;
 
 import java.io.*;
 
-public class DebugSpotsComposer {
+public class SpotsPreview {
 
     private static final float LINE_LENGTH = 20;
 
-    public File composeToFile(PageSize pageSize, SpotSize spotSize) {
+    private final SpotsLayout spotsLayout;
+
+    public SpotsPreview(SpotsLayout spotsLayout) {
+        this.spotsLayout = spotsLayout;
+    }
+
+    public File composeToFile() {
         File debugFile = createDebugFile("./src/test/resources");
-        createPdfDocument(pageSize, spotSize, getPdfWriterToFile(debugFile));
+        createPdfDocument(getPdfWriterToFile(debugFile));
         return debugFile;
     }
 
-    public ByteArrayInputStream composeToStream(PageSize pageSize, SpotSize spotSize) {
+    public ByteArrayInputStream composeToStream() {
         try (ByteArrayOutputStream outStream = new ByteArrayOutputStream()) {
-            createPdfDocument(pageSize, spotSize, new PdfWriter(outStream));
+            createPdfDocument(new PdfWriter(outStream));
             return new ByteArrayInputStream(outStream.toByteArray());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void createPdfDocument(PageSize pageSize, SpotSize spotSize, PdfWriter writer) {
-        SpotsLayout spotsLayout = new SpotsLayout(pageSize, spotSize);
+    private void createPdfDocument(PdfWriter writer) {
         try (PdfDocument debugPdf = new PdfDocument(writer)) {
-            debugPdf.setDefaultPageSize(pageSize);
+            debugPdf.setDefaultPageSize(spotsLayout.getPageSize());
             PdfCanvas canvas = new PdfCanvas(debugPdf.addNewPage());
             canvas.setStrokeColor(ColorConstants.BLACK)
                     .setLineWidth(3)
                     .rectangle(canvas.getDocument().getDefaultPageSize())
                     .closePathStroke();
-            for (Spot spot : spotsLayout) {
+            for (Spot spot : this.spotsLayout) {
+                SpotSize spotSize = spotsLayout.getSpotSize();
                 Rectangle spotRectangle = new Rectangle(
                         spot.getCenterAlignX(spotSize.getWidth()),
                         spot.getCenterAlignY(spotSize.getHeight()),

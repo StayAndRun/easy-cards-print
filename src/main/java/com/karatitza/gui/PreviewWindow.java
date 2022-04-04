@@ -1,7 +1,8 @@
 package com.karatitza.gui;
 
 import com.itextpdf.kernel.geom.PageSize;
-import com.karatitza.project.compose.DebugSpotsComposer;
+import com.karatitza.project.CardProject;
+import com.karatitza.project.compose.SpotsPreview;
 import com.karatitza.project.layout.spots.SpotSize;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -15,8 +16,10 @@ import java.io.IOException;
 public class PreviewWindow {
 
     private final JLabel preview;
+    private final CardProject cardProject;
 
-    public PreviewWindow() {
+    public PreviewWindow(CardProject cardProject) {
+        this.cardProject = cardProject;
         this.preview = new JLabel();
     }
 
@@ -30,15 +33,14 @@ public class PreviewWindow {
     }
 
     public void refresh(Integer height, Integer width, Integer space, PageSize pageSize) {
-        ImageIcon imageIcon = buildImageFromStream(pageSize, SpotSize.millimeters(height, width, space));
-        System.out.println("Image size: " + imageIcon.getIconWidth() + " " + imageIcon.getIconHeight());
+        SpotsPreview spotsPreview = cardProject.initSpots(pageSize, SpotSize.millimeters(height, width, space));
+        ImageIcon imageIcon = buildImageFromStream(spotsPreview);
         preview.setIcon(resizeImageIcon(imageIcon));
     }
 
     private ImageIcon resizeImageIcon(ImageIcon imageIcon) {
-        System.out.println("Previes size: " + preview.getSize());
+        // TODO Refactor danger numeric cast
         float scaleFactor = (float) (imageIcon.getIconWidth() / preview.getPreferredSize().getWidth());
-        System.out.println("Scale factor: " + scaleFactor);
         if (scaleFactor < 1) {
             return imageIcon;
         }
@@ -49,11 +51,10 @@ public class PreviewWindow {
         );
     }
 
-    private ImageIcon buildImageFromFile(PageSize pagesize, SpotSize millimeters) {
+    private ImageIcon buildImageFromFile(SpotsPreview spotsPreview) {
         try {
-            DebugSpotsComposer spotsComposer = new DebugSpotsComposer();
             BufferedImage bufferedImage;
-            try (PDDocument document = PDDocument.load(spotsComposer.composeToFile(pagesize, millimeters))) {
+            try (PDDocument document = PDDocument.load(spotsPreview.composeToFile())) {
                 PDFRenderer pdfRenderer = new PDFRenderer(document);
                 bufferedImage = pdfRenderer.renderImage(0);
             }
@@ -63,9 +64,8 @@ public class PreviewWindow {
         }
     }
 
-    private ImageIcon buildImageFromStream(PageSize pagesize, SpotSize spotSize) {
-        DebugSpotsComposer spotsComposer = new DebugSpotsComposer();
-        try (ByteArrayInputStream byteArrayInputStream = spotsComposer.composeToStream(pagesize, spotSize)) {
+    private ImageIcon buildImageFromStream(SpotsPreview spotsPreview) {
+        try (ByteArrayInputStream byteArrayInputStream = spotsPreview.composeToStream()) {
             try (PDDocument document = PDDocument.load(byteArrayInputStream)) {
                 PDFRenderer pdfRenderer = new PDFRenderer(document);
                 return new ImageIcon(pdfRenderer.renderImage(0));
