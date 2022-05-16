@@ -16,7 +16,7 @@ public class DecksCatalog {
     public DecksCatalog(File rootDir, ImageFormat imageFormat) {
         this.imageFormat = imageFormat;
         List<File> decksRoots = Arrays.asList(
-                Objects.requireNonNull(rootDir.listFiles(File::isDirectory), "Not found deckFiles")
+                Objects.requireNonNull(rootDir.listFiles(File::isDirectory), "Not found decks at dir: " + rootDir)
         );
         this.decks = new ArrayList<>(decksRoots.size());
         for (File deckRoot : decksRoots) {
@@ -39,5 +39,13 @@ public class DecksCatalog {
         }
         List<Deck> convertedDecks = decks.stream().map(deck -> deck.convert(converter)).collect(Collectors.toList());
         return new DecksCatalog(convertedDecks, converter.fileFormat());
+    }
+
+    @Override
+    public String toString() {
+        return "DecksCatalog{" +
+                "decks=" + decks +
+                ", imageFormat=" + imageFormat +
+                '}';
     }
 }

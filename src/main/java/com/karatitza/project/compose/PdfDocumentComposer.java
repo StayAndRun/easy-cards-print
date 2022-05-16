@@ -1,11 +1,11 @@
-package com.karatitza.project;
+package com.karatitza.project.compose;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.PdfMerger;
+import com.karatitza.project.PathConstants;
 import com.karatitza.project.catalog.ImageFormat;
-import com.karatitza.project.compose.PdfPagesComposer;
 import com.karatitza.project.layout.DocumentLayout;
 
 import java.io.File;
@@ -20,6 +20,11 @@ public class PdfDocumentComposer {
 
     public PdfDocumentComposer(PdfPagesComposer pagesComposer, File projectPath) {
         this.pagesComposer = pagesComposer;
+        this.projectPath = projectPath;
+    }
+
+    public PdfDocumentComposer(File projectPath) {
+        this.pagesComposer = new PdfPagesComposerByIText(projectPath);
         this.projectPath = projectPath;
     }
 

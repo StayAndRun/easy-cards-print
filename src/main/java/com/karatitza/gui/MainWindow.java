@@ -27,9 +27,7 @@ public class MainWindow {
         PreviewWindow previewWindow = new PreviewWindow(cardProject);
         JPanel previewPanel = previewWindow.packToPanel();
         JPanel spotControlPanel = new SpotControlWindow(previewWindow).packToPanel();
-
-        JPanel catalogControlPanel = new JPanel(new GridLayout(0, 1));
-        catalogControlPanel.add(new Button("Build PDF"));
+        JPanel catalogControlPanel = new CardCatalogControlWindow(cardProject).packToPanel();
 
         JPanel controlPanel = new JPanel(new GridLayout(2,1));
 

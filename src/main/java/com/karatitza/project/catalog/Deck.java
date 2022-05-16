@@ -64,4 +64,11 @@ public class Deck {
         ).findFirst();
     }
 
+    @Override
+    public String toString() {
+        return "Deck{" +
+                ", cardsFiles=" + cardsFiles +
+                ", backsFiles=" + backsFiles +
+                '}';
+    }
 }

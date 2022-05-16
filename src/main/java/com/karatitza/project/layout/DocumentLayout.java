@@ -17,8 +17,8 @@ public class DocumentLayout implements Iterable<DocumentLayout.PageLayout> {
     private final List<CardsLayout> cardPages = new ArrayList<>();
     private final SpotsLayout spots;
 
-    public DocumentLayout(PageSize pageSize, SpotSize spotSize) {
-        this.spots = new SpotsLayout(pageSize, spotSize);
+    public DocumentLayout(SpotsLayout spots) {
+        this.spots = spots;
     }
 
     public CardsLayout createPage() {

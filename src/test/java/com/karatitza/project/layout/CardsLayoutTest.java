@@ -7,6 +7,7 @@ import com.karatitza.project.catalog.DecksCatalog;
 import com.karatitza.project.catalog.Image;
 import com.karatitza.project.layout.cards.ImageLayout;
 import com.karatitza.project.layout.spots.SpotSize;
+import com.karatitza.project.layout.spots.SpotsLayout;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -91,8 +92,8 @@ class CardsLayoutTest {
         Assertions.assertEquals("white", thirdBackPage.getImage(1, 1).toString());
     }
 
-    private LayoutComposer createComposer(PageSize pageSize, SpotSize millimeters) {
-        return new LayoutComposer(new DocumentLayout(pageSize, millimeters));
+    private LayoutComposer createComposer(PageSize pageSize, SpotSize spotSize) {
+        return new LayoutComposer(new DocumentLayout(new SpotsLayout(pageSize, spotSize)));
     }
 
     private DecksCatalog mockDecksCatalog() {

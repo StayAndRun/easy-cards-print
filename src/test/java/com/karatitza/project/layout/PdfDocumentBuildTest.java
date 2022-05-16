@@ -1,6 +1,6 @@
 package com.karatitza.project.layout;
 
-import com.karatitza.project.PdfDocumentComposer;
+import com.karatitza.project.compose.PdfDocumentComposer;
 import com.karatitza.project.compose.PdfPagesComposer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

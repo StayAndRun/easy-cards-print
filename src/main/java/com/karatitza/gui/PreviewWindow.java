@@ -33,7 +33,7 @@ public class PreviewWindow {
     }
 
     public void refresh(Integer height, Integer width, Integer space, PageSize pageSize) {
-        SpotsPreview spotsPreview = cardProject.initSpots(pageSize, SpotSize.millimeters(height, width, space));
+        SpotsPreview spotsPreview = cardProject.defineSpots(pageSize, SpotSize.millimeters(height, width, space));
         ImageIcon imageIcon = buildImageFromStream(spotsPreview);
         preview.setIcon(resizeImageIcon(imageIcon));
     }

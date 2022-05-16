@@ -8,6 +8,7 @@ import com.karatitza.project.catalog.ProjectTempTest;
 import com.karatitza.project.compose.PdfPagesComposer;
 import com.karatitza.project.compose.PdfPagesComposerByIText;
 import com.karatitza.project.layout.spots.SpotSize;
+import com.karatitza.project.layout.spots.SpotsLayout;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -83,7 +84,7 @@ public class DocumentLayoutTest extends ProjectTempTest {
         return new PdfPagesComposerByIText(new File(PDF_PROJECT_PATH));
     }
 
-    private LayoutComposer createComposer(PageSize pageSize, SpotSize millimeters) {
-        return new LayoutComposer(new DocumentLayout(pageSize, millimeters));
+    private LayoutComposer createComposer(PageSize pageSize, SpotSize spotSize) {
+        return new LayoutComposer(new DocumentLayout(new SpotsLayout(pageSize, spotSize)));
     }
 }
