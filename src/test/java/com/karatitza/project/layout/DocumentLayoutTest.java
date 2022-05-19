@@ -26,8 +26,8 @@ public class DocumentLayoutTest extends ProjectTempTest {
     public static final String PDF_CATALOG_PATH = "./src/test/resources/pdf-project/source";
     public static final String PDF_PROJECT_PATH = "./src/test/resources/pdf-project";
     public static final String PROJECT_TEMP_PATH = "./src/test/resources/pdf-project/print/temp";
-    public static final String EXPECTED_PDF_PAGE_1 = "./src/test/resources/pdf-project/expected/spot-91x59/page-1.pdf";
-    public static final String EXPECTED_PDF_PAGE_2 = "./src/test/resources/pdf-project/expected/spot-91x59/page-2.pdf";
+    public static final String EXPECTED_PDF_PAGE_1 = "./src/test/resources/expected/spot-91x59/page-1.pdf";
+    public static final String EXPECTED_PDF_PAGE_2 = "./src/test/resources/expected/spot-91x59/page-2.pdf";
 
     @BeforeEach
     void setUp() {
@@ -59,7 +59,7 @@ public class DocumentLayoutTest extends ProjectTempTest {
         for (int pageNumber = 1; pageNumber <= 6; pageNumber++) {
             assertPdfFilesEquals(
                     searchTempPdfFile(format("page-%d.pdf", pageNumber)).getPath(),
-                    format("./src/test/resources/pdf-project/expected/spot-100x80/page-%d.pdf", pageNumber)
+                    format("./src/test/resources/expected/spot-100x80/page-%d.pdf", pageNumber)
             );
         }
     }

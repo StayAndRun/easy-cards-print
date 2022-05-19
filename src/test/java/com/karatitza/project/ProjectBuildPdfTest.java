@@ -33,7 +33,7 @@ public class ProjectBuildPdfTest extends ProjectTempTest {
         cardProject.buildFinalPdf();
         File actualFile = searchTempPdfFile("pdf-project.pdf", PDF_PROJECT_PATH);
         assertPdfFilesEquals(
-                "./src/test/resources/pdf-project/expected/spot-91x59/pdf-project.pdf", actualFile.getPath()
+                "./src/test/resources/expected/spot-91x59/expected-project.pdf", actualFile.getPath()
         );
     }
 
@@ -41,9 +41,12 @@ public class ProjectBuildPdfTest extends ProjectTempTest {
     void acceptBuildFromSvgCatalog() {
         CardProject cardProject = new CardProject();
         cardProject.selectCatalog(new File(SVG_PROJECT_PATH), ImageFormat.SVG);
-        cardProject.defineSpots(PageSize.A4, SpotSize.millimeters(91, 59, 5));
+        cardProject.defineSpots(PageSize.A4, SpotSize.millimeters(91, 59));
         cardProject.buildFinalPdf();
-        //TODO assert files
+        File actualFile = searchTempPdfFile("svg-project.pdf", SVG_PROJECT_PATH);
+        assertPdfFilesEquals(
+                "./src/test/resources/expected/spot-91x59/expected-project.pdf", actualFile.getPath()
+        );
     }
 
     private File searchTempPdfFile(String expectedFileName, String projectDir) {

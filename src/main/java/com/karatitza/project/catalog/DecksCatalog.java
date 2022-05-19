@@ -41,6 +41,10 @@ public class DecksCatalog {
         return new DecksCatalog(convertedDecks, converter.fileFormat());
     }
 
+    public ImageFormat getImageFormat() {
+        return imageFormat;
+    }
+
     @Override
     public String toString() {
         return "DecksCatalog{" +
