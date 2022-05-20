@@ -49,6 +49,18 @@ public class ProjectBuildPdfTest extends ProjectTempTest {
         );
     }
 
+    @Test
+    void acceptBuildWithInkscapeConversionFromSvgCatalog() {
+        CardProject cardProject = new CardProject();
+        cardProject.selectCatalog(new File(SVG_PROJECT_PATH), ImageFormat.SVG);
+        cardProject.defineSpots(PageSize.A4, SpotSize.millimeters(91, 59));
+        cardProject.buildFinalPdf();
+        File actualFile = searchTempPdfFile("svg-project.pdf", SVG_PROJECT_PATH);
+        assertPdfFilesEquals(
+                "./src/test/resources/expected/spot-91x59/expected-project.pdf", actualFile.getPath()
+        );
+    }
+
     private File searchTempPdfFile(String expectedFileName, String projectDir) {
         File projectRoot = new File(projectDir);
         File printDir = Arrays.stream(Objects.requireNonNull(projectRoot.listFiles((dir, name) -> "print".equals(name))))
