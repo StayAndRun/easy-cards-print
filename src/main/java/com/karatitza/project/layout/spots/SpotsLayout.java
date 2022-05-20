@@ -2,6 +2,7 @@ package com.karatitza.project.layout.spots;
 
 import com.itextpdf.kernel.geom.PageSize;
 import com.karatitza.project.MeasureUtils;
+import com.karatitza.project.layout.PageFormat;
 
 import java.math.BigDecimal;
 import java.util.Iterator;
@@ -15,18 +16,18 @@ public class SpotsLayout implements Iterable<Spot> {
     private final int rowSize;
     private final int columnSize;
     protected final Spot[][] table;
-    private final PageSize pageSize;
+    private final PageFormat pageFormat;
     private final SpotSize spotSize;
 
-    public SpotsLayout(PageSize pageSize, SpotSize spotSize) {
-        this.pageSize = pageSize;
+    public SpotsLayout(PageFormat pageFormat, SpotSize spotSize) {
+        this.pageFormat = pageFormat;
         this.spotSize = spotSize;
-        this.rowSize = calculateSize(pageSize.getHeight(), spotSize.getHeight(), spotSize.getSpace());
+        this.rowSize = calculateSize(pageFormat.getHeight(), spotSize.getHeight(), spotSize.getSpace());
         this.maxRowIndex = rowSize - 1;
-        this.columnSize = calculateSize(pageSize.getWidth(), spotSize.getWidth(), spotSize.getSpace());
+        this.columnSize = calculateSize(pageFormat.getWidth(), spotSize.getWidth(), spotSize.getSpace());
         this.maxColumnIndex = columnSize - 1;
         this.table = new Spot[columnSize][rowSize];
-        calculateSpotsCoordinates(pageSize, spotSize);
+        calculateSpotsCoordinates(pageFormat, spotSize);
     }
 
     public int getMaxRowIndex() {
@@ -45,8 +46,8 @@ public class SpotsLayout implements Iterable<Spot> {
         return columnSize;
     }
 
-    public PageSize getPageSize() {
-        return pageSize;
+    public PageFormat getPageFormat() {
+        return pageFormat;
     }
 
     public SpotSize getSpotSize() {
@@ -67,13 +68,13 @@ public class SpotsLayout implements Iterable<Spot> {
         return Math.floorDiv(roundedPageSize + roundedSpace, roundedSpotSize + roundedSpace);
     }
 
-    private void calculateSpotsCoordinates(PageSize pageSize, SpotSize spotSize) {
+    private void calculateSpotsCoordinates(PageFormat pageFormat, SpotSize spotSize) {
         float xSpotCenterDistance = spotSize.getWidth() + spotSize.getSpace();
         float ySpotCenterDistance = spotSize.getHeight() + spotSize.getSpace();
         float xSpotsMeshCenterShift = (spotSize.getWidth() + spotSize.getSpace()) * (columnSize - 1) / 2;
         float ySpotsMeshCenterShift = (spotSize.getHeight() + spotSize.getSpace()) * (rowSize - 1) / 2;
-        float xPageCenter = pageSize.getWidth() / 2;
-        float yPageCenter = pageSize.getHeight() / 2;
+        float xPageCenter = pageFormat.getWidth() / 2;
+        float yPageCenter = pageFormat.getHeight() / 2;
         for (LayoutIterator iterator = new LayoutIterator(); iterator.hasNext(); iterator.next()) {
             int rowCursor = iterator.getRowCursor();
             int columnCursor = iterator.getColumnCursor();

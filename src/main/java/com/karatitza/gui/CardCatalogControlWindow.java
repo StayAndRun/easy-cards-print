@@ -26,7 +26,7 @@ public class CardCatalogControlWindow implements ActionListener {
         this.selectProjectButton = new JButton("Select project");
         this.projectChooser = new JFileChooser();
         this.projectChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        this.projectChooser.setCurrentDirectory(new File("/"));
+        this.projectChooser.setCurrentDirectory(new File("."));
     }
 
     public JPanel packToPanel() {

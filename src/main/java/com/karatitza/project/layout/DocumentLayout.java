@@ -1,6 +1,5 @@
 package com.karatitza.project.layout;
 
-import com.itextpdf.kernel.geom.PageSize;
 import com.karatitza.project.catalog.Image;
 import com.karatitza.project.layout.cards.CardsLayout;
 import com.karatitza.project.layout.cards.ImageLayout;
@@ -59,8 +58,8 @@ public class DocumentLayout implements Iterable<DocumentLayout.PageLayout> {
             this.spotsLayout = spotsLayout;
         }
 
-        public PageSize getPageSize() {
-            return spotsLayout.getPageSize();
+        public PageFormat getPageFormat() {
+            return spotsLayout.getPageFormat();
         }
 
         public SpotSize getSpotSize() {

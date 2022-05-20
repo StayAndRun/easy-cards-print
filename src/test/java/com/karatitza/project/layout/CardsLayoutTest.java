@@ -1,6 +1,5 @@
 package com.karatitza.project.layout;
 
-import com.itextpdf.kernel.geom.PageSize;
 import com.karatitza.project.catalog.Card;
 import com.karatitza.project.catalog.Deck;
 import com.karatitza.project.catalog.DecksCatalog;
@@ -32,7 +31,7 @@ class CardsLayoutTest {
     //            0             1           2
     @Test
     public void acceptPageLayout3on3() {
-        LayoutComposer composer = createComposer(PageSize.A4, SpotSize.millimeters(92, 59));
+        LayoutComposer composer = createComposer(CommonPageFormat.A4, SpotSize.millimeters(92, 59));
         DocumentLayout pages = composer.compose(mockDecksCatalog());
         Assertions.assertEquals(1, pages.size());
         ImageLayout frontPage = pages.get(0).getFrontLayout();
@@ -59,7 +58,7 @@ class CardsLayoutTest {
 
     @Test
     public void acceptPageLayout2on2() {
-        LayoutComposer composer = createComposer(PageSize.A4, SpotSize.millimeters(120, 100));
+        LayoutComposer composer = createComposer(CommonPageFormat.A4, SpotSize.millimeters(120, 100));
         DocumentLayout pages = composer.compose(mockDecksCatalog());
         Assertions.assertEquals(3, pages.size());
         ImageLayout firstFrontPage = pages.get(0).getFrontLayout();
@@ -92,8 +91,8 @@ class CardsLayoutTest {
         Assertions.assertEquals("white", thirdBackPage.getImage(1, 1).toString());
     }
 
-    private LayoutComposer createComposer(PageSize pageSize, SpotSize spotSize) {
-        return new LayoutComposer(new DocumentLayout(new SpotsLayout(pageSize, spotSize)));
+    private LayoutComposer createComposer(PageFormat pageFormat, SpotSize spotSize) {
+        return new LayoutComposer(new DocumentLayout(new SpotsLayout(pageFormat, spotSize)));
     }
 
     private DecksCatalog mockDecksCatalog() {

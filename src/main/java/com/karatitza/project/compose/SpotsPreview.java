@@ -1,6 +1,7 @@
 package com.karatitza.project.compose;
 
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -38,7 +39,8 @@ public class SpotsPreview {
 
     private void createPdfDocument(PdfWriter writer) {
         try (PdfDocument debugPdf = new PdfDocument(writer)) {
-            debugPdf.setDefaultPageSize(spotsLayout.getPageSize());
+            debugPdf.setDefaultPageSize(
+                    new PageSize(spotsLayout.getPageFormat().getWidth(), spotsLayout.getPageFormat().getHeight()));
             PdfCanvas canvas = new PdfCanvas(debugPdf.addNewPage());
             canvas.setStrokeColor(ColorConstants.BLACK)
                     .setLineWidth(3)

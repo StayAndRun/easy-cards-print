@@ -1,6 +1,5 @@
 package com.karatitza.project;
 
-import com.itextpdf.kernel.geom.PageSize;
 import com.karatitza.converters.ImageConverter;
 import com.karatitza.converters.TempImageFactory;
 import com.karatitza.converters.itext.ITextSvgToPdfConverter;
@@ -10,6 +9,7 @@ import com.karatitza.project.compose.PdfDocumentComposer;
 import com.karatitza.project.compose.SpotsPreview;
 import com.karatitza.project.layout.DocumentLayout;
 import com.karatitza.project.layout.LayoutComposer;
+import com.karatitza.project.layout.PageFormat;
 import com.karatitza.project.layout.spots.SpotSize;
 import com.karatitza.project.layout.spots.SpotsLayout;
 
@@ -30,8 +30,8 @@ public class CardProject {
         System.out.println("Selected Catalog: " + selectedCatalog);
     }
 
-    public SpotsPreview defineSpots(PageSize pageSize, SpotSize spotSize) {
-        this.spotsLayout = new SpotsLayout(pageSize, spotSize);
+    public SpotsPreview defineSpots(PageFormat pageFormat, SpotSize spotSize) {
+        this.spotsLayout = new SpotsLayout(pageFormat, spotSize);
         return new SpotsPreview(spotsLayout);
     }
 

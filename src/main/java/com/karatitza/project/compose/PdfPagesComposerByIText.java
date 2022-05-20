@@ -1,6 +1,7 @@
 package com.karatitza.project.compose;
 
 import com.itextpdf.kernel.colors.ColorConstants;
+import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
@@ -33,7 +34,8 @@ public class PdfPagesComposerByIText extends PdfPagesComposer {
             String pdfPageFilePath = buildTempPdfPageFileName(pageNumber);
             PdfWriter pdfWriter = createPdfWriter(pdfPageFilePath);
             try (PdfDocument pdfDocument = new PdfDocument(pdfWriter)) {
-                pdfDocument.setDefaultPageSize(pageLayout.getPageSize());
+                pdfDocument.setDefaultPageSize(
+                        new PageSize(pageLayout.getPageFormat().getWidth(), pageLayout.getPageFormat().getHeight()));
                 placeLayoutToPdfDocument(pageLayout, pdfDocument);
             }
             pageNumber++;

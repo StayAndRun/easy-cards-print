@@ -1,8 +1,8 @@
 package com.karatitza.gui;
 
-import com.itextpdf.kernel.geom.PageSize;
 import com.karatitza.project.CardProject;
 import com.karatitza.project.compose.SpotsPreview;
+import com.karatitza.project.layout.PageFormat;
 import com.karatitza.project.layout.spots.SpotSize;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
@@ -32,8 +32,8 @@ public class PreviewWindow {
         return previewPanel;
     }
 
-    public void refresh(Integer height, Integer width, Integer space, PageSize pageSize) {
-        SpotsPreview spotsPreview = cardProject.defineSpots(pageSize, SpotSize.millimeters(height, width, space));
+    public void refresh(Integer height, Integer width, Integer space, PageFormat pageFormat) {
+        SpotsPreview spotsPreview = cardProject.defineSpots(pageFormat, SpotSize.millimeters(height, width, space));
         ImageIcon imageIcon = buildImageFromStream(spotsPreview);
         preview.setIcon(resizeImageIcon(imageIcon));
     }

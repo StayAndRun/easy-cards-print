@@ -1,6 +1,7 @@
 package com.karatitza.gui;
 
-import com.itextpdf.kernel.geom.PageSize;
+import com.karatitza.project.layout.CommonPageFormat;
+import com.karatitza.project.layout.PageFormat;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -15,7 +16,7 @@ public class SpotControlWindow implements ChangeListener, ItemListener {
     private final JSpinner spotHeight;
     private final JSpinner spotWidth;
     private final JSpinner spotSpace;
-    private final JComboBox<PageSize> pageSizeJComboBox;
+    private final JComboBox<PageFormat> pageSizeJComboBox;
 
     public SpotControlWindow(PreviewWindow previewWindow) {
         this.previewWindow = previewWindow;
@@ -23,10 +24,8 @@ public class SpotControlWindow implements ChangeListener, ItemListener {
         spotHeight.setToolTipText("test");
         spotWidth = new JSpinner(new SpinnerNumberModel(50, 10, Integer.MAX_VALUE, 1));
         spotSpace = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
-        ComboBoxModel<PageSize> comboBoxModel = new DefaultComboBoxModel<>(
-                new PageSize[]{PageSize.A4, PageSize.A3, PageSize.A2}
-        );
-        comboBoxModel.setSelectedItem(PageSize.A4);
+        ComboBoxModel<PageFormat> comboBoxModel = new DefaultComboBoxModel<>(CommonPageFormat.values());
+        comboBoxModel.setSelectedItem(CommonPageFormat.A4);
         pageSizeJComboBox = new JComboBox<>(comboBoxModel);
     }
 
@@ -63,7 +62,7 @@ public class SpotControlWindow implements ChangeListener, ItemListener {
         Integer height = Integer.parseInt(String.valueOf(spotHeight.getValue()));
         Integer width = Integer.parseInt(String.valueOf(spotWidth.getValue()));
         Integer space = Integer.parseInt(String.valueOf(spotSpace.getValue()));
-        PageSize pageSize = (PageSize) pageSizeJComboBox.getSelectedItem();
-        previewWindow.refresh(height, width, space, pageSize);
+        PageFormat pageFormat = (PageFormat) pageSizeJComboBox.getSelectedItem();
+        previewWindow.refresh(height, width, space, pageFormat);
     }
 }

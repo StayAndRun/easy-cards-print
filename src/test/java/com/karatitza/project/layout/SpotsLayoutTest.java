@@ -1,6 +1,5 @@
 package com.karatitza.project.layout;
 
-import com.itextpdf.kernel.geom.PageSize;
 import com.karatitza.project.MeasureUtils;
 import com.karatitza.project.layout.spots.Spot;
 import com.karatitza.project.layout.spots.SpotSize;
@@ -15,7 +14,7 @@ public class SpotsLayoutTest {
     @Test
     void acceptSpots4on4() {
         SpotsLayout spots = new SpotsLayout(
-                new PageSize(millimetersToPoints(220), millimetersToPoints(420)),
+                CustomPageFormat.millimeters(220, 420),
                 SpotSize.millimeters(100, 50)
         );
         Assertions.assertEquals(4, spots.getColumnSize());
@@ -41,7 +40,7 @@ public class SpotsLayoutTest {
     @Test
     void acceptSpots4on4WithSpace() {
         SpotsLayout spots = new SpotsLayout(
-                new PageSize(millimetersToPoints(260), millimetersToPoints(520)),
+                CustomPageFormat.millimeters(260, 520),
                 SpotSize.millimeters(100, 50, 10)
         );
         Assertions.assertEquals(4, spots.getColumnSize());
@@ -67,7 +66,7 @@ public class SpotsLayoutTest {
     @Test
     void acceptSpots5on3() {
         SpotsLayout spots = new SpotsLayout(
-                new PageSize(millimetersToPoints(220), millimetersToPoints(320)),
+                CustomPageFormat.millimeters(220, 320),
                 SpotSize.millimeters(100, 40)
         );
         Assertions.assertEquals(5, spots.getColumnSize());
@@ -92,7 +91,7 @@ public class SpotsLayoutTest {
     @Test
     void acceptSpots5on3WithSpace() {
         SpotsLayout spots = new SpotsLayout(
-                new PageSize(millimetersToPoints(260), millimetersToPoints(400)),
+                CustomPageFormat.millimeters(260, 400),
                 SpotSize.millimeters(100, 40, 10)
         );
         Assertions.assertEquals(5, spots.getColumnSize());
@@ -117,7 +116,7 @@ public class SpotsLayoutTest {
     @Test
     void acceptMaxSpotsWithoutBorders() {
         SpotsLayout spots = new SpotsLayout(
-                new PageSize(millimetersToPoints(230), millimetersToPoints(430)),
+                CustomPageFormat.millimeters(230, 430),
                 SpotSize.millimeters(100, 50, 10)
         );
         Assertions.assertEquals(4, spots.getColumnSize());
