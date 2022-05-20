@@ -12,7 +12,7 @@ public class CatalogInitializationTest {
 
     @Test
     void acceptInitSvgCatalog() {
-        String svgCatalogPath = "./src/test/resources/svg-project/source";
+        String svgCatalogPath = "./src/test/resources/svg-project/decks";
         DecksCatalog svgCatalog = new DecksCatalog(new File(svgCatalogPath), ImageFormat.SVG);
         List<Deck> decks = svgCatalog.getDecks();
         Assertions.assertEquals(5, decks.size());
@@ -58,7 +58,7 @@ public class CatalogInitializationTest {
 
     @Test
     void acceptInitPdfCatalog() {
-        String svgCatalogPath = "./src/test/resources/pdf-project/source";
+        String svgCatalogPath = "./src/test/resources/pdf-project/decks";
         DecksCatalog svgCatalog = new DecksCatalog(new File(svgCatalogPath), ImageFormat.PDF);
         List<Deck> decks = svgCatalog.getDecks();
         Assertions.assertEquals(5, decks.size());

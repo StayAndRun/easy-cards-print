@@ -15,7 +15,7 @@ import java.util.Optional;
 class CatalogConversionTest extends ProjectTempTest {
 
     public static final String TEST_PROJECT_PATH = "./src/test/resources/svg-project";
-    public static final String TEST_SOURCE_PATH = "./src/test/resources/svg-project/source";
+    public static final String TEST_SOURCE_PATH = "./src/test/resources/svg-project/decks";
     public static final String TEST_TEMP_PATH = "./src/test/resources/svg-project/print/temp/pdf";
 
     @Test

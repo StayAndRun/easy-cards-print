@@ -22,7 +22,7 @@ import static java.lang.String.format;
 
 public class DocumentLayoutTest extends ProjectTempTest {
 
-    public static final String PDF_CATALOG_PATH = "./src/test/resources/pdf-project/source";
+    public static final String PDF_CATALOG_PATH = "./src/test/resources/pdf-project/decks";
     public static final String PDF_PROJECT_PATH = "./src/test/resources/pdf-project";
     public static final String PROJECT_TEMP_PATH = "./src/test/resources/pdf-project/print/temp";
     public static final String EXPECTED_PDF_PAGE_1 = "./src/test/resources/expected/spot-91x59/page-1.pdf";

@@ -21,7 +21,7 @@ import static java.text.MessageFormat.format;
 public class Main {
 
     public static final String TEMP_FILES_RELATE_PATH = format("{0}print{0}temp", File.separator);
-    public static final String SOURCE_FILES_RELATE_PATH = format("{0}source", File.separator);
+    public static final String SOURCE_FILES_RELATE_PATH = format("{0}decks", File.separator);
 
     public static void main(String[] args) throws IOException {
         PipedOutputStream pipedOutputStream = new PipedOutputStream();

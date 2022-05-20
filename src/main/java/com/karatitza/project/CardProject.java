@@ -21,7 +21,7 @@ import java.util.Objects;
 
 public class CardProject {
     public static final Logger LOG = LoggerFactory.getLogger(CardProject.class);
-    public static final String SOURCE_FILE_DIR_NAME = "source";
+    public static final String DECKS_DIR_NAME = "decks";
 
     private DecksCatalog selectedCatalog;
     private SpotsLayout spotsLayout;
@@ -66,7 +66,7 @@ public class CardProject {
     }
 
     private File selectSourceDir(File projectRootDir) {
-        File sourceDir = Arrays.stream(Objects.requireNonNull(projectRootDir.listFiles((dir, name) -> SOURCE_FILE_DIR_NAME.equals(name))))
+        File sourceDir = Arrays.stream(Objects.requireNonNull(projectRootDir.listFiles((dir, name) -> DECKS_DIR_NAME.equals(name))))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Not found source dir at project: " + projectRootDir.getName()));
         return sourceDir;

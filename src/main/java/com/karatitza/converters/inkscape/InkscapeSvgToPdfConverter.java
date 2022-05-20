@@ -66,6 +66,7 @@ public class InkscapeSvgToPdfConverter implements ImageConverter {
 
         InputStream inputErrorStream = process.getErrorStream();
         BufferedReader bufferedErrorReader = new BufferedReader(new InputStreamReader(inputErrorStream, "866"));
+        bufferedErrorReader.lines().forEach(LOG::warn);
     }
 
     private String generateTargetPdfFileName(File back) {
