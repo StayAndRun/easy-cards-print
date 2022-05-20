@@ -3,9 +3,11 @@ package com.karatitza.converters.inkscape;
 import com.karatitza.converters.ImageConverter;
 import com.karatitza.converters.TempImageFactory;
 import com.karatitza.converters.inkscape.console.InkscapeCommandBuilder;
-import com.karatitza.project.catalog.ImageFormat;
 import com.karatitza.project.catalog.Image;
+import com.karatitza.project.catalog.ImageFormat;
 import org.bouncycastle.util.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 
@@ -13,6 +15,8 @@ import static com.karatitza.Main.SOURCE_FILES_RELATE_PATH;
 import static com.karatitza.Main.TEMP_FILES_RELATE_PATH;
 
 public class InkscapeSvgToPlainSvgConverter implements ImageConverter {
+
+    public static final Logger LOG = LoggerFactory.getLogger(InkscapeSvgToPlainSvgConverter.class);
 
     private final TempImageFactory imageFactory;
 
@@ -42,7 +46,7 @@ public class InkscapeSvgToPlainSvgConverter implements ImageConverter {
         }
         File convertedFile = new File(targetSvgFileName);
         if (convertedFile.exists()) {
-            System.out.println("Success converted file: " + convertedFile.getAbsolutePath());
+            LOG.info("Success converted file: " + convertedFile.getAbsolutePath());
         }
         return convertedFile;
     }
@@ -52,11 +56,9 @@ public class InkscapeSvgToPlainSvgConverter implements ImageConverter {
         Process process = processBuilder.start();
         InputStream inputStream = process.getInputStream();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "866"));
-        bufferedReader.lines().forEach(System.out::println);
 
         InputStream inputErrorStream = process.getErrorStream();
         BufferedReader bufferedErrorReader = new BufferedReader(new InputStreamReader(inputErrorStream, "866"));
-        bufferedErrorReader.lines().forEach(System.out::println);
     }
 
     @Override

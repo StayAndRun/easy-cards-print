@@ -12,12 +12,15 @@ import com.karatitza.project.layout.LayoutComposer;
 import com.karatitza.project.layout.PageFormat;
 import com.karatitza.project.layout.spots.SpotSize;
 import com.karatitza.project.layout.spots.SpotsLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.Objects;
 
 public class CardProject {
+    public static final Logger LOG = LoggerFactory.getLogger(CardProject.class);
     public static final String SOURCE_FILE_DIR_NAME = "source";
 
     private DecksCatalog selectedCatalog;
@@ -27,7 +30,7 @@ public class CardProject {
     public void selectCatalog(File projectRoot, ImageFormat format) {
         this.projectRoot = projectRoot;
         this.selectedCatalog = new DecksCatalog(selectSourceDir(projectRoot), format);
-        System.out.println("Selected Catalog: " + selectedCatalog);
+        LOG.info("Selected Catalog: " + selectedCatalog);
     }
 
     public SpotsPreview defineSpots(PageFormat pageFormat, SpotSize spotSize) {

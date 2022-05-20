@@ -1,5 +1,8 @@
 package com.karatitza.project.layout.spots;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 
@@ -7,6 +10,8 @@ import static com.karatitza.project.MeasureUtils.pointsToMillimeters;
 import static com.karatitza.project.MeasureUtils.round;
 
 public class Spot {
+    public final static Logger LOG = LoggerFactory.getLogger(Spot.class);
+
     private final float x;
     private final float y;
 
@@ -41,7 +46,7 @@ public class Spot {
             return false;
         Spot spot = (Spot) obj;
         if (!equalsAtFloatPoints(spot, this)) {
-            System.out.println(MessageFormat.format("Not equal at points:\n{0}\n{1}", spot, this));
+            LOG.warn(MessageFormat.format("Not equal at points:\n{0}\n{1}", spot, this));
         }
         return equalsAtRoundedMillimeters(spot, this);
     }
