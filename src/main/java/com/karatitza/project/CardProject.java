@@ -1,12 +1,13 @@
 package com.karatitza.project;
 
+import com.karatitza.converters.ConversionFactory;
 import com.karatitza.converters.ImageConverter;
 import com.karatitza.converters.TempImageFactory;
-import com.karatitza.converters.itext.ITextSvgToPdfConverter;
 import com.karatitza.project.catalog.DecksCatalog;
 import com.karatitza.project.catalog.ImageFormat;
 import com.karatitza.project.compose.PdfDocumentComposer;
 import com.karatitza.project.compose.SpotsPreview;
+import com.karatitza.project.layout.CommonPageFormat;
 import com.karatitza.project.layout.DocumentLayout;
 import com.karatitza.project.layout.LayoutComposer;
 import com.karatitza.project.layout.PageFormat;
@@ -17,20 +18,28 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Objects;
+import java.util.Collections;
+
+import static java.util.Objects.requireNonNull;
 
 public class CardProject {
     public static final Logger LOG = LoggerFactory.getLogger(CardProject.class);
     public static final String DECKS_DIR_NAME = "decks";
 
-    private DecksCatalog selectedCatalog;
-    private SpotsLayout spotsLayout;
+    private DecksCatalog selectedCatalog = defaultEmptyCatalog();
+    private SpotsLayout spotsLayout = defaultSpotLayout();
+    private ConversionFactory conversionFactory = defaultConversionFactory();
     private File projectRoot;
 
     public void selectCatalog(File projectRoot, ImageFormat format) {
         this.projectRoot = projectRoot;
-        this.selectedCatalog = new DecksCatalog(selectSourceDir(projectRoot), format);
+        this.selectedCatalog = new DecksCatalog(selectDecksDir(projectRoot), format);
         LOG.info("Selected Catalog: " + selectedCatalog);
+    }
+
+    public void selectConverterFactory(ConversionFactory factory) {
+        this.conversionFactory = factory;
+        LOG.info("Selected converter factory: " + factory);
     }
 
     public SpotsPreview defineSpots(PageFormat pageFormat, SpotSize spotSize) {
@@ -45,13 +54,10 @@ public class CardProject {
         return pdfDocumentComposer.compose(composedDocumentLayout);
     }
 
-    public DecksCatalog prepareCatalog() {
+    private DecksCatalog prepareCatalog() {
         DecksCatalog currentCatalog = selectedCatalog;
-        if (currentCatalog == null) {
-            throw new UnsupportedOperationException("Not selected default catalog");
-        }
         if (currentCatalog.getImageFormat() != ImageFormat.PDF) {
-            ImageConverter converter = new ITextSvgToPdfConverter(new TempImageFactory(projectRoot));
+            ImageConverter converter = conversionFactory.create(new TempImageFactory(projectRoot));
             currentCatalog = selectedCatalog.convert(converter);
         }
         return currentCatalog;
@@ -65,10 +71,21 @@ public class CardProject {
         }
     }
 
-    private File selectSourceDir(File projectRootDir) {
-        File sourceDir = Arrays.stream(Objects.requireNonNull(projectRootDir.listFiles((dir, name) -> DECKS_DIR_NAME.equals(name))))
+    private File selectDecksDir(File projectRootDir) {
+        return Arrays.stream(requireNonNull(projectRootDir.listFiles((dir, name) -> DECKS_DIR_NAME.equals(name))))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Not found source dir at project: " + projectRootDir.getName()));
-        return sourceDir;
+    }
+
+    private static ConversionFactory defaultConversionFactory() {
+        return new ConversionFactory.ITextConversionFactory();
+    }
+
+    private static SpotsLayout defaultSpotLayout() {
+        return new SpotsLayout(CommonPageFormat.A4, SpotSize.millimeters(92, 59));
+    }
+
+    private static DecksCatalog defaultEmptyCatalog() {
+        return new DecksCatalog(Collections.emptyList(), ImageFormat.PDF);
     }
 }

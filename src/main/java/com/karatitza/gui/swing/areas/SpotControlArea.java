@@ -32,6 +32,7 @@ public class SpotControlArea implements ChangeListener, ItemListener {
     public JPanel packToPanel() {
         JPanel controlPanel = new JPanel();
         controlPanel.setLayout(new GridLayout(0, 2, 10, 10));
+        controlPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         spotHeight.addChangeListener(this);
         spotWidth.addChangeListener(this);
         spotSpace.addChangeListener(this);

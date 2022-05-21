@@ -1,6 +1,7 @@
 package com.karatitza.project;
 
 import com.itextpdf.kernel.utils.CompareTool;
+import com.karatitza.converters.ConversionFactory;
 import com.karatitza.project.catalog.ImageFormat;
 import com.karatitza.project.catalog.ProjectTempTest;
 import com.karatitza.project.layout.CommonPageFormat;
@@ -50,10 +51,11 @@ public class ProjectBuildPdfTest extends ProjectTempTest {
     }
 
     @Test
-    void acceptBuildWithInkscapeConversionFromSvgCatalog() {
+    void acceptBuildFromSvgCatalogWithInkscapeConversion() {
         CardProject cardProject = new CardProject();
         cardProject.selectCatalog(new File(SVG_PROJECT_PATH), ImageFormat.SVG);
         cardProject.defineSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
+        cardProject.selectConverterFactory(new ConversionFactory.InkscapeConversionFactory());
         cardProject.buildFinalPdf();
         File actualFile = searchTempPdfFile("svg-project.pdf", SVG_PROJECT_PATH);
         assertPdfFilesEquals(

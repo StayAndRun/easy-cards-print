@@ -25,6 +25,7 @@ public class PreviewArea {
 
     public JPanel packToPanel() {
         JPanel previewPanel = new JPanel();
+        previewPanel.setBorder(BorderFactory.createTitledBorder("Preview of card spots disposition"));
         preview.setPreferredSize(new Dimension(600, 900));
         preview.setVerticalAlignment(JLabel.CENTER);
         preview.setHorizontalAlignment(JLabel.CENTER);
