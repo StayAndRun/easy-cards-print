@@ -1,4 +1,4 @@
-package com.karatitza.gui;
+package com.karatitza.gui.swing.areas;
 
 import com.karatitza.project.CardProject;
 import com.karatitza.project.catalog.ImageFormat;
@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-public class CardCatalogControlWindow implements ActionListener {
+public class CardCatalogControlArea implements ActionListener {
 
     private final JComboBox<ImageFormat> imageFormatJComboBox;
     private final JButton selectProjectButton;
@@ -18,7 +18,7 @@ public class CardCatalogControlWindow implements ActionListener {
 
     private final CardProject cardProject;
 
-    public CardCatalogControlWindow(CardProject cardProject) {
+    public CardCatalogControlArea(CardProject cardProject) {
         this.cardProject = cardProject;
         ImageFormat[] model = {ImageFormat.PDF, ImageFormat.SVG};
         this.imageFormatJComboBox = new JComboBox<>(model);

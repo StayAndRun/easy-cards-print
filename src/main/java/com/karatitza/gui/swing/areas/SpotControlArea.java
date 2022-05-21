@@ -1,4 +1,4 @@
-package com.karatitza.gui;
+package com.karatitza.gui.swing.areas;
 
 import com.karatitza.project.layout.CommonPageFormat;
 import com.karatitza.project.layout.PageFormat;
@@ -10,16 +10,16 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-public class SpotControlWindow implements ChangeListener, ItemListener {
+public class SpotControlArea implements ChangeListener, ItemListener {
 
-    private final PreviewWindow previewWindow;
+    private final PreviewArea previewArea;
     private final JSpinner spotHeight;
     private final JSpinner spotWidth;
     private final JSpinner spotSpace;
     private final JComboBox<PageFormat> pageSizeJComboBox;
 
-    public SpotControlWindow(PreviewWindow previewWindow) {
-        this.previewWindow = previewWindow;
+    public SpotControlArea(PreviewArea previewArea) {
+        this.previewArea = previewArea;
         spotHeight = new JSpinner(new SpinnerNumberModel(50, 10, Integer.MAX_VALUE, 1));
         spotHeight.setToolTipText("test");
         spotWidth = new JSpinner(new SpinnerNumberModel(50, 10, Integer.MAX_VALUE, 1));
@@ -63,6 +63,6 @@ public class SpotControlWindow implements ChangeListener, ItemListener {
         Integer width = Integer.parseInt(String.valueOf(spotWidth.getValue()));
         Integer space = Integer.parseInt(String.valueOf(spotSpace.getValue()));
         PageFormat pageFormat = (PageFormat) pageSizeJComboBox.getSelectedItem();
-        previewWindow.refresh(height, width, space, pageFormat);
+        previewArea.refresh(height, width, space, pageFormat);
     }
 }

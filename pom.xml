@@ -64,7 +64,7 @@
                             <finalName>${project.artifactId}</finalName>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.karatitza.gui.MainWindow</mainClass>
+                                    <mainClass>com.karatitza.gui.swing.MainWindow</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>

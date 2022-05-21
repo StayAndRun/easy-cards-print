@@ -1,4 +1,4 @@
-package com.karatitza.gui;
+package com.karatitza.gui.swing.areas;
 
 import com.karatitza.project.CardProject;
 import com.karatitza.project.compose.SpotsPreview;
@@ -13,12 +13,12 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-public class PreviewWindow {
+public class PreviewArea {
 
     private final JLabel preview;
     private final CardProject cardProject;
 
-    public PreviewWindow(CardProject cardProject) {
+    public PreviewArea(CardProject cardProject) {
         this.cardProject = cardProject;
         this.preview = new JLabel();
     }
