@@ -1,8 +1,8 @@
 package com.karatitza.gui.swing;
 
 import com.karatitza.gui.swing.areas.CardCatalogControlArea;
-import com.karatitza.gui.swing.areas.PreviewArea;
 import com.karatitza.gui.swing.areas.SpotControlArea;
+import com.karatitza.gui.swing.areas.SpotsLayoutPreviewArea;
 import com.karatitza.project.CardProject;
 
 import javax.swing.*;
@@ -24,12 +24,12 @@ public class MainWindow {
         JFrame frame = new JFrame();
 
         JPanel mainPanel = new JPanel();
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         mainPanel.setLayout(new GridLayout(1, 2));
 
-        PreviewArea previewArea = new PreviewArea(cardProject);
-        JPanel previewPanel = previewArea.packToPanel();
-        JPanel spotControlPanel = new SpotControlArea(previewArea).packToPanel();
+        SpotsLayoutPreviewArea spotsLayoutPreviewArea = new SpotsLayoutPreviewArea(cardProject);
+        JPanel layoutPreviewPanel = spotsLayoutPreviewArea.packToPanel();
+        JPanel spotControlPanel = new SpotControlArea(spotsLayoutPreviewArea).packToPanel();
         JPanel catalogControlPanel = new CardCatalogControlArea(cardProject).packToPanel();
 
         JPanel controlPanel = new JPanel(new GridLayout(2,1));
@@ -37,7 +37,7 @@ public class MainWindow {
         controlPanel.add(spotControlPanel);
         controlPanel.add(catalogControlPanel);
 
-        mainPanel.add(previewPanel);
+        mainPanel.add(layoutPreviewPanel);
         mainPanel.add(controlPanel);
 
         frame.setTitle("Easy Card Print");

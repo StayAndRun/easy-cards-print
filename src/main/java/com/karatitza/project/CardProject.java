@@ -31,10 +31,11 @@ public class CardProject {
     private ConversionFactory conversionFactory = defaultConversionFactory();
     private File projectRoot;
 
-    public void selectCatalog(File projectRoot, ImageFormat format) {
+    public DecksCatalog selectCatalog(File projectRoot, ImageFormat format) {
         this.projectRoot = projectRoot;
         this.selectedCatalog = new DecksCatalog(selectDecksDir(projectRoot), format);
         LOG.info("Selected Catalog: " + selectedCatalog);
+        return selectedCatalog;
     }
 
     public void selectConverterFactory(ConversionFactory factory) {
@@ -52,6 +53,10 @@ public class CardProject {
         LayoutComposer layoutComposer = new LayoutComposer(new DocumentLayout(spotsLayout));
         DocumentLayout composedDocumentLayout = layoutComposer.compose(prepareCatalog());
         return pdfDocumentComposer.compose(composedDocumentLayout);
+    }
+
+    public DecksCatalog getSelectedCatalog() {
+        return selectedCatalog;
     }
 
     private DecksCatalog prepareCatalog() {

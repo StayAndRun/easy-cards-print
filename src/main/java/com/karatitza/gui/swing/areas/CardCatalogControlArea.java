@@ -2,6 +2,7 @@ package com.karatitza.gui.swing.areas;
 
 import com.karatitza.converters.ConversionFactory;
 import com.karatitza.project.CardProject;
+import com.karatitza.project.catalog.DecksCatalog;
 import com.karatitza.project.catalog.ImageFormat;
 
 import javax.swing.*;
@@ -10,6 +11,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import static javax.swing.BorderFactory.*;
+
 public class CardCatalogControlArea implements ActionListener {
 
     private final JComboBox<ImageFormat> imageFormatJComboBox;
@@ -17,6 +20,7 @@ public class CardCatalogControlArea implements ActionListener {
     private final JFileChooser projectChooser;
     private final JButton buildPdfButton;
     private final JPanel selectConverterPanel;
+    private final CatalogPreviewArea previewArea;
 
     private final CardProject cardProject;
 
@@ -30,6 +34,7 @@ public class CardCatalogControlArea implements ActionListener {
         this.projectChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         this.projectChooser.setCurrentDirectory(new File("."));
         this.selectConverterPanel = buildConverterSelectionPanel();
+        this.previewArea = new CatalogPreviewArea();
     }
 
     private JPanel buildConverterSelectionPanel() {
@@ -52,10 +57,14 @@ public class CardCatalogControlArea implements ActionListener {
 
     public JPanel packToPanel() {
         JPanel controlPanel = new JPanel();
-        controlPanel.setLayout(new GridLayout(2, 2, 10, 10));
-        controlPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        controlPanel.setLayout(new GridLayout(3, 2, 10, 10));
+        controlPanel.setBorder(createCompoundBorder(
+                createEmptyBorder(10, 10, 10, 10), createTitledBorder("Project catalog control"))
+        );
         controlPanel.add(selectProjectButton);
         controlPanel.add(imageFormatJComboBox);
+        controlPanel.add(previewArea.packToPanel());
+        controlPanel.add(new JLabel());
         controlPanel.add(buildPdfButton);
         controlPanel.add(selectConverterPanel);
         selectProjectButton.addActionListener(this);
@@ -67,7 +76,8 @@ public class CardCatalogControlArea implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         int selectedOption = projectChooser.showOpenDialog((Component) e.getSource());
         if (selectedOption == JFileChooser.APPROVE_OPTION) {
-            cardProject.selectCatalog(getSelectedProject(), getSelectedImageFormat());
+            DecksCatalog catalog = cardProject.selectCatalog(getSelectedProject(), getSelectedImageFormat());
+            previewArea.refresh(catalog);
         }
     }
 

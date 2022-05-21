@@ -13,19 +13,24 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-public class PreviewArea {
+import static javax.swing.BorderFactory.*;
+
+public class SpotsLayoutPreviewArea {
 
     private final JLabel preview;
     private final CardProject cardProject;
 
-    public PreviewArea(CardProject cardProject) {
+    public SpotsLayoutPreviewArea(CardProject cardProject) {
         this.cardProject = cardProject;
         this.preview = new JLabel();
     }
 
     public JPanel packToPanel() {
         JPanel previewPanel = new JPanel();
-        previewPanel.setBorder(BorderFactory.createTitledBorder("Preview of card spots disposition"));
+        previewPanel.setBorder(createCompoundBorder(
+                createEmptyBorder(10, 10, 10, 10),
+                createTitledBorder("Preview of card spots disposition"))
+        );
         preview.setPreferredSize(new Dimension(600, 900));
         preview.setVerticalAlignment(JLabel.CENTER);
         preview.setHorizontalAlignment(JLabel.CENTER);

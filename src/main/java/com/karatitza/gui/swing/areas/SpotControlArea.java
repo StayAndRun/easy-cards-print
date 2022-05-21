@@ -10,16 +10,18 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import static javax.swing.BorderFactory.*;
+
 public class SpotControlArea implements ChangeListener, ItemListener {
 
-    private final PreviewArea previewArea;
+    private final SpotsLayoutPreviewArea spotsLayoutPreviewArea;
     private final JSpinner spotHeight;
     private final JSpinner spotWidth;
     private final JSpinner spotSpace;
     private final JComboBox<PageFormat> pageSizeJComboBox;
 
-    public SpotControlArea(PreviewArea previewArea) {
-        this.previewArea = previewArea;
+    public SpotControlArea(SpotsLayoutPreviewArea spotsLayoutPreviewArea) {
+        this.spotsLayoutPreviewArea = spotsLayoutPreviewArea;
         spotHeight = new JSpinner(new SpinnerNumberModel(50, 10, Integer.MAX_VALUE, 1));
         spotHeight.setToolTipText("test");
         spotWidth = new JSpinner(new SpinnerNumberModel(50, 10, Integer.MAX_VALUE, 1));
@@ -32,7 +34,9 @@ public class SpotControlArea implements ChangeListener, ItemListener {
     public JPanel packToPanel() {
         JPanel controlPanel = new JPanel();
         controlPanel.setLayout(new GridLayout(0, 2, 10, 10));
-        controlPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        controlPanel.setBorder(createCompoundBorder(
+                createEmptyBorder(10, 10, 10, 10), createTitledBorder("Spots layout control"))
+        );
         spotHeight.addChangeListener(this);
         spotWidth.addChangeListener(this);
         spotSpace.addChangeListener(this);
@@ -64,6 +68,6 @@ public class SpotControlArea implements ChangeListener, ItemListener {
         Integer width = Integer.parseInt(String.valueOf(spotWidth.getValue()));
         Integer space = Integer.parseInt(String.valueOf(spotSpace.getValue()));
         PageFormat pageFormat = (PageFormat) pageSizeJComboBox.getSelectedItem();
-        previewArea.refresh(height, width, space, pageFormat);
+        spotsLayoutPreviewArea.refresh(height, width, space, pageFormat);
     }
 }
