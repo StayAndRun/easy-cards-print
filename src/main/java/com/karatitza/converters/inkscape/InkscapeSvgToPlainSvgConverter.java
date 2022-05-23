@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.List;
 
 import static com.karatitza.Main.SOURCE_FILES_RELATE_PATH;
 import static com.karatitza.Main.TEMP_FILES_RELATE_PATH;
@@ -34,13 +35,12 @@ public class InkscapeSvgToPlainSvgConverter implements ImageConverter {
     }
 
     private File convertToPlainSvg(String sourceSvgFileName, String targetSvgFileName) {
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        String command = new InkscapeCommandBuilder(sourceSvgFileName)
+        List<String> command = new InkscapeCommandBuilder(sourceSvgFileName)
                 .enablePlainSvgOption()
                 .addExportFileOption(targetSvgFileName)
                 .build();
         try {
-            execute(processBuilder, command);
+            execute(command);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -51,14 +51,14 @@ public class InkscapeSvgToPlainSvgConverter implements ImageConverter {
         return convertedFile;
     }
 
-    private void execute(ProcessBuilder processBuilder, String dir) throws IOException {
-        processBuilder.command("cmd.exe", "/c", dir);
+    private void execute(List<String> command) throws IOException {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command(command);
         Process process = processBuilder.start();
-        InputStream inputStream = process.getInputStream();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "866"));
 
         InputStream inputErrorStream = process.getErrorStream();
         BufferedReader bufferedErrorReader = new BufferedReader(new InputStreamReader(inputErrorStream, "866"));
+        bufferedErrorReader.lines().forEach(LOG::warn);
     }
 
     @Override

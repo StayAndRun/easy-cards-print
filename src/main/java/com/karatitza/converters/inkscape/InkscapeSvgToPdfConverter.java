@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.List;
 
 import static com.karatitza.Main.SOURCE_FILES_RELATE_PATH;
 import static com.karatitza.Main.TEMP_FILES_RELATE_PATH;
@@ -33,20 +34,19 @@ public class InkscapeSvgToPdfConverter implements ImageConverter {
     public Image convert(Image sourceImage) {
         Image targetImage = imageFactory.create(sourceImage, fileFormat());
         File convertedImagePath = convertFile(
-                new File(sourceImage.getLocation().getAbsolutePath()), targetImage.getLocation().getAbsolutePath()
+                getCanonicalPath(sourceImage.getLocation()), getCanonicalPath(targetImage.getLocation())
         );
         return targetImage;
     }
 
-    private File convertFile(File sourceSvgFile, String targetFileName) {
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        String command = new InkscapeCommandBuilder(sourceSvgFile.getAbsolutePath())
+    private File convertFile(String sourceSvgFile, String targetFileName) {
+        List<String> commands = new InkscapeCommandBuilder(sourceSvgFile)
                 .addExportFileOption(targetFileName)
                 .addExportType("pdf")
                 .addPdfVersionOption("1.5")
                 .build();
         try {
-            execute(processBuilder, command);
+            execute(commands);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -58,11 +58,18 @@ public class InkscapeSvgToPdfConverter implements ImageConverter {
         return convertedFile;
     }
 
-    private void execute(ProcessBuilder processBuilder, String dir) throws IOException {
-        processBuilder.command("cmd.exe", "/c", dir);
+    private String getCanonicalPath(File sourceSvgFile) {
+        try {
+            return sourceSvgFile.getCanonicalPath();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void execute(List<String> command) throws IOException {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command(command);
         Process process = processBuilder.start();
-        InputStream inputStream = process.getInputStream();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "866"));
 
         InputStream inputErrorStream = process.getErrorStream();
         BufferedReader bufferedErrorReader = new BufferedReader(new InputStreamReader(inputErrorStream, "866"));
@@ -70,7 +77,7 @@ public class InkscapeSvgToPdfConverter implements ImageConverter {
     }
 
     private String generateTargetPdfFileName(File back) {
-        return back.getParent()+ File.separator + Strings.split(back.getName(), '.')[0] + fileFormat().getExtension();
+        return back.getParent() + File.separator + Strings.split(back.getName(), '.')[0] + fileFormat().getExtension();
     }
 
     private String buildTempPdfFileName(File file) {

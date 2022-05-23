@@ -21,39 +21,39 @@ public class CatalogInitializationTest {
         List<Card> blueCards = blueDeck.getCards();
         Assertions.assertEquals(2, blueCards.size());
         Card bird = searchCardByName(blueCards, "bird.svg");
-        Assertions.assertEquals("blue-back.svg", bird.getBackSide().get().getName());
+        Assertions.assertEquals("blue back.svg", bird.getBackSide().get().getName());
         Card elemental = searchCardByName(blueCards, "elemental.svg");
-        Assertions.assertEquals("blue-back.svg", elemental.getBackSide().get().getName());
+        Assertions.assertEquals("blue back.svg", elemental.getBackSide().get().getName());
 
         Deck greenDeck = searchDeckByName(decks, "green-deck");
         List<Card> greenCards = greenDeck.getCards();
         Assertions.assertEquals(2, greenDeck.getCards().size());
         Card wolf = searchCardByName(greenCards, "wolf.svg");
-        Assertions.assertEquals("green-back.svg", wolf.getBackSide().get().getName());
+        Assertions.assertEquals("green back.svg", wolf.getBackSide().get().getName());
         Card spider = searchCardByName(greenCards, "spider.svg");
-        Assertions.assertEquals("green-back.svg", spider.getBackSide().get().getName());
+        Assertions.assertEquals("green back.svg", spider.getBackSide().get().getName());
 
         Deck redDeck = searchDeckByName(decks, "red-deck");
         List<Card> redCards = redDeck.getCards();
         Assertions.assertEquals(2, redDeck.getCards().size());
         Card goblin = searchCardByName(redCards, "goblin.svg");
-        Assertions.assertEquals("red-back.svg", goblin.getBackSide().get().getName());
+        Assertions.assertEquals("red back.svg", goblin.getBackSide().get().getName());
         Card dragon = searchCardByName(redCards, "dragon.svg");
-        Assertions.assertEquals("red-back.svg", dragon.getBackSide().get().getName());
+        Assertions.assertEquals("red back.svg", dragon.getBackSide().get().getName());
 
         Deck blackDeck = searchDeckByName(decks, "black-deck");
         List<Card> blackCards = blackDeck.getCards();
         Assertions.assertEquals(2, blackDeck.getCards().size());
         Card zombie = searchCardByName(blackCards, "zombie.svg");
-        Assertions.assertEquals("black-back.svg", zombie.getBackSide().get().getName());
+        Assertions.assertEquals("black back.svg", zombie.getBackSide().get().getName());
         Card skeleton = searchCardByName(blackCards, "skeleton.svg");
-        Assertions.assertEquals("black-back.svg", skeleton.getBackSide().get().getName());
+        Assertions.assertEquals("black back.svg", skeleton.getBackSide().get().getName());
 
         Deck yellowDeck = searchDeckByName(decks, "white-deck");
         List<Card> yellowCards = yellowDeck.getCards();
         Assertions.assertEquals(1, yellowDeck.getCards().size());
         Card knight = searchCardByName(yellowCards, "knight.svg");
-        Assertions.assertEquals("white-back.svg", knight.getBackSide().get().getName());
+        Assertions.assertEquals("white back.svg", knight.getBackSide().get().getName());
     }
 
     @Test
@@ -67,39 +67,39 @@ public class CatalogInitializationTest {
         List<Card> blueCards = blueDeck.getCards();
         Assertions.assertEquals(2, blueCards.size());
         Card bird = searchCardByName(blueCards, "bird.pdf");
-        Assertions.assertEquals("blue-back.pdf", bird.getBackSide().get().getName());
+        Assertions.assertEquals("blue back.pdf", bird.getBackSide().get().getName());
         Card elemental = searchCardByName(blueCards, "elemental.pdf");
-        Assertions.assertEquals("blue-back.pdf", elemental.getBackSide().get().getName());
+        Assertions.assertEquals("blue back.pdf", elemental.getBackSide().get().getName());
 
         Deck greenDeck = searchDeckByName(decks, "green-deck");
         List<Card> greenCards = greenDeck.getCards();
         Assertions.assertEquals(2, greenDeck.getCards().size());
         Card wolf = searchCardByName(greenCards, "wolf.pdf");
-        Assertions.assertEquals("green-back.pdf", wolf.getBackSide().get().getName());
+        Assertions.assertEquals("green back.pdf", wolf.getBackSide().get().getName());
         Card spider = searchCardByName(greenCards, "spider.pdf");
-        Assertions.assertEquals("green-back.pdf", spider.getBackSide().get().getName());
+        Assertions.assertEquals("green back.pdf", spider.getBackSide().get().getName());
 
         Deck redDeck = searchDeckByName(decks, "red-deck");
         List<Card> redCards = redDeck.getCards();
         Assertions.assertEquals(2, redDeck.getCards().size());
         Card goblin = searchCardByName(redCards, "goblin.pdf");
-        Assertions.assertEquals("red-back.pdf", goblin.getBackSide().get().getName());
+        Assertions.assertEquals("red back.pdf", goblin.getBackSide().get().getName());
         Card dragon = searchCardByName(redCards, "dragon.pdf");
-        Assertions.assertEquals("red-back.pdf", dragon.getBackSide().get().getName());
+        Assertions.assertEquals("red back.pdf", dragon.getBackSide().get().getName());
 
         Deck blackDeck = searchDeckByName(decks, "black-deck");
         List<Card> blackCards = blackDeck.getCards();
         Assertions.assertEquals(2, blackDeck.getCards().size());
         Card zombie = searchCardByName(blackCards, "zombie.pdf");
-        Assertions.assertEquals("black-back.pdf", zombie.getBackSide().get().getName());
+        Assertions.assertEquals("black back.pdf", zombie.getBackSide().get().getName());
         Card skeleton = searchCardByName(blackCards, "skeleton.pdf");
-        Assertions.assertEquals("black-back.pdf", skeleton.getBackSide().get().getName());
+        Assertions.assertEquals("black back.pdf", skeleton.getBackSide().get().getName());
 
         Deck yellowDeck = searchDeckByName(decks, "white-deck");
         List<Card> yellowCards = yellowDeck.getCards();
         Assertions.assertEquals(1, yellowDeck.getCards().size());
         Card knight = searchCardByName(yellowCards, "knight.pdf");
-        Assertions.assertEquals("white-back.pdf", knight.getBackSide().get().getName());
+        Assertions.assertEquals("white back.pdf", knight.getBackSide().get().getName());
     }
 
     private Deck searchDeckByName(List<Deck> decks, String name) {

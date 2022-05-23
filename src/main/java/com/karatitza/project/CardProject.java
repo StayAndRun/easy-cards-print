@@ -70,7 +70,7 @@ public class CardProject {
 
     private File getCurrentProjectPath() {
         if (projectRoot == null) {
-            return new File("./src/test/resources/pdf-project");
+            throw new UnsupportedOperationException("Default path not specified");
         } else {
             return projectRoot;
         }
