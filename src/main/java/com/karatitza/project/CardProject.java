@@ -1,5 +1,6 @@
 package com.karatitza.project;
 
+import com.google.gson.Gson;
 import com.karatitza.converters.ConversionFactory;
 import com.karatitza.converters.ImageConverter;
 import com.karatitza.converters.TempImageFactory;
@@ -16,7 +17,7 @@ import com.karatitza.project.layout.spots.SpotsLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -29,12 +30,21 @@ public class CardProject {
     private DecksCatalog selectedCatalog = defaultEmptyCatalog();
     private SpotsLayout spotsLayout = defaultSpotLayout();
     private ConversionFactory conversionFactory = defaultConversionFactory();
-    private File projectRoot;
+    private File projectRoot = loadLatestRoot();
+
+    public DecksCatalog getSelectedCatalog() {
+        return selectedCatalog;
+    }
+
+    public File getProjectRoot() {
+        return projectRoot;
+    }
 
     public DecksCatalog selectCatalog(File projectRoot, ImageFormat format) {
         this.projectRoot = projectRoot;
         this.selectedCatalog = new DecksCatalog(selectDecksDir(projectRoot), format);
         LOG.info("Selected Catalog: " + selectedCatalog);
+        saveLatestProjectConfiguration(projectRoot);
         return selectedCatalog;
     }
 
@@ -53,10 +63,6 @@ public class CardProject {
         LayoutComposer layoutComposer = new LayoutComposer(new DocumentLayout(spotsLayout));
         DocumentLayout composedDocumentLayout = layoutComposer.compose(prepareCatalog());
         return pdfDocumentComposer.compose(composedDocumentLayout);
-    }
-
-    public DecksCatalog getSelectedCatalog() {
-        return selectedCatalog;
     }
 
     private DecksCatalog prepareCatalog() {
@@ -82,6 +88,18 @@ public class CardProject {
                 .orElseThrow(() -> new RuntimeException("Not found source dir at project: " + projectRootDir.getName()));
     }
 
+    private static void saveLatestProjectConfiguration(File projectRoot) {
+        Gson gson = new Gson();
+        File confFile = new File("./latest/conf.json");
+        confFile.getParentFile().mkdirs();
+        try (FileWriter writer = new FileWriter(confFile)) {
+            confFile.createNewFile();
+            gson.toJson(new LatestProjectConfiguration(projectRoot.getCanonicalPath()), writer);
+        } catch (IOException e) {
+            LOG.warn("Failed save latest project configuration.", e);
+        }
+    }
+
     private static ConversionFactory defaultConversionFactory() {
         return new ConversionFactory.ITextConversionFactory();
     }
@@ -92,5 +110,22 @@ public class CardProject {
 
     private static DecksCatalog defaultEmptyCatalog() {
         return new DecksCatalog(Collections.emptyList(), ImageFormat.PDF);
+    }
+
+    private static File loadLatestRoot() {
+        File file = new File("./latest/conf.json");
+        Gson gson = new Gson();
+        try (FileReader fileReader = new FileReader(file)) {
+            LatestProjectConfiguration configuration = gson.fromJson(fileReader, LatestProjectConfiguration.class);
+            File latestRoot = new File(configuration.getProjectRoot());
+            LOG.info("Found latest root: {}", latestRoot);
+            return latestRoot;
+        } catch (FileNotFoundException e) {
+            LOG.info("Not found latest project config");
+            return new File("");
+        } catch (IOException e) {
+            LOG.warn("Failed to load latest project config");
+            return new File("");
+        }
     }
 }

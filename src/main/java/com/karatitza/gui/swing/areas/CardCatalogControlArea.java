@@ -32,7 +32,7 @@ public class CardCatalogControlArea implements ActionListener {
         this.selectProjectButton = new JButton("Select project");
         this.projectChooser = new JFileChooser();
         this.projectChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        this.projectChooser.setCurrentDirectory(new File("."));
+        this.projectChooser.setCurrentDirectory(cardProject.getProjectRoot());
         this.selectConverterPanel = buildConverterSelectionPanel();
         this.previewArea = new CatalogPreviewArea();
     }
