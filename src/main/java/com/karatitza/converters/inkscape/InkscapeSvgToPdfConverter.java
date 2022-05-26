@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.karatitza.Main.SOURCE_FILES_RELATE_PATH;
@@ -20,6 +21,7 @@ public class InkscapeSvgToPdfConverter implements ImageConverter {
     public static final Logger LOG = LoggerFactory.getLogger(InkscapeSvgToPdfConverter.class);
 
     private final TempImageFactory imageFactory;
+    private final List<Image> batchImages = new ArrayList<>();
 
     public InkscapeSvgToPdfConverter(TempImageFactory imageFactory) {
         this.imageFactory = imageFactory;
@@ -37,6 +39,19 @@ public class InkscapeSvgToPdfConverter implements ImageConverter {
                 getCanonicalPath(sourceImage.getLocation()), getCanonicalPath(targetImage.getLocation())
         );
         return targetImage;
+    }
+
+    @Override
+    public Image addToBatch(Image sourceImage) {
+        batchImages.add(sourceImage);
+        return imageFactory.create(sourceImage, fileFormat());
+    }
+
+    @Override
+    public List<Image> convertBatch() {
+        executeConvertBatch(batchImages);
+        return batchImages.stream()
+                .map(sourceImage -> imageFactory.create(sourceImage, fileFormat())).toList();
     }
 
     private File convertFile(String sourceSvgFile, String targetFileName) {
@@ -72,8 +87,48 @@ public class InkscapeSvgToPdfConverter implements ImageConverter {
         Process process = processBuilder.start();
 
         InputStream inputErrorStream = process.getErrorStream();
-        BufferedReader bufferedErrorReader = new BufferedReader(new InputStreamReader(inputErrorStream, "866"));
-        bufferedErrorReader.lines().forEach(LOG::warn);
+        try (BufferedReader bufferedErrorReader = new BufferedReader(new InputStreamReader(inputErrorStream, "866"))) {
+            bufferedErrorReader.lines().forEach(LOG::warn);
+        }
+    }
+
+    public void executeConvertBatch(List<Image> sourceImages) {
+        List<String> actionsLines = new ArrayList<>(sourceImages.size());
+        for (Image sourceImage : sourceImages) {
+            String sourceFileLocation = getCanonicalPath(sourceImage.getLocation());
+            String targetFileLocation = getCanonicalPath(imageFactory.create(sourceImage, fileFormat()).getLocation());
+            String actionsLine = new StringBuilder(6)
+                    .append("file-open: " + sourceFileLocation + ";")
+                    .append("export-filename: " + targetFileLocation + ";")
+                    .append("export-pdf-version:1.5;")
+                    .append("export-type:pdf;")
+                    .append("export-do;")
+                    .append("file-close")
+                    .toString();
+            actionsLines.add(actionsLine);
+        }
+        try {
+            executeShellActions(actionsLines);
+        } catch (IOException e) {
+            throw new RuntimeException("Batch conversion failed: ", e);
+        }
+    }
+
+    private static void executeShellActions(List<String> actions) throws IOException {
+        ProcessBuilder pb = new ProcessBuilder("inkscape", "--shell");
+        final Process process = pb.start();
+
+        try (PrintWriter output = new PrintWriter(process.getOutputStream(), true)) {
+            actions.forEach(output::println);
+            output.println("quit");
+        }
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream(), "866"))) {
+            input.lines().forEach(LOG::info);
+        }
+        try (BufferedReader errors = new BufferedReader(new InputStreamReader(process.getErrorStream(), "866"))) {
+            errors.lines().forEach(LOG::warn);
+        }
+
     }
 
     private String generateTargetPdfFileName(File back) {

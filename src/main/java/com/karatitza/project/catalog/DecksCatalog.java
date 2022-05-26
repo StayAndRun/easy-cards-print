@@ -42,6 +42,7 @@ public class DecksCatalog {
             throw new UnsupportedOperationException("Unsupported format: " + imageFormat.getExtension());
         }
         List<Deck> convertedDecks = decks.stream().map(deck -> deck.convert(converter)).collect(Collectors.toList());
+        converter.convertBatch();
         LOG.info("Catalog conversion from {} to {} finished.", getImageFormat(), converter.fileFormat());
         return new DecksCatalog(convertedDecks, converter.fileFormat());
     }

@@ -10,16 +10,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.karatitza.Main.SOURCE_FILES_RELATE_PATH;
 import static com.karatitza.Main.TEMP_FILES_RELATE_PATH;
 
 public class InkscapeSvgToPlainSvgConverter implements ImageConverter {
-
     public static final Logger LOG = LoggerFactory.getLogger(InkscapeSvgToPlainSvgConverter.class);
 
     private final TempImageFactory imageFactory;
+    private final List<Image> images = new ArrayList<>();
 
     public InkscapeSvgToPlainSvgConverter(TempImageFactory imageFactory) {
         this.imageFactory = imageFactory;
@@ -32,6 +33,17 @@ public class InkscapeSvgToPlainSvgConverter implements ImageConverter {
                 sourceImage.getLocation().getAbsolutePath(), targetImage.getLocation().getAbsolutePath()
         );
         return targetImage;
+    }
+
+    @Override
+    public Image addToBatch(Image sourceImage) {
+        images.add(sourceImage);
+        return imageFactory.create(sourceImage, fileFormat());
+    }
+
+    @Override
+    public List<Image> convertBatch() {
+        return images.stream().map(this::convert).toList();
     }
 
     private File convertToPlainSvg(String sourceSvgFileName, String targetSvgFileName) {

@@ -47,8 +47,8 @@ public class Deck {
     }
 
     public Deck convert(ImageConverter converter) {
-        List<Image> convertedCards = cardsFiles.stream().map(converter::convert).collect(Collectors.toList());
-        List<Image> convertedBacks = backsFiles.stream().map(converter::convert).collect(Collectors.toList());
+        List<Image> convertedCards = cardsFiles.stream().map(converter::addToBatch).collect(Collectors.toList());
+        List<Image> convertedBacks = backsFiles.stream().map(converter::addToBatch).collect(Collectors.toList());
         return new Deck(root, converter.fileFormat(), convertedCards, convertedBacks);
     }
 
