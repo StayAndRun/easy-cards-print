@@ -3,6 +3,7 @@ package com.karatitza.converters.inkscape;
 import com.karatitza.converters.ImageConverter;
 import com.karatitza.converters.TempImageFactory;
 import com.karatitza.converters.inkscape.console.InkscapeCommandBuilder;
+import com.karatitza.converters.inkscape.console.InkscapeShell;
 import com.karatitza.project.catalog.Image;
 import com.karatitza.project.catalog.ImageFormat;
 import org.bouncycastle.util.Strings;
@@ -49,9 +50,7 @@ public class InkscapeSvgToPdfConverter implements ImageConverter {
 
     @Override
     public List<Image> convertBatch() {
-        executeConvertBatch(batchImages);
-        return batchImages.stream()
-                .map(sourceImage -> imageFactory.create(sourceImage, fileFormat())).toList();
+        return executeConvertBatch(batchImages);
     }
 
     private File convertFile(String sourceSvgFile, String targetFileName) {
@@ -92,29 +91,36 @@ public class InkscapeSvgToPdfConverter implements ImageConverter {
         }
     }
 
-    public void executeConvertBatch(List<Image> sourceImages) {
-        List<String> actionsLines = new ArrayList<>(sourceImages.size());
-        for (Image sourceImage : sourceImages) {
-            String sourceFileLocation = getCanonicalPath(sourceImage.getLocation());
-            String targetFileLocation = getCanonicalPath(imageFactory.create(sourceImage, fileFormat()).getLocation());
-            String actionsLine = new StringBuilder(6)
-                    .append("file-open: " + sourceFileLocation + ";")
-                    .append("export-filename: " + targetFileLocation + ";")
-                    .append("export-pdf-version:1.5;")
-                    .append("export-type:pdf;")
-                    .append("export-do;")
-                    .append("file-close")
-                    .toString();
-            actionsLines.add(actionsLine);
+    public List<Image> executeConvertBatch(List<Image> sourceImages) {
+        List<Image> convertedImages = new ArrayList<>(sourceImages.size());
+        try (InkscapeShell inkscapeShell = new InkscapeShell()) {
+            for (Image sourceImage : sourceImages) {
+                Image tempImage = imageFactory.create(sourceImage, fileFormat());
+                inkscapeShell.exportToPdfFile(sourceImage.getLocation(), tempImage.getLocation());
+                convertedImages.add(tempImage);
+            }
         }
-        try {
-            executeShellActions(actionsLines);
-        } catch (IOException e) {
-            throw new RuntimeException("Batch conversion failed: ", e);
-        }
+        return convertedImages;
     }
 
     private static void executeShellActions(List<String> actions) throws IOException {
+        ProcessBuilder pb = new ProcessBuilder("inkscape", "--shell");
+        final Process process = pb.start();
+
+        try (PrintWriter output = new PrintWriter(process.getOutputStream(), true)) {
+            actions.forEach(output::println);
+            output.println("quit");
+        }
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream(), "866"))) {
+            input.lines().forEach(LOG::info);
+        }
+        try (BufferedReader errors = new BufferedReader(new InputStreamReader(process.getErrorStream(), "866"))) {
+            errors.lines().forEach(LOG::warn);
+        }
+
+    }
+
+    private static void executeActionLine(List<String> actions) throws IOException {
         ProcessBuilder pb = new ProcessBuilder("inkscape", "--shell");
         final Process process = pb.start();
 

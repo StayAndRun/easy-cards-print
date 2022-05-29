@@ -12,11 +12,11 @@ import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
-class CatalogConversionTest extends ProjectTempTest {
+class CatalogConversionTest extends TempFilesTest {
 
     public static final String TEST_PROJECT_PATH = "./src/test/resources/svg-project";
     public static final String TEST_SOURCE_PATH = "./src/test/resources/svg-project/decks";
-    public static final String TEST_TEMP_PATH = "./src/test/resources/svg-project/print/temp/pdf";
+    public static final String TEST_TEMP_PATH = "./src/test/resources/svg-project/print/temp/PDF";
 
     @Test
     void acceptSourceToPdfConversion() {
@@ -82,7 +82,7 @@ class CatalogConversionTest extends ProjectTempTest {
 
     @BeforeEach
     void setUp() {
-        cleanTempDirectory(TEST_PROJECT_PATH);
+        cleanupProjectTempFiles(TEST_PROJECT_PATH);
     }
 
     private Deck searchDeckByName(List<Deck> decks, String name) {

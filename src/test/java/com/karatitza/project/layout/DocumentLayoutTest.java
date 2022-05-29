@@ -3,7 +3,7 @@ package com.karatitza.project.layout;
 import com.itextpdf.kernel.utils.CompareTool;
 import com.karatitza.project.catalog.DecksCatalog;
 import com.karatitza.project.catalog.ImageFormat;
-import com.karatitza.project.catalog.ProjectTempTest;
+import com.karatitza.project.catalog.TempFilesTest;
 import com.karatitza.project.compose.PdfPagesComposer;
 import com.karatitza.project.compose.PdfPagesComposerByIText;
 import com.karatitza.project.layout.spots.SpotSize;
@@ -20,7 +20,7 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 
-public class DocumentLayoutTest extends ProjectTempTest {
+public class DocumentLayoutTest extends TempFilesTest {
 
     public static final String PDF_CATALOG_PATH = "./src/test/resources/pdf-project/decks";
     public static final String PDF_PROJECT_PATH = "./src/test/resources/pdf-project";
@@ -30,7 +30,7 @@ public class DocumentLayoutTest extends ProjectTempTest {
 
     @BeforeEach
     void setUp() {
-        cleanTempDirectory(PDF_PROJECT_PATH);
+        cleanupProjectTempFiles(PDF_PROJECT_PATH);
     }
 
     @Test

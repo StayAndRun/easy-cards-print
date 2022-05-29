@@ -4,6 +4,8 @@ import com.karatitza.converters.ConversionFactory;
 import com.karatitza.project.CardProject;
 import com.karatitza.project.catalog.DecksCatalog;
 import com.karatitza.project.catalog.ImageFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,6 +16,7 @@ import java.io.File;
 import static javax.swing.BorderFactory.*;
 
 public class CardCatalogControlArea implements ActionListener {
+    private static final Logger LOG = LoggerFactory.getLogger(CardCatalogControlArea.class);
 
     private final JComboBox<ImageFormat> imageFormatJComboBox;
     private final JButton selectProjectButton;
@@ -32,9 +35,17 @@ public class CardCatalogControlArea implements ActionListener {
         this.selectProjectButton = new JButton("Select project");
         this.projectChooser = new JFileChooser();
         this.projectChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        this.projectChooser.setCurrentDirectory(cardProject.getProjectRoot());
+        trySetLatestProjectRoot(cardProject);
         this.selectConverterPanel = buildConverterSelectionPanel();
         this.previewArea = new CatalogPreviewArea();
+    }
+
+    private void trySetLatestProjectRoot(CardProject cardProject) {
+        try {
+            this.projectChooser.setCurrentDirectory(cardProject.getProjectRoot());
+        } catch (IndexOutOfBoundsException exception) {
+            LOG.warn("Failed to set latest project root: ", exception);
+        }
     }
 
     private JPanel buildConverterSelectionPanel() {
