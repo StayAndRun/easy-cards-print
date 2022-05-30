@@ -16,7 +16,6 @@ import com.karatitza.project.layout.spots.Spot;
 import com.karatitza.project.layout.spots.SpotSize;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.List;
@@ -90,18 +89,18 @@ public class PdfPagesComposerByIText extends PdfPagesComposer {
     private PdfReader createPdfReader(String filename) {
         try {
             return new PdfReader(filename);
-        } catch (IOException e) {
+        } catch (Exception e) {
             // TODO custom exception
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to read pdf file: " + filename);
         }
     }
 
     private PdfWriter createPdfWriter(String filename) {
         try {
             return new PdfWriter(filename);
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             // TODO custom exception
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed write to pdf file: " + filename);
         }
     }
 

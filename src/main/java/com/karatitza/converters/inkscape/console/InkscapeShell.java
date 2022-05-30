@@ -6,9 +6,18 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.FileSystems;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+import java.util.concurrent.TimeUnit;
+
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 public class InkscapeShell implements AutoCloseable {
     public static final Logger LOG = LoggerFactory.getLogger(InkscapeShell.class);
+    public static final int FILE_CREATION_WATCH_TIMEOUT_SECONDS = 15;
 
     private final Process shellProcess;
     private final PrintWriter shellOutput;
@@ -32,25 +41,50 @@ public class InkscapeShell implements AutoCloseable {
     }
 
     public void exportToPdfFile(File sourceFile, File targetFile) {
+        targetFile.getParentFile().mkdirs();
         shellOutput.println("file-open:" + getCanonicalPath(sourceFile));
         shellOutput.println("export-filename:" + getCanonicalPath(targetFile));
         shellOutput.println("export-pdf-version:1.5");
         shellOutput.println("export-type:pdf");
         shellOutput.println("export-do");
-//        shellOutput.println("file-close");
         LOG.info("Export actions was enter for file {}", targetFile);
+        if (!acceptFileCreated(targetFile)) {
+            LOG.error("Timeout exceeded");
+        }
+        shellOutput.println("file-close");
     }
 
-    private void logFileExists(File targetFile) {
+    private boolean acceptFileCreated(File targetFile) {
         try {
-            LOG.info("Exists: {}", targetFile.exists());
-            LOG.info("Exists: {} (Absolute)", targetFile.getAbsoluteFile().exists());
-            LOG.info("Exists: {} (Canonical)", targetFile.getCanonicalFile().exists());
-            LOG.info("Can read: {}", targetFile.canRead());
-            LOG.info("Can read: {} (Absolute)", targetFile.getAbsoluteFile().canRead());
-            LOG.info("Can read: {} (Canonical)", targetFile.getCanonicalFile().canRead());
+            WatchService watchService = FileSystems.getDefault().newWatchService();
+            targetFile.toPath().getParent().register(watchService, ENTRY_CREATE, ENTRY_MODIFY);
+            WatchKey watchedKey;
+            boolean acceptFileCreated = false;
+            boolean acceptFileModified = false;
+            while ((watchedKey = watchService.poll(FILE_CREATION_WATCH_TIMEOUT_SECONDS, TimeUnit.SECONDS)) != null) {
+                for (WatchEvent<?> watchEvent : watchedKey.pollEvents()) {
+                    WatchEvent.Kind<?> actualEventKind = watchEvent.kind();
+                    LOG.info("File Event kind: {}", actualEventKind);
+                    LOG.info("File Event context: {}", watchEvent.context());
+                    if (ENTRY_CREATE.equals(actualEventKind)) {
+                        acceptFileCreated = true;
+                        if (watchEvent.count() > 1) LOG.warn("Multiple file creation {}", targetFile);
+                    }
+                    if (ENTRY_MODIFY.equals(actualEventKind)) {
+                        acceptFileModified = true;
+                        if (watchEvent.count() > 1) LOG.warn("Multiple file modify {}", targetFile);
+                    }
+                    if (acceptFileCreated && acceptFileModified) {
+                        return true;
+                    }
+                }
+                watchedKey.reset();
+            }
+            return false;
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to watch file: " + targetFile, e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("File watch canceled: " + targetFile, e);
         }
     }
 
@@ -93,7 +127,7 @@ public class InkscapeShell implements AutoCloseable {
         }
     }
 
-    public File createConversionErrorLog(File conversionLogsDir) throws IOException {
+    private File createConversionErrorLog(File conversionLogsDir) throws IOException {
         File errorLog = new File(conversionLogsDir, "error.log");
         if (!errorLog.exists()) {
             errorLog.createNewFile();
@@ -101,7 +135,7 @@ public class InkscapeShell implements AutoCloseable {
         return errorLog;
     }
 
-    public File createConversionOutputLog(File conversionLogsDir) throws IOException {
+    private File createConversionOutputLog(File conversionLogsDir) throws IOException {
         File errorLog = new File(conversionLogsDir, "input.log");
         if (!errorLog.exists()) {
             errorLog.createNewFile();
