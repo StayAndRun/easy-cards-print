@@ -9,18 +9,23 @@ import static java.text.MessageFormat.format;
 public class TempFilesTest {
 
     public static final String PROJECT_TEMP_FILES_RELATE_PATH = format("{0}print{0}temp", File.separator);
+    public static final String PROJECT_PRINT_FILES_RELATE_PATH = format("{0}print", File.separator);
     public static final String TEMP_FILES_PATH = File.separator + "temp";
 
     protected void cleanupProjectTempFiles(String projectPath) {
-        File tempDir = new File(projectPath + PROJECT_TEMP_FILES_RELATE_PATH);
-        deleteSubDirs(tempDir);
-        if (tempDir.exists() && !tempDir.delete()) {
-            throw new TestInstantiationException("Failed to remove temp files: " + tempDir);
-        }
+        cleanupDirectory(new File(projectPath + PROJECT_TEMP_FILES_RELATE_PATH));
+    }
+
+    protected void cleanupProjectPrintFiles(String projectPath) {
+        cleanupDirectory(new File(projectPath + PROJECT_PRINT_FILES_RELATE_PATH));
     }
 
     protected void cleanupTempFiles(String testDir) {
-        File tempDir = new File(testDir + TEMP_FILES_PATH);
+        cleanupDirectory(new File(testDir + TEMP_FILES_PATH));
+    }
+
+    private void cleanupDirectory(File dir) {
+        File tempDir = dir;
         deleteSubDirs(tempDir);
         if (tempDir.exists() && !tempDir.delete()) {
             throw new TestInstantiationException("Failed to remove temp files: " + tempDir);

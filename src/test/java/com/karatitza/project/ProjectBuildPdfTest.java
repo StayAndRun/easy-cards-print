@@ -24,7 +24,8 @@ public class ProjectBuildPdfTest extends TempFilesTest {
 
     @BeforeEach
     void setUp() {
-        cleanupProjectTempFiles(PDF_PROJECT_PATH);
+        cleanupProjectPrintFiles(PDF_PROJECT_PATH);
+        cleanupProjectPrintFiles(SVG_PROJECT_PATH);
     }
 
     @Test
@@ -32,7 +33,7 @@ public class ProjectBuildPdfTest extends TempFilesTest {
         CardProject cardProject = new CardProject();
         cardProject.selectCatalog(new File(PDF_PROJECT_PATH), ImageFormat.PDF);
         cardProject.defineSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
-        cardProject.buildFinalPdf();
+        cardProject.snapshot().buildFinalPdf();
         File actualFile = searchTempPdfFile("pdf-project.pdf", PDF_PROJECT_PATH);
         assertPdfFilesEquals(EXPECTED_PROJECT_PDF, actualFile.getPath());
     }
@@ -42,7 +43,7 @@ public class ProjectBuildPdfTest extends TempFilesTest {
         CardProject cardProject = new CardProject();
         cardProject.selectCatalog(new File(SVG_PROJECT_PATH), ImageFormat.SVG);
         cardProject.defineSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
-        cardProject.buildFinalPdf();
+        cardProject.snapshot().buildFinalPdf();
         File actualFile = searchTempPdfFile("svg-project.pdf", SVG_PROJECT_PATH);
         assertPdfFilesEquals(EXPECTED_PROJECT_PDF, actualFile.getPath());
     }
@@ -53,7 +54,7 @@ public class ProjectBuildPdfTest extends TempFilesTest {
         cardProject.selectCatalog(new File(SVG_PROJECT_PATH), ImageFormat.SVG);
         cardProject.defineSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
         cardProject.selectConverterFactory(new ConversionFactory.InkscapeConversionFactory());
-        cardProject.buildFinalPdf();
+        cardProject.snapshot().buildFinalPdf();
         File actualFile = searchTempPdfFile("svg-project.pdf", SVG_PROJECT_PATH);
         //TODO Check diff at text conversion
 //        assertPdfFilesEquals(EXPECTED_PROJECT_PDF, actualFile.getPath());

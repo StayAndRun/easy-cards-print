@@ -79,7 +79,7 @@ public class CardCatalogControlArea implements ActionListener {
         controlPanel.add(buildPdfButton);
         controlPanel.add(selectConverterPanel);
         selectProjectButton.addActionListener(this);
-        buildPdfButton.addActionListener(e -> cardProject.buildFinalPdf());
+        buildPdfButton.addActionListener(e -> cardProject.snapshot().buildFinalPdf());
         return controlPanel;
     }
 

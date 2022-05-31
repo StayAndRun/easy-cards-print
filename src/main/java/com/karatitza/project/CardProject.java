@@ -2,15 +2,10 @@ package com.karatitza.project;
 
 import com.google.gson.Gson;
 import com.karatitza.converters.ConversionFactory;
-import com.karatitza.converters.ImageConverter;
-import com.karatitza.converters.TempImageFactory;
 import com.karatitza.project.catalog.DecksCatalog;
 import com.karatitza.project.catalog.ImageFormat;
-import com.karatitza.project.compose.PdfDocumentComposer;
 import com.karatitza.project.compose.SpotsPreview;
 import com.karatitza.project.layout.CommonPageFormat;
-import com.karatitza.project.layout.DocumentLayout;
-import com.karatitza.project.layout.LayoutComposer;
 import com.karatitza.project.layout.PageFormat;
 import com.karatitza.project.layout.spots.SpotSize;
 import com.karatitza.project.layout.spots.SpotsLayout;
@@ -57,21 +52,11 @@ public class CardProject {
         this.spotsLayout = new SpotsLayout(pageFormat, spotSize);
         return new SpotsPreview(spotsLayout);
     }
-
-    public File buildFinalPdf() {
-        PdfDocumentComposer pdfDocumentComposer = new PdfDocumentComposer(getCurrentProjectPath());
-        LayoutComposer layoutComposer = new LayoutComposer(new DocumentLayout(spotsLayout));
-        DocumentLayout composedDocumentLayout = layoutComposer.compose(prepareCatalog());
-        return pdfDocumentComposer.compose(composedDocumentLayout);
-    }
-
-    private DecksCatalog prepareCatalog() {
-        DecksCatalog currentCatalog = selectedCatalog;
-        if (currentCatalog.getImageFormat() != ImageFormat.PDF) {
-            ImageConverter converter = conversionFactory.create(new TempImageFactory(projectRoot));
-            currentCatalog = selectedCatalog.convert(converter);
-        }
-        return currentCatalog;
+    
+    public CardProjectSnapshot snapshot() {
+        return new CardProjectSnapshot(
+                getCurrentProjectPath(), spotsLayout, getSelectedCatalog(), conversionFactory
+        );
     }
 
     private File getCurrentProjectPath() {
