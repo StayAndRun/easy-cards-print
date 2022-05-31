@@ -52,6 +52,10 @@ public class Deck {
         return new Deck(root, converter.fileFormat(), convertedCards, convertedBacks);
     }
 
+    public DeckStatistic getDeckStatistic() {
+        return new DeckStatistic();
+    }
+
     private List<Image> searchImages(File imagesDir) {
         return Arrays.stream(
                 imagesDir.listFiles((dir, name) -> name.endsWith(imageFormat.getExtension()))
@@ -70,5 +74,23 @@ public class Deck {
                 ", cardsFiles=" + cardsFiles +
                 ", backsFiles=" + backsFiles +
                 '}';
+    }
+
+    public class DeckStatistic {
+        private final int totalImages;
+        private final int totalCards;
+
+        public DeckStatistic() {
+            totalImages = cardsFiles.size() + backsFiles.size();
+            totalCards = cardsFiles.size();
+        }
+
+        public int getTotalImages() {
+            return totalImages;
+        }
+
+        public int getTotalCards() {
+            return totalCards;
+        }
     }
 }

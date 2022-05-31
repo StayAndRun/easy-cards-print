@@ -48,9 +48,7 @@ public class DecksCatalog {
 
 
     public CatalogStatistic getCatalogStatistic() {
-        final int DEFAULT_BACK_COUNT = 1;
-        int totalCards = getDecks().stream().mapToInt(deck -> deck.getCards().size() + DEFAULT_BACK_COUNT).sum();
-        return new CatalogStatistic(totalCards);
+        return new CatalogStatistic();
     }
 
     public DecksCatalog convert(ImageConverter converter, Consumer<Integer> progressListener) {
@@ -80,8 +78,18 @@ public class DecksCatalog {
         }
     }
 
-    private record CatalogStatistic(int totalImages) {
+    public class CatalogStatistic {
+        private final int totalImages;
+
+        private CatalogStatistic() {
+            this.totalImages = getDecks().stream().mapToInt(deck -> deck.getDeckStatistic().getTotalImages()).sum();
+        }
+
         public int getTotalImages() {
+            return totalImages;
+        }
+
+        public int totalImages() {
             return totalImages;
         }
     }
