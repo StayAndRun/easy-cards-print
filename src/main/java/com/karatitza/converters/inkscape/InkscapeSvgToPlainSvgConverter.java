@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static com.karatitza.Main.SOURCE_FILES_RELATE_PATH;
 import static com.karatitza.Main.TEMP_FILES_RELATE_PATH;
@@ -21,6 +22,7 @@ public class InkscapeSvgToPlainSvgConverter implements ImageConverter {
 
     private final TempImageFactory imageFactory;
     private final List<Image> images = new ArrayList<>();
+    private Consumer<File> fileCreationListener = defaultFileListener();
 
     public InkscapeSvgToPlainSvgConverter(TempImageFactory imageFactory) {
         this.imageFactory = imageFactory;
@@ -32,6 +34,7 @@ public class InkscapeSvgToPlainSvgConverter implements ImageConverter {
         File convertedImagePath = convertToPlainSvg(
                 sourceImage.getLocation().getAbsolutePath(), targetImage.getLocation().getAbsolutePath()
         );
+        defaultFileListener().accept(targetImage.getLocation());
         return targetImage;
     }
 
@@ -44,6 +47,16 @@ public class InkscapeSvgToPlainSvgConverter implements ImageConverter {
     @Override
     public List<Image> convertBatch() {
         return images.stream().map(this::convert).toList();
+    }
+
+    @Override
+    public ImageFormat fileFormat() {
+        return ImageFormat.SVG;
+    }
+
+    @Override
+    public void listenFileCreation(Consumer<File> fileCreationListener) {
+        this.fileCreationListener = fileCreationListener;
     }
 
     private File convertToPlainSvg(String sourceSvgFileName, String targetSvgFileName) {
@@ -71,11 +84,6 @@ public class InkscapeSvgToPlainSvgConverter implements ImageConverter {
         InputStream inputErrorStream = process.getErrorStream();
         BufferedReader bufferedErrorReader = new BufferedReader(new InputStreamReader(inputErrorStream, "866"));
         bufferedErrorReader.lines().forEach(LOG::warn);
-    }
-
-    @Override
-    public ImageFormat fileFormat() {
-        return ImageFormat.SVG;
     }
 
     private String generateTargetPdfFileName(File back) {

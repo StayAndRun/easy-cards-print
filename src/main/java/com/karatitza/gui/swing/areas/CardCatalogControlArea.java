@@ -1,6 +1,7 @@
 package com.karatitza.gui.swing.areas;
 
 import com.karatitza.converters.ConversionFactory;
+import com.karatitza.gui.swing.worker.PdfBuildWorker;
 import com.karatitza.project.CardProject;
 import com.karatitza.project.catalog.DecksCatalog;
 import com.karatitza.project.catalog.ImageFormat;
@@ -24,6 +25,7 @@ public class CardCatalogControlArea implements ActionListener {
     private final JButton buildPdfButton;
     private final JPanel selectConverterPanel;
     private final CatalogPreviewArea previewArea;
+    private final JProgressBar conversionProgress;
 
     private final CardProject cardProject;
 
@@ -38,6 +40,35 @@ public class CardCatalogControlArea implements ActionListener {
         trySetLatestProjectRoot(cardProject);
         this.selectConverterPanel = buildConverterSelectionPanel();
         this.previewArea = new CatalogPreviewArea();
+        this.conversionProgress = new JProgressBar(0, 100);
+        this.conversionProgress.setVisible(false);
+    }
+
+    public JPanel packToPanel() {
+        JPanel controlPanel = new JPanel();
+        controlPanel.setLayout(new GridLayout(4, 2, 10, 10));
+        controlPanel.setBorder(createCompoundBorder(
+                createEmptyBorder(10, 10, 10, 10), createTitledBorder("Project catalog control"))
+        );
+        controlPanel.add(selectProjectButton);
+        controlPanel.add(imageFormatJComboBox);
+        controlPanel.add(previewArea.packToPanel());
+        controlPanel.add(new JLabel());
+        controlPanel.add(buildPdfButton);
+        controlPanel.add(selectConverterPanel);
+        selectProjectButton.addActionListener(this);
+        buildPdfButton.addActionListener(e -> preparePdfWorker().execute());
+        controlPanel.add(conversionProgress);
+        return controlPanel;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        int selectedOption = projectChooser.showOpenDialog((Component) e.getSource());
+        if (selectedOption == JFileChooser.APPROVE_OPTION) {
+            DecksCatalog catalog = cardProject.selectCatalog(getSelectedProject(), getSelectedImageFormat());
+            previewArea.refresh(catalog);
+        }
     }
 
     private void trySetLatestProjectRoot(CardProject cardProject) {
@@ -66,30 +97,17 @@ public class CardCatalogControlArea implements ActionListener {
         return selectConverterPanel;
     }
 
-    public JPanel packToPanel() {
-        JPanel controlPanel = new JPanel();
-        controlPanel.setLayout(new GridLayout(3, 2, 10, 10));
-        controlPanel.setBorder(createCompoundBorder(
-                createEmptyBorder(10, 10, 10, 10), createTitledBorder("Project catalog control"))
-        );
-        controlPanel.add(selectProjectButton);
-        controlPanel.add(imageFormatJComboBox);
-        controlPanel.add(previewArea.packToPanel());
-        controlPanel.add(new JLabel());
-        controlPanel.add(buildPdfButton);
-        controlPanel.add(selectConverterPanel);
-        selectProjectButton.addActionListener(this);
-        buildPdfButton.addActionListener(e -> cardProject.snapshot().buildFinalPdf());
-        return controlPanel;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        int selectedOption = projectChooser.showOpenDialog((Component) e.getSource());
-        if (selectedOption == JFileChooser.APPROVE_OPTION) {
-            DecksCatalog catalog = cardProject.selectCatalog(getSelectedProject(), getSelectedImageFormat());
-            previewArea.refresh(catalog);
-        }
+    private PdfBuildWorker preparePdfWorker() {
+        PdfBuildWorker worker = new PdfBuildWorker(cardProject.snapshot());
+        worker.addPropertyChangeListener(
+                event -> {
+                    if ("progress".equals(event.getPropertyName())) {
+                        conversionProgress.setValue((Integer) event.getNewValue());
+                        LOG.info("Incoming progress: {}", event.getNewValue());
+                    }
+                });
+        conversionProgress.setVisible(true);
+        return worker;
     }
 
     private ImageFormat getSelectedImageFormat() {

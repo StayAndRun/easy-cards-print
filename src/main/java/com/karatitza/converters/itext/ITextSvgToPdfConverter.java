@@ -11,11 +11,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ITextSvgToPdfConverter implements ImageConverter {
 
     private final TempImageFactory tempImageFactory;
     private final List<Image> images = new ArrayList<>();
+    private Consumer<File> fileCreationListener = defaultFileListener();
 
     public ITextSvgToPdfConverter(TempImageFactory tempImageFactory) {
         this.tempImageFactory = tempImageFactory;
@@ -31,6 +33,7 @@ public class ITextSvgToPdfConverter implements ImageConverter {
 //          TODO exception details
             throw new RuntimeException(e);
         }
+        fileCreationListener.accept(targetImage.getLocation());
         return targetImage;
     }
 
@@ -45,6 +48,16 @@ public class ITextSvgToPdfConverter implements ImageConverter {
         return images.stream().map(this::convert).toList();
     }
 
+    @Override
+    public ImageFormat fileFormat() {
+        return ImageFormat.PDF;
+    }
+
+    @Override
+    public void listenFileCreation(Consumer<File> fileCreationListener) {
+        this.fileCreationListener = fileCreationListener;
+    }
+
     private void tryCreateFile(File location) {
         if (!location.getParentFile().exists()) {
             if (!location.getParentFile().mkdirs()) {
@@ -57,10 +70,5 @@ public class ITextSvgToPdfConverter implements ImageConverter {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public ImageFormat fileFormat() {
-        return ImageFormat.PDF;
     }
 }

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class DecksCatalog {
@@ -38,17 +39,51 @@ public class DecksCatalog {
     }
 
     public DecksCatalog convert(ImageConverter converter) {
+        return convert(converter, null);
+    }
+
+    public ImageFormat getImageFormat() {
+        return imageFormat;
+    }
+
+
+    public CatalogStatistic getCatalogStatistic() {
+        final int DEFAULT_BACK_COUNT = 1;
+        int totalCards = getDecks().stream().mapToInt(deck -> deck.getCards().size() + DEFAULT_BACK_COUNT).sum();
+        return new CatalogStatistic(totalCards);
+    }
+
+    public DecksCatalog convert(ImageConverter converter, Consumer<Integer> progressListener) {
         if (imageFormat != ImageFormat.SVG) {
             throw new UnsupportedOperationException("Unsupported format: " + imageFormat.getExtension());
         }
+        countConversionProgress(converter, progressListener);
         List<Deck> convertedDecks = decks.stream().map(deck -> deck.convert(converter)).collect(Collectors.toList());
         converter.convertBatch();
         LOG.info("Catalog conversion from {} to {} finished.", getImageFormat(), converter.fileFormat());
         return new DecksCatalog(convertedDecks, converter.fileFormat());
     }
 
-    public ImageFormat getImageFormat() {
-        return imageFormat;
+    private void countConversionProgress(ImageConverter converter, Consumer<Integer> progressListener) {
+        if (progressListener != null) {
+            final int total = getCatalogStatistic().getTotalImages();
+            converter.listenFileCreation(new Consumer<File>() {
+                private int current = 0;
+
+                @Override
+                public void accept(File file) {
+                    current++;
+                    int progressPercentage = Math.floorDiv(current * 100, total);
+                    progressListener.accept(progressPercentage);
+                }
+            });
+        }
+    }
+
+    private record CatalogStatistic(int totalImages) {
+        public int getTotalImages() {
+            return totalImages;
+        }
     }
 
     @Override

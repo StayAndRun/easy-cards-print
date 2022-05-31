@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static com.karatitza.Main.SOURCE_FILES_RELATE_PATH;
 import static com.karatitza.Main.TEMP_FILES_RELATE_PATH;
@@ -23,6 +24,7 @@ public class InkscapeSvgToPdfConverter implements ImageConverter {
 
     private final TempImageFactory imageFactory;
     private final List<Image> batchImages = new ArrayList<>();
+    private Consumer<File> fileCreationListener = defaultFileListener();
 
     public InkscapeSvgToPdfConverter(TempImageFactory imageFactory) {
         this.imageFactory = imageFactory;
@@ -98,43 +100,15 @@ public class InkscapeSvgToPdfConverter implements ImageConverter {
                 Image tempImage = imageFactory.create(sourceImage, fileFormat());
                 inkscapeShell.exportToPdfFile(sourceImage.getLocation(), tempImage.getLocation());
                 convertedImages.add(tempImage);
+                fileCreationListener.accept(tempImage.getLocation());
             }
         }
         return convertedImages;
     }
 
-    private static void executeShellActions(List<String> actions) throws IOException {
-        ProcessBuilder pb = new ProcessBuilder("inkscape", "--shell");
-        final Process process = pb.start();
-
-        try (PrintWriter output = new PrintWriter(process.getOutputStream(), true)) {
-            actions.forEach(output::println);
-            output.println("quit");
-        }
-        try (BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream(), "866"))) {
-            input.lines().forEach(LOG::info);
-        }
-        try (BufferedReader errors = new BufferedReader(new InputStreamReader(process.getErrorStream(), "866"))) {
-            errors.lines().forEach(LOG::warn);
-        }
-
-    }
-
-    private static void executeActionLine(List<String> actions) throws IOException {
-        ProcessBuilder pb = new ProcessBuilder("inkscape", "--shell");
-        final Process process = pb.start();
-
-        try (PrintWriter output = new PrintWriter(process.getOutputStream(), true)) {
-            actions.forEach(output::println);
-            output.println("quit");
-        }
-        try (BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream(), "866"))) {
-            input.lines().forEach(LOG::info);
-        }
-        try (BufferedReader errors = new BufferedReader(new InputStreamReader(process.getErrorStream(), "866"))) {
-            errors.lines().forEach(LOG::warn);
-        }
-
+    @Override
+    public void listenFileCreation(Consumer<File> fileCreationListener) {
+        this.fileCreationListener = fileCreationListener;
     }
 
     private String generateTargetPdfFileName(File back) {
@@ -145,4 +119,5 @@ public class InkscapeSvgToPdfConverter implements ImageConverter {
         return file.getParent().replace(SOURCE_FILES_RELATE_PATH, TEMP_FILES_RELATE_PATH)
                 + File.separator + Strings.split(file.getName(), '.')[0] + fileFormat().getExtension();
     }
+
 }

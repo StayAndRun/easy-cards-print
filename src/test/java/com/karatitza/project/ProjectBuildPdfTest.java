@@ -43,7 +43,7 @@ public class ProjectBuildPdfTest extends TempFilesTest {
         CardProject cardProject = new CardProject();
         cardProject.selectCatalog(new File(SVG_PROJECT_PATH), ImageFormat.SVG);
         cardProject.defineSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
-        cardProject.snapshot().buildFinalPdf();
+        cardProject.snapshot().buildFinalPdf(progress -> System.out.println("Progress percentage: " + progress));
         File actualFile = searchTempPdfFile("svg-project.pdf", SVG_PROJECT_PATH);
         assertPdfFilesEquals(EXPECTED_PROJECT_PDF, actualFile.getPath());
     }
@@ -54,7 +54,7 @@ public class ProjectBuildPdfTest extends TempFilesTest {
         cardProject.selectCatalog(new File(SVG_PROJECT_PATH), ImageFormat.SVG);
         cardProject.defineSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
         cardProject.selectConverterFactory(new ConversionFactory.InkscapeConversionFactory());
-        cardProject.snapshot().buildFinalPdf();
+        cardProject.snapshot().buildFinalPdf(progress -> System.out.println("Progress percentage: " + progress));
         File actualFile = searchTempPdfFile("svg-project.pdf", SVG_PROJECT_PATH);
         //TODO Check diff at text conversion
 //        assertPdfFilesEquals(EXPECTED_PROJECT_PDF, actualFile.getPath());
