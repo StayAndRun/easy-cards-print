@@ -6,14 +6,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.FileSystems;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
-import java.util.concurrent.TimeUnit;
-
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 public class InkscapeShell implements AutoCloseable {
     public static final Logger LOG = LoggerFactory.getLogger(InkscapeShell.class);
@@ -41,51 +33,17 @@ public class InkscapeShell implements AutoCloseable {
     }
 
     public void exportToPdfFile(File sourceFile, File targetFile) {
-        targetFile.getParentFile().mkdirs();
+        FileAcceptListener listener = new FileAcceptListener(targetFile);
         shellOutput.println("file-open:" + getCanonicalPath(sourceFile));
         shellOutput.println("export-filename:" + getCanonicalPath(targetFile));
         shellOutput.println("export-pdf-version:1.5");
         shellOutput.println("export-type:pdf");
         shellOutput.println("export-do");
         LOG.info("Export actions was enter for file {}", targetFile);
-        if (!acceptFileCreated(targetFile)) {
-            LOG.error("Timeout exceeded");
+        if (!listener.accept()) {
+            LOG.error("Accept Timeout exceeded for file: {}", targetFile);
         }
         shellOutput.println("file-close");
-    }
-
-    private boolean acceptFileCreated(File targetFile) {
-        try {
-            WatchService watchService = FileSystems.getDefault().newWatchService();
-            targetFile.toPath().getParent().register(watchService, ENTRY_CREATE, ENTRY_MODIFY);
-            WatchKey watchedKey;
-            boolean acceptFileCreated = false;
-            boolean acceptFileModified = false;
-            while ((watchedKey = watchService.poll(FILE_CREATION_WATCH_TIMEOUT_SECONDS, TimeUnit.SECONDS)) != null) {
-                for (WatchEvent<?> watchEvent : watchedKey.pollEvents()) {
-                    WatchEvent.Kind<?> actualEventKind = watchEvent.kind();
-                    LOG.info("File Event kind: {}", actualEventKind);
-                    LOG.info("File Event context: {}", watchEvent.context());
-                    if (ENTRY_CREATE.equals(actualEventKind)) {
-                        acceptFileCreated = true;
-                        if (watchEvent.count() > 1) LOG.warn("Multiple file creation {}", targetFile);
-                    }
-                    if (ENTRY_MODIFY.equals(actualEventKind)) {
-                        acceptFileModified = true;
-                        if (watchEvent.count() > 1) LOG.warn("Multiple file modify {}", targetFile);
-                    }
-                    if (acceptFileCreated && acceptFileModified) {
-                        return true;
-                    }
-                }
-                watchedKey.reset();
-            }
-            return false;
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to watch file: " + targetFile, e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException("File watch canceled: " + targetFile, e);
-        }
     }
 
     private Process enterToInkscapeShell() {
