@@ -3,25 +3,19 @@ package com.karatitza.gui.swing.areas;
 import com.karatitza.converters.ConversionFactory;
 import com.karatitza.gui.swing.worker.PdfBuildWorker;
 import com.karatitza.project.CardProject;
-import com.karatitza.project.catalog.DecksCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 
 import static javax.swing.BorderFactory.*;
 import static javax.swing.SwingWorker.StateValue.DONE;
 import static javax.swing.SwingWorker.StateValue.STARTED;
 
-public class CardCatalogControlArea implements ActionListener {
+public class CardCatalogControlArea {
     private static final Logger LOG = LoggerFactory.getLogger(CardCatalogControlArea.class);
 
-    private final JButton selectProjectButton;
-    private final JFileChooser projectChooser;
     private final JButton buildPdfButton;
     private final JPanel selectConverterPanel;
     private final CatalogPreviewArea previewArea;
@@ -32,10 +26,6 @@ public class CardCatalogControlArea implements ActionListener {
     public CardCatalogControlArea(CardProject cardProject) {
         this.cardProject = cardProject;
         this.buildPdfButton = new JButton("Build PDF");
-        this.selectProjectButton = new JButton("Select project");
-        this.projectChooser = new JFileChooser();
-        this.projectChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        trySetLatestProjectRoot(cardProject);
         this.selectConverterPanel = buildConverterSelectionPanel();
         this.previewArea = new CatalogPreviewArea();
         this.conversionProgress = new JProgressBar(0, 100);
@@ -48,32 +38,14 @@ public class CardCatalogControlArea implements ActionListener {
         controlPanel.setBorder(createCompoundBorder(
                 createEmptyBorder(10, 10, 10, 10), createTitledBorder("Project catalog control"))
         );
-        controlPanel.add(selectProjectButton);
+        previewArea.refresh(cardProject.getSelectedCatalog());
         controlPanel.add(previewArea.packToPanel());
         controlPanel.add(new JLabel());
         controlPanel.add(buildPdfButton);
         controlPanel.add(selectConverterPanel);
-        selectProjectButton.addActionListener(this);
         buildPdfButton.addActionListener(e -> preparePdfWorker().execute());
         controlPanel.add(conversionProgress);
         return controlPanel;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        int selectedOption = projectChooser.showOpenDialog((Component) e.getSource());
-        if (selectedOption == JFileChooser.APPROVE_OPTION) {
-            DecksCatalog catalog = cardProject.selectCatalog(getSelectedProject());
-            previewArea.refresh(catalog);
-        }
-    }
-
-    private void trySetLatestProjectRoot(CardProject cardProject) {
-        try {
-            this.projectChooser.setCurrentDirectory(cardProject.getProjectRoot());
-        } catch (IndexOutOfBoundsException exception) {
-            LOG.warn("Failed to set latest project root: ", exception);
-        }
     }
 
     private JPanel buildConverterSelectionPanel() {
@@ -114,9 +86,5 @@ public class CardCatalogControlArea implements ActionListener {
         });
         conversionProgress.setVisible(true);
         return worker;
-    }
-
-    private File getSelectedProject() {
-        return projectChooser.getSelectedFile();
     }
 }

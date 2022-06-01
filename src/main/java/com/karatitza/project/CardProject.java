@@ -24,7 +24,13 @@ public class CardProject {
     private DecksCatalog selectedCatalog = DecksCatalog.empty();
     private SpotsLayout spotsLayout = defaultSpotLayout();
     private ConversionFactory conversionFactory = defaultConversionFactory();
-    private File projectRoot = loadLatestRoot();
+    private File projectRoot = new File("");
+
+    public static CardProject fromConfiguration(CardProjectConfig config) {
+        CardProject cardProject = new CardProject();
+        cardProject.selectCatalog(config.getRoot());
+        return cardProject;
+    }
 
     public DecksCatalog getSelectedCatalog() {
         return selectedCatalog;
