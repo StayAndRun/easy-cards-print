@@ -15,6 +15,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 import static javax.swing.BorderFactory.*;
+import static javax.swing.SwingWorker.StateValue.DONE;
+import static javax.swing.SwingWorker.StateValue.STARTED;
 
 public class CardCatalogControlArea implements ActionListener {
     private static final Logger LOG = LoggerFactory.getLogger(CardCatalogControlArea.class);
@@ -99,13 +101,22 @@ public class CardCatalogControlArea implements ActionListener {
 
     private PdfBuildWorker preparePdfWorker() {
         PdfBuildWorker worker = new PdfBuildWorker(cardProject.snapshot());
-        worker.addPropertyChangeListener(
-                event -> {
-                    if ("progress".equals(event.getPropertyName())) {
-                        conversionProgress.setValue((Integer) event.getNewValue());
-                        LOG.info("Incoming progress: {}", event.getNewValue());
-                    }
-                });
+        worker.addPropertyChangeListener(event -> {
+            if ("progress".equals(event.getPropertyName())) {
+                conversionProgress.setValue((Integer) event.getNewValue());
+                LOG.info("Incoming progress: {}", event.getNewValue());
+            }
+        });
+        worker.addPropertyChangeListener(event -> {
+            if ("state".equals(event.getPropertyName()) && (DONE.equals(event.getNewValue()))) {
+                buildPdfButton.setEnabled(true);
+            }
+        });
+        worker.addPropertyChangeListener(event -> {
+            if ("state".equals(event.getPropertyName()) && (STARTED.equals(event.getNewValue()))) {
+                buildPdfButton.setEnabled(false);
+            }
+        });
         conversionProgress.setVisible(true);
         return worker;
     }
