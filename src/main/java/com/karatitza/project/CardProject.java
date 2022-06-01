@@ -11,7 +11,9 @@ import com.karatitza.project.layout.spots.SpotsLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -97,20 +99,4 @@ public class CardProject {
         return new SpotsLayout(CommonPageFormat.A4, SpotSize.millimeters(92, 59));
     }
 
-    private static File loadLatestRoot() {
-        File file = new File("./latest/conf.json");
-        Gson gson = new Gson();
-        try (FileReader fileReader = new FileReader(file)) {
-            LatestProjectConfiguration configuration = gson.fromJson(fileReader, LatestProjectConfiguration.class);
-            File latestRoot = new File(configuration.getProjectRoot());
-            LOG.info("Found latest root: {}", latestRoot);
-            return latestRoot;
-        } catch (FileNotFoundException e) {
-            LOG.info("Not found latest project config");
-            return new File("");
-        } catch (IOException e) {
-            LOG.warn("Failed to load latest project config");
-            return new File("");
-        }
-    }
 }

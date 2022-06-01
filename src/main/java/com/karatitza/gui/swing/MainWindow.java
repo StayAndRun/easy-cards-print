@@ -53,7 +53,7 @@ public class MainWindow extends JFrame {
         return open;
     }
 
-    public static class CardProjectWindow {
+    public static class CardProjectWindow extends JPanel{
 
         private final CardProject cardProject;
 
@@ -62,10 +62,8 @@ public class MainWindow extends JFrame {
         }
 
         public JPanel open() {
-
-            JPanel projectPanel = new JPanel();
-            projectPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-            projectPanel.setLayout(new GridLayout(1, 2));
+            setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            setLayout(new GridLayout(1, 2));
 
             SpotsLayoutPreviewArea spotsLayoutPreviewArea = new SpotsLayoutPreviewArea(cardProject);
             JPanel layoutPreviewPanel = spotsLayoutPreviewArea.packToPanel();
@@ -77,9 +75,9 @@ public class MainWindow extends JFrame {
             controlPanel.add(spotControlPanel);
             controlPanel.add(catalogControlPanel);
 
-            projectPanel.add(layoutPreviewPanel);
-            projectPanel.add(controlPanel);
-            return projectPanel;
+            add(layoutPreviewPanel);
+            add(controlPanel);
+            return this;
         }
     }
 
