@@ -4,7 +4,6 @@ import com.karatitza.converters.ConversionFactory;
 import com.karatitza.gui.swing.worker.PdfBuildWorker;
 import com.karatitza.project.CardProject;
 import com.karatitza.project.catalog.DecksCatalog;
-import com.karatitza.project.catalog.ImageFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +20,6 @@ import static javax.swing.SwingWorker.StateValue.STARTED;
 public class CardCatalogControlArea implements ActionListener {
     private static final Logger LOG = LoggerFactory.getLogger(CardCatalogControlArea.class);
 
-    private final JComboBox<ImageFormat> imageFormatJComboBox;
     private final JButton selectProjectButton;
     private final JFileChooser projectChooser;
     private final JButton buildPdfButton;
@@ -33,8 +31,6 @@ public class CardCatalogControlArea implements ActionListener {
 
     public CardCatalogControlArea(CardProject cardProject) {
         this.cardProject = cardProject;
-        ImageFormat[] model = {ImageFormat.PDF, ImageFormat.SVG};
-        this.imageFormatJComboBox = new JComboBox<>(model);
         this.buildPdfButton = new JButton("Build PDF");
         this.selectProjectButton = new JButton("Select project");
         this.projectChooser = new JFileChooser();
@@ -53,7 +49,6 @@ public class CardCatalogControlArea implements ActionListener {
                 createEmptyBorder(10, 10, 10, 10), createTitledBorder("Project catalog control"))
         );
         controlPanel.add(selectProjectButton);
-        controlPanel.add(imageFormatJComboBox);
         controlPanel.add(previewArea.packToPanel());
         controlPanel.add(new JLabel());
         controlPanel.add(buildPdfButton);
@@ -68,7 +63,7 @@ public class CardCatalogControlArea implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         int selectedOption = projectChooser.showOpenDialog((Component) e.getSource());
         if (selectedOption == JFileChooser.APPROVE_OPTION) {
-            DecksCatalog catalog = cardProject.selectCatalog(getSelectedProject(), getSelectedImageFormat());
+            DecksCatalog catalog = cardProject.selectCatalog(getSelectedProject());
             previewArea.refresh(catalog);
         }
     }
@@ -119,10 +114,6 @@ public class CardCatalogControlArea implements ActionListener {
         });
         conversionProgress.setVisible(true);
         return worker;
-    }
-
-    private ImageFormat getSelectedImageFormat() {
-        return (ImageFormat) imageFormatJComboBox.getSelectedItem();
     }
 
     private File getSelectedProject() {

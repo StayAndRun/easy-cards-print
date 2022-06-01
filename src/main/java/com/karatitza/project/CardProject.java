@@ -3,7 +3,6 @@ package com.karatitza.project;
 import com.google.gson.Gson;
 import com.karatitza.converters.ConversionFactory;
 import com.karatitza.project.catalog.DecksCatalog;
-import com.karatitza.project.catalog.ImageFormat;
 import com.karatitza.project.compose.SpotsPreview;
 import com.karatitza.project.layout.CommonPageFormat;
 import com.karatitza.project.layout.PageFormat;
@@ -14,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
@@ -22,7 +21,7 @@ public class CardProject {
     public static final Logger LOG = LoggerFactory.getLogger(CardProject.class);
     public static final String DECKS_DIR_NAME = "decks";
 
-    private DecksCatalog selectedCatalog = defaultEmptyCatalog();
+    private DecksCatalog selectedCatalog = DecksCatalog.empty();
     private SpotsLayout spotsLayout = defaultSpotLayout();
     private ConversionFactory conversionFactory = defaultConversionFactory();
     private File projectRoot = loadLatestRoot();
@@ -35,9 +34,9 @@ public class CardProject {
         return projectRoot;
     }
 
-    public DecksCatalog selectCatalog(File projectRoot, ImageFormat format) {
+    public DecksCatalog selectCatalog(File projectRoot) {
         this.projectRoot = projectRoot;
-        this.selectedCatalog = new DecksCatalog(selectDecksDir(projectRoot));
+        this.selectedCatalog = selectDecksDir(projectRoot).map(DecksCatalog::new).orElse(DecksCatalog.empty());
         LOG.info("Selected Catalog: " + selectedCatalog);
         saveLatestProjectConfiguration(projectRoot);
         return selectedCatalog;
@@ -67,10 +66,9 @@ public class CardProject {
         }
     }
 
-    private File selectDecksDir(File projectRootDir) {
+    private Optional<File> selectDecksDir(File projectRootDir) {
         return Arrays.stream(requireNonNull(projectRootDir.listFiles((dir, name) -> DECKS_DIR_NAME.equals(name))))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Not found source dir at project: " + projectRootDir.getName()));
+                .findFirst();
     }
 
     private static void saveLatestProjectConfiguration(File projectRoot) {
@@ -91,10 +89,6 @@ public class CardProject {
 
     private static SpotsLayout defaultSpotLayout() {
         return new SpotsLayout(CommonPageFormat.A4, SpotSize.millimeters(92, 59));
-    }
-
-    private static DecksCatalog defaultEmptyCatalog() {
-        return new DecksCatalog(Collections.emptyList());
     }
 
     private static File loadLatestRoot() {

@@ -2,7 +2,6 @@ package com.karatitza.project;
 
 import com.itextpdf.kernel.utils.CompareTool;
 import com.karatitza.converters.ConversionFactory;
-import com.karatitza.project.catalog.ImageFormat;
 import com.karatitza.project.catalog.TempFilesTest;
 import com.karatitza.project.layout.CommonPageFormat;
 import com.karatitza.project.layout.spots.SpotSize;
@@ -31,7 +30,7 @@ public class ProjectBuildPdfTest extends TempFilesTest {
     @Test
     void acceptBuildFromPdfCatalog() {
         CardProject cardProject = new CardProject();
-        cardProject.selectCatalog(new File(PDF_PROJECT_PATH), ImageFormat.PDF);
+        cardProject.selectCatalog(new File(PDF_PROJECT_PATH));
         cardProject.defineSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
         cardProject.snapshot().buildFinalPdf();
         File actualFile = searchTempPdfFile("pdf-project.pdf", PDF_PROJECT_PATH);
@@ -41,7 +40,7 @@ public class ProjectBuildPdfTest extends TempFilesTest {
     @Test
     void acceptBuildFromSvgCatalog() {
         CardProject cardProject = new CardProject();
-        cardProject.selectCatalog(new File(SVG_PROJECT_PATH), ImageFormat.SVG);
+        cardProject.selectCatalog(new File(SVG_PROJECT_PATH));
         cardProject.defineSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
         cardProject.snapshot().buildFinalPdf(progress -> System.out.println("Progress percentage: " + progress));
         File actualFile = searchTempPdfFile("svg-project.pdf", SVG_PROJECT_PATH);
@@ -51,7 +50,7 @@ public class ProjectBuildPdfTest extends TempFilesTest {
     @Test
     void acceptBuildFromSvgCatalogWithInkscapeConversion() {
         CardProject cardProject = new CardProject();
-        cardProject.selectCatalog(new File(SVG_PROJECT_PATH), ImageFormat.SVG);
+        cardProject.selectCatalog(new File(SVG_PROJECT_PATH));
         cardProject.defineSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
         cardProject.selectConverterFactory(new ConversionFactory.InkscapeConversionFactory());
         cardProject.snapshot().buildFinalPdf(progress -> System.out.println("Progress percentage: " + progress));

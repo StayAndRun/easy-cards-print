@@ -28,6 +28,10 @@ public class DecksCatalog {
         this.decks = decks;
     }
 
+    public static DecksCatalog empty() {
+        return new DecksCatalog(Collections.emptyList());
+    }
+
     public List<Deck> getDecks() {
         return decks;
     }
