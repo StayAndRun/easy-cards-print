@@ -2,9 +2,8 @@ package com.karatitza.project;
 
 import com.karatitza.converters.ConversionFactory;
 import com.karatitza.converters.ImageConverter;
-import com.karatitza.converters.TempImageFactory;
+import com.karatitza.converters.TempFileProvider;
 import com.karatitza.project.catalog.DecksCatalog;
-import com.karatitza.project.catalog.ImageFormat;
 import com.karatitza.project.compose.PdfDocumentComposer;
 import com.karatitza.project.layout.DocumentLayout;
 import com.karatitza.project.layout.LayoutComposer;
@@ -23,7 +22,7 @@ public class CardProjectSnapshot {
         this.projectRoot = projectRoot;
         this.spots = spots;
         this.catalog = catalog;
-        converter = conversionFactory.create(new TempImageFactory(projectRoot));
+        converter = conversionFactory.create(new TempFileProvider(projectRoot));
     }
 
     public File buildFinalPdf() {
@@ -41,18 +40,10 @@ public class CardProjectSnapshot {
     }
 
     private DecksCatalog prepareCatalog() {
-        DecksCatalog currentCatalog = catalog;
-        if (currentCatalog.getImageFormat() != ImageFormat.PDF) {
-            currentCatalog = catalog.convert(converter);
-        }
-        return currentCatalog;
+        return catalog.convert(converter);
     }
 
     private DecksCatalog prepareCatalog(Consumer<Integer> progressConsumer) {
-        DecksCatalog currentCatalog = catalog;
-        if (currentCatalog.getImageFormat() != ImageFormat.PDF) {
-            currentCatalog = catalog.convert(converter, progressConsumer);
-        }
-        return currentCatalog;
+        return catalog.convert(converter, progressConsumer);
     }
 }

@@ -1,6 +1,6 @@
 package com.karatitza.project.catalog;
 
-import com.karatitza.converters.TempImageFactory;
+import com.karatitza.converters.TempFileProvider;
 import com.karatitza.converters.inkscape.InkscapeSvgToPdfConverter;
 import com.karatitza.converters.itext.ITextSvgToPdfConverter;
 import org.junit.jupiter.api.Assertions;
@@ -20,24 +20,24 @@ class CatalogConversionTest extends TempFilesTest {
 
     @Test
     void acceptSourceToPdfConversion() {
-        DecksCatalog sourceCatalog = new DecksCatalog(new File(TEST_SOURCE_PATH), ImageFormat.SVG);
+        DecksCatalog sourceCatalog = new DecksCatalog(new File(TEST_SOURCE_PATH));
         sourceCatalog.convert(
-                new ITextSvgToPdfConverter(new TempImageFactory(new File(TEST_PROJECT_PATH)))
+                new ITextSvgToPdfConverter(new TempFileProvider(new File(TEST_PROJECT_PATH)))
         );
         assertCreatedFilesCreated(TEST_TEMP_PATH);
     }
 
     @Test
     void acceptInkscapeConversion() {
-        DecksCatalog sourceCatalog = new DecksCatalog(new File(TEST_SOURCE_PATH), ImageFormat.SVG);
+        DecksCatalog sourceCatalog = new DecksCatalog(new File(TEST_SOURCE_PATH));
         sourceCatalog.convert(
-                new InkscapeSvgToPdfConverter(new TempImageFactory(new File(TEST_PROJECT_PATH)))
+                new InkscapeSvgToPdfConverter(new TempFileProvider(new File(TEST_PROJECT_PATH)))
         );
         assertCreatedFilesCreated(TEST_TEMP_PATH);
     }
 
     private void assertCreatedFilesCreated(String path) {
-        DecksCatalog targetCatalog = new DecksCatalog(new File(path), ImageFormat.PDF);
+        DecksCatalog targetCatalog = new DecksCatalog(new File(path));
         List<Deck> decks = targetCatalog.getDecks();
         Assertions.assertEquals(5, decks.size());
 

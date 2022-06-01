@@ -10,20 +10,17 @@ public class Deck {
     public static final String BACKS_DIR_NAME = "backs";
 
     private final File root;
-    private final ImageFormat imageFormat;
     private final List<Image> cardsFiles;
     private final List<Image> backsFiles;
 
-    public Deck(File root, ImageFormat format) {
+    public Deck(File root) {
         this.root = root;
-        this.imageFormat = format;
         this.cardsFiles = searchImages(root);
         this.backsFiles = searchBacksDir(root).map(this::searchImages).orElseGet(Collections::emptyList);
     }
 
-    private Deck(File root, ImageFormat imageFormat, List<Image> cardsFiles, List<Image> backsFiles) {
+    private Deck(File root, List<Image> cardsFiles, List<Image> backsFiles) {
         this.root = root;
-        this.imageFormat = imageFormat;
         this.cardsFiles = cardsFiles;
         this.backsFiles = backsFiles;
     }
@@ -49,7 +46,7 @@ public class Deck {
     public Deck convert(ImageConverter converter) {
         List<Image> convertedCards = cardsFiles.stream().map(converter::addToBatch).collect(Collectors.toList());
         List<Image> convertedBacks = backsFiles.stream().map(converter::addToBatch).collect(Collectors.toList());
-        return new Deck(root, converter.fileFormat(), convertedCards, convertedBacks);
+        return new Deck(root, convertedCards, convertedBacks);
     }
 
     public DeckStatistic getDeckStatistic() {
@@ -57,9 +54,9 @@ public class Deck {
     }
 
     private List<Image> searchImages(File imagesDir) {
-        return Arrays.stream(
-                imagesDir.listFiles((dir, name) -> name.endsWith(imageFormat.getExtension()))
-        ).map(file -> new Image(file, this.root, imageFormat)).collect(Collectors.toList());
+        return Arrays.stream(imagesDir.listFiles())
+                .filter(File::isFile)
+                .flatMap(file -> Image.fromFile(file, this.root).stream()).collect(Collectors.toList());
     }
 
     private Optional<File> searchBacksDir(File root) {
@@ -79,10 +76,20 @@ public class Deck {
     public class DeckStatistic {
         private final int totalImages;
         private final int totalCards;
+        private final EnumMap<ImageFormat, Integer> imageFormatsStats = new EnumMap<>(ImageFormat.class);
 
         public DeckStatistic() {
+            for (ImageFormat format : ImageFormat.values()) {
+                long cardImagesCount = cardsFiles.stream().filter(image -> image.getFormat() == format).count();
+                long backImagesCount = backsFiles.stream().filter(image -> image.getFormat() == format).count();
+                imageFormatsStats.put(format, Math.toIntExact(cardImagesCount + backImagesCount));
+            }
             totalImages = cardsFiles.size() + backsFiles.size();
             totalCards = cardsFiles.size();
+        }
+
+        public int countImagesByFormat(ImageFormat format) {
+            return imageFormatsStats.get(format);
         }
 
         public int getTotalImages() {

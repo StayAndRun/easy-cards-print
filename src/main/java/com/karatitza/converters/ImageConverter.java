@@ -16,7 +16,9 @@ public interface ImageConverter {
 
     List<Image> convertBatch();
 
-    ImageFormat fileFormat();
+    ImageFormat outputFormat();
+
+    ImageFormat inputFormat();
 
     void listenFileCreation(Consumer<File> fileCreationListener);
 

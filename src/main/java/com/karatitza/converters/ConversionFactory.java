@@ -5,21 +5,21 @@ import com.karatitza.converters.itext.ITextSvgToPdfConverter;
 
 public interface ConversionFactory {
 
-    ImageConverter create(TempImageFactory tempImageFactory);
+    ImageConverter create(TempFileProvider tempFileProvider);
 
     class InkscapeConversionFactory implements ConversionFactory {
 
         @Override
-        public ImageConverter create(TempImageFactory tempImageFactory) {
-            return new InkscapeSvgToPdfConverter(tempImageFactory);
+        public ImageConverter create(TempFileProvider tempFileProvider) {
+            return new InkscapeSvgToPdfConverter(tempFileProvider);
         }
     }
 
     class ITextConversionFactory implements ConversionFactory {
 
         @Override
-        public ImageConverter create(TempImageFactory tempImageFactory) {
-            return new ITextSvgToPdfConverter(tempImageFactory);
+        public ImageConverter create(TempFileProvider tempFileProvider) {
+            return new ITextSvgToPdfConverter(tempFileProvider);
         }
     }
 }

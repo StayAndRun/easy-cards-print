@@ -1,7 +1,7 @@
 package com.karatitza.converters.inkscape;
 
 import com.karatitza.converters.ImageConverter;
-import com.karatitza.converters.TempImageFactory;
+import com.karatitza.converters.TempFileProvider;
 import com.karatitza.converters.inkscape.console.InkscapeCommandBuilder;
 import com.karatitza.project.catalog.Image;
 import com.karatitza.project.catalog.ImageFormat;
@@ -20,17 +20,17 @@ import static com.karatitza.Main.TEMP_FILES_RELATE_PATH;
 public class InkscapeSvgToPlainSvgConverter implements ImageConverter {
     public static final Logger LOG = LoggerFactory.getLogger(InkscapeSvgToPlainSvgConverter.class);
 
-    private final TempImageFactory imageFactory;
+    private final TempFileProvider imageFactory;
     private final List<Image> images = new ArrayList<>();
     private Consumer<File> fileCreationListener = defaultFileListener();
 
-    public InkscapeSvgToPlainSvgConverter(TempImageFactory imageFactory) {
+    public InkscapeSvgToPlainSvgConverter(TempFileProvider imageFactory) {
         this.imageFactory = imageFactory;
     }
 
     @Override
     public Image convert(Image sourceImage) {
-        Image targetImage = imageFactory.create(sourceImage, fileFormat());
+        Image targetImage = imageFactory.create(sourceImage, outputFormat());
         File convertedImagePath = convertToPlainSvg(
                 sourceImage.getLocation().getAbsolutePath(), targetImage.getLocation().getAbsolutePath()
         );
@@ -40,8 +40,12 @@ public class InkscapeSvgToPlainSvgConverter implements ImageConverter {
 
     @Override
     public Image addToBatch(Image sourceImage) {
+        if (sourceImage.getFormat() != inputFormat()) {
+            LOG.warn("Not supported input format {}, conversion skipped", sourceImage.getName());
+            return sourceImage;
+        }
         images.add(sourceImage);
-        return imageFactory.create(sourceImage, fileFormat());
+        return imageFactory.create(sourceImage, outputFormat());
     }
 
     @Override
@@ -50,7 +54,12 @@ public class InkscapeSvgToPlainSvgConverter implements ImageConverter {
     }
 
     @Override
-    public ImageFormat fileFormat() {
+    public ImageFormat inputFormat() {
+        return ImageFormat.SVG;
+    }
+
+    @Override
+    public ImageFormat outputFormat() {
         return ImageFormat.SVG;
     }
 
@@ -87,12 +96,12 @@ public class InkscapeSvgToPlainSvgConverter implements ImageConverter {
     }
 
     private String generateTargetPdfFileName(File back) {
-        return back.getParent() + File.separator + Strings.split(back.getName(), '.')[0] + fileFormat().getExtension();
+        return back.getParent() + File.separator + Strings.split(back.getName(), '.')[0] + outputFormat().getExtension();
     }
 
     private String buildTempFileName(File file) {
         return file.getParent().replace(SOURCE_FILES_RELATE_PATH, TEMP_FILES_RELATE_PATH)
-                + File.separator + Strings.split(file.getName(), '.')[0] + fileFormat().getExtension();
+                + File.separator + Strings.split(file.getName(), '.')[0] + outputFormat().getExtension();
     }
 
 }

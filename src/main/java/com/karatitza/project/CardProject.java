@@ -37,7 +37,7 @@ public class CardProject {
 
     public DecksCatalog selectCatalog(File projectRoot, ImageFormat format) {
         this.projectRoot = projectRoot;
-        this.selectedCatalog = new DecksCatalog(selectDecksDir(projectRoot), format);
+        this.selectedCatalog = new DecksCatalog(selectDecksDir(projectRoot));
         LOG.info("Selected Catalog: " + selectedCatalog);
         saveLatestProjectConfiguration(projectRoot);
         return selectedCatalog;
@@ -94,7 +94,7 @@ public class CardProject {
     }
 
     private static DecksCatalog defaultEmptyCatalog() {
-        return new DecksCatalog(Collections.emptyList(), ImageFormat.PDF);
+        return new DecksCatalog(Collections.emptyList());
     }
 
     private static File loadLatestRoot() {

@@ -2,7 +2,6 @@ package com.karatitza.project.layout;
 
 import com.itextpdf.kernel.utils.CompareTool;
 import com.karatitza.project.catalog.DecksCatalog;
-import com.karatitza.project.catalog.ImageFormat;
 import com.karatitza.project.catalog.TempFilesTest;
 import com.karatitza.project.compose.PdfPagesComposer;
 import com.karatitza.project.compose.PdfPagesComposerByIText;
@@ -36,7 +35,7 @@ public class DocumentLayoutTest extends TempFilesTest {
     @Test
     void acceptPdfPagesCompileWithSpot91x59() throws IOException, InterruptedException {
         LayoutComposer composer = createComposer(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
-        DecksCatalog pdfCatalog = new DecksCatalog(new File(PDF_CATALOG_PATH), ImageFormat.PDF);
+        DecksCatalog pdfCatalog = new DecksCatalog(new File(PDF_CATALOG_PATH));
         DocumentLayout pages = composer.compose(pdfCatalog);
         PdfPagesComposer pdfPagesComposer = createPdfPagesLayout();
         pdfPagesComposer.composeByLayout(pages);
@@ -51,7 +50,7 @@ public class DocumentLayoutTest extends TempFilesTest {
     @Test
     void acceptPdfPagesCompileWithSpot100x80() throws IOException, InterruptedException {
         LayoutComposer composer = createComposer(CommonPageFormat.A4, SpotSize.millimeters(100, 80));
-        DecksCatalog pdfCatalog = new DecksCatalog(new File(PDF_CATALOG_PATH), ImageFormat.PDF);
+        DecksCatalog pdfCatalog = new DecksCatalog(new File(PDF_CATALOG_PATH));
         DocumentLayout pages = composer.compose(pdfCatalog);
         PdfPagesComposer pdfPagesComposer = createPdfPagesLayout();
         pdfPagesComposer.composeByLayout(pages);

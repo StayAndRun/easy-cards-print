@@ -3,9 +3,11 @@ package com.karatitza.converters.itext;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.svg.converter.SvgConverter;
 import com.karatitza.converters.ImageConverter;
-import com.karatitza.converters.TempImageFactory;
+import com.karatitza.converters.TempFileProvider;
 import com.karatitza.project.catalog.Image;
 import com.karatitza.project.catalog.ImageFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,18 +16,19 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class ITextSvgToPdfConverter implements ImageConverter {
+    public static final Logger LOG = LoggerFactory.getLogger(ITextSvgToPdfConverter.class);
 
-    private final TempImageFactory tempImageFactory;
+    private final TempFileProvider tempFileProvider;
     private final List<Image> images = new ArrayList<>();
     private Consumer<File> fileCreationListener = defaultFileListener();
 
-    public ITextSvgToPdfConverter(TempImageFactory tempImageFactory) {
-        this.tempImageFactory = tempImageFactory;
+    public ITextSvgToPdfConverter(TempFileProvider tempFileProvider) {
+        this.tempFileProvider = tempFileProvider;
     }
 
     @Override
     public Image convert(Image sourceImage) {
-        Image targetImage = tempImageFactory.create(sourceImage, fileFormat());
+        Image targetImage = tempFileProvider.create(sourceImage, outputFormat());
         tryCreateFile(targetImage.getLocation());
         try {
             SvgConverter.createPdf(sourceImage.getLocation(), targetImage.getLocation());
@@ -39,8 +42,12 @@ public class ITextSvgToPdfConverter implements ImageConverter {
 
     @Override
     public Image addToBatch(Image sourceImage) {
+        if (sourceImage.getFormat() != inputFormat()) {
+            LOG.warn("Not supported input format {}, conversion skipped", sourceImage.getName());
+            return sourceImage;
+        }
         images.add(sourceImage);
-        return tempImageFactory.create(sourceImage, fileFormat());
+        return tempFileProvider.create(sourceImage, outputFormat());
     }
 
     @Override
@@ -49,7 +56,12 @@ public class ITextSvgToPdfConverter implements ImageConverter {
     }
 
     @Override
-    public ImageFormat fileFormat() {
+    public ImageFormat inputFormat() {
+        return ImageFormat.SVG;
+    }
+
+    @Override
+    public ImageFormat outputFormat() {
         return ImageFormat.PDF;
     }
 

@@ -8,11 +8,11 @@ import java.io.IOException;
 
 import static java.text.MessageFormat.format;
 
-public class TempImageFactory {
+public class TempFileProvider {
 
     private final File projectRoot;
 
-    public TempImageFactory(File projectRoot) {
+    public TempFileProvider(File projectRoot) {
         this.projectRoot = projectRoot;
     }
 
@@ -24,7 +24,8 @@ public class TempImageFactory {
         String newCatalogRelatePath = format("{0}print{0}temp{0}{1}{0}", File.separator, targetFormat);
         String targetImagePath = projectRoot.getPath() + newCatalogRelatePath + targetImageRelatePath;
         String targetDeckPath = projectRoot.getPath() + newCatalogRelatePath + sourceImage.getDeckLocation().getName();
-        return new Image(new File(targetImagePath), new File(targetDeckPath), targetFormat);
+        return Image.fromFile(new File(targetImagePath), new File(targetDeckPath)).orElseThrow(
+                () -> new UnsupportedOperationException("Unsupported image format: "  + targetFormat.getExtension()));
     }
 
     public File createConversionLogDir() {

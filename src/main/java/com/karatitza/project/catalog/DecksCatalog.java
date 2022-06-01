@@ -5,10 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -16,22 +13,19 @@ public class DecksCatalog {
     public static final Logger LOG = LoggerFactory.getLogger(DecksCatalog.class);
 
     private final List<Deck> decks;
-    private final ImageFormat imageFormat;
 
-    public DecksCatalog(File rootDir, ImageFormat imageFormat) {
-        this.imageFormat = imageFormat;
+    public DecksCatalog(File rootDir) {
         List<File> decksRoots = Arrays.asList(
                 Objects.requireNonNull(rootDir.listFiles(File::isDirectory), "Not found decks at dir: " + rootDir)
         );
         this.decks = new ArrayList<>(decksRoots.size());
         for (File deckRoot : decksRoots) {
-            decks.add(new Deck(deckRoot, imageFormat));
+            decks.add(new Deck(deckRoot));
         }
     }
 
-    public DecksCatalog(List<Deck> decks, ImageFormat imageFormat) {
+    public DecksCatalog(List<Deck> decks) {
         this.decks = decks;
-        this.imageFormat = imageFormat;
     }
 
     public List<Deck> getDecks() {
@@ -42,31 +36,23 @@ public class DecksCatalog {
         return convert(converter, null);
     }
 
-    public ImageFormat getImageFormat() {
-        return imageFormat;
-    }
-
-
     public CatalogStatistic getCatalogStatistic() {
         return new CatalogStatistic();
     }
 
     public DecksCatalog convert(ImageConverter converter, Consumer<Integer> progressListener) {
-        if (imageFormat != ImageFormat.SVG) {
-            throw new UnsupportedOperationException("Unsupported format: " + imageFormat.getExtension());
-        }
         countConversionProgress(converter, progressListener);
         List<Deck> convertedDecks = decks.stream().map(deck -> deck.convert(converter)).collect(Collectors.toList());
         converter.convertBatch();
-        LOG.info("Catalog conversion from {} to {} finished.", getImageFormat(), converter.fileFormat());
-        return new DecksCatalog(convertedDecks, converter.fileFormat());
+        LOG.info("Catalog conversion from {} to {} finished.", converter.outputFormat(), converter.outputFormat());
+        return new DecksCatalog(convertedDecks);
     }
 
     private void countConversionProgress(ImageConverter converter, Consumer<Integer> progressListener) {
         if (progressListener != null) {
-            final int total = getCatalogStatistic().getTotalImages();
             converter.listenFileCreation(new Consumer<File>() {
                 private int current = 0;
+                private final int total = getCatalogStatistic().getTotalImages();
 
                 @Override
                 public void accept(File file) {
@@ -80,16 +66,30 @@ public class DecksCatalog {
 
     public class CatalogStatistic {
         private final int totalImages;
+        private final EnumMap<ImageFormat, Integer> imageFormatsStats = new EnumMap<>(ImageFormat.class);
 
         private CatalogStatistic() {
             this.totalImages = getDecks().stream().mapToInt(deck -> deck.getDeckStatistic().getTotalImages()).sum();
+            for (Deck deck : getDecks()) {
+                //TODO merge maps more conveniently
+                Deck.DeckStatistic deckStatistic = deck.getDeckStatistic();
+                for (ImageFormat format : ImageFormat.values()) {
+                    if (imageFormatsStats.containsKey(format)) {
+                        int count = imageFormatsStats.get(format) + deckStatistic.countImagesByFormat(format);
+                        imageFormatsStats.put(format, count);
+                    } else {
+                        imageFormatsStats.put(format, deckStatistic.countImagesByFormat(format));
+                    }
+                }
+            }
+
+        }
+
+        public int countImagesByFormat(ImageFormat format) {
+            return imageFormatsStats.get(format);
         }
 
         public int getTotalImages() {
-            return totalImages;
-        }
-
-        public int totalImages() {
             return totalImages;
         }
     }
@@ -98,7 +98,6 @@ public class DecksCatalog {
     public String toString() {
         return "DecksCatalog{" +
                 "decks=" + decks +
-                ", imageFormat=" + imageFormat +
                 '}';
     }
 }
