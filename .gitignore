@@ -21,8 +21,10 @@ target/
 
 ### VS Code ###
 .vscode/
-/src/test/resources/svg-project/print/temp/
-/src/test/resources/pdf-doc-build/print/
+/src/test/resources/svg-project/print/
+/src/test/resources/pdf-project/print/
 /src/test/resources/multi-project/print/
+/src/test/resources/pdf-doc-build/print/
 /src/test/resources/conversion/temp/
 /src/test/resources/svg-project/config.json
+/src/test/resources/pdf-project/config.json

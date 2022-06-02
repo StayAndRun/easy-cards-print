@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
 import java.io.File;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,24 +18,41 @@ class CatalogConversionTest extends TempFilesTest {
 
     public static final String TEST_PROJECT_PATH = "./src/test/resources/svg-project";
     public static final String TEST_SOURCE_PATH = "./src/test/resources/svg-project/decks";
+    public static final String TEST_MULTI_CATALOG_PATH = "./src/test/resources/multi-project/decks";
+    public static final String TEST_MULTI_PROJECT_PATH = "./src/test/resources/multi-project";
+    public static final String TEST_MULTI_PROJECT_TEMP_PATH = "./src/test/resources/multi-project/print/temp/PDF";
     public static final String TEST_TEMP_PATH = "./src/test/resources/svg-project/print/temp/PDF";
 
     @Test
     void acceptSourceToPdfConversion() {
         DecksCatalog sourceCatalog = new DecksCatalog(new File(TEST_SOURCE_PATH));
-        sourceCatalog.convert(
-                new ITextSvgToPdfConverter(new TempFileProvider(new File(TEST_PROJECT_PATH)))
-        );
+        ITextSvgToPdfConverter converter = new ITextSvgToPdfConverter(new TempFileProvider(new File(TEST_PROJECT_PATH)));
+        Deque<Integer> conversionProgressSteps = new ArrayDeque<>();
+        sourceCatalog.convert(converter, conversionProgressSteps::add);
+        Assertions.assertEquals(100, conversionProgressSteps.getLast());
         assertCreatedFilesCreated(TEST_TEMP_PATH);
     }
 
     @Test
     void acceptInkscapeConversion() {
         DecksCatalog sourceCatalog = new DecksCatalog(new File(TEST_SOURCE_PATH));
+        InkscapeSvgToPdfConverter converter = new InkscapeSvgToPdfConverter(new TempFileProvider(new File(TEST_PROJECT_PATH)));
+        Deque<Integer> conversionProgressSteps = new ArrayDeque<>();
         sourceCatalog.convert(
-                new InkscapeSvgToPdfConverter(new TempFileProvider(new File(TEST_PROJECT_PATH)))
+                converter, conversionProgressSteps::add
         );
+        Assertions.assertEquals(100, conversionProgressSteps.getLast());
         assertCreatedFilesCreated(TEST_TEMP_PATH);
+    }
+
+    @Test
+    void acceptMultiCatalogConversion() {
+        DecksCatalog sourceCatalog = new DecksCatalog(new File(TEST_MULTI_CATALOG_PATH));
+        ITextSvgToPdfConverter converter = new ITextSvgToPdfConverter(new TempFileProvider(new File(TEST_MULTI_PROJECT_PATH)));
+        Deque<Integer> conversionProgressSteps = new ArrayDeque<>();
+        sourceCatalog.convert(converter, conversionProgressSteps::add);
+        Assertions.assertEquals(100, conversionProgressSteps.getLast());
+        assertCreatedFilesCreated(TEST_MULTI_PROJECT_TEMP_PATH);
     }
 
     private void assertCreatedFilesCreated(String path) {
@@ -83,6 +102,7 @@ class CatalogConversionTest extends TempFilesTest {
     @BeforeEach
     void setUp() {
         cleanupProjectTempFiles(TEST_PROJECT_PATH);
+        cleanupProjectTempFiles(TEST_MULTI_CATALOG_PATH);
     }
 
     private Deck searchDeckByName(List<Deck> decks, String name) {

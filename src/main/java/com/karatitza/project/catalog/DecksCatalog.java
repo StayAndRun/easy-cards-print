@@ -56,8 +56,7 @@ public class DecksCatalog {
         if (progressListener != null) {
             converter.listenFileCreation(new Consumer<File>() {
                 private int current = 0;
-                private final int total = getCatalogStatistic().getTotalImages();
-
+                private final int total = getCatalogStatistic().countImagesByFormat(converter.inputFormat());
                 @Override
                 public void accept(File file) {
                     current++;
