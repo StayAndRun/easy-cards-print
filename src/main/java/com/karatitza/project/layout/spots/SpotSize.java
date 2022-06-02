@@ -52,4 +52,13 @@ public class SpotSize {
     public float getSpace() {
         return space;
     }
+
+    @Override
+    public String toString() {
+        return "SpotSize{" +
+                "high=" + MeasureUtils.pointsToMillimeters(high) +
+                ", width=" + MeasureUtils.pointsToMillimeters(width) +
+                ", space=" + MeasureUtils.pointsToMillimeters(space) +
+                '}';
+    }
 }

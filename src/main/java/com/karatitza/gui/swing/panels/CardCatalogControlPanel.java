@@ -1,4 +1,4 @@
-package com.karatitza.gui.swing.areas;
+package com.karatitza.gui.swing.panels;
 
 import com.karatitza.converters.ConversionFactory;
 import com.karatitza.gui.swing.worker.PdfBuildWorker;
@@ -13,39 +13,34 @@ import static javax.swing.BorderFactory.*;
 import static javax.swing.SwingWorker.StateValue.DONE;
 import static javax.swing.SwingWorker.StateValue.STARTED;
 
-public class CardCatalogControlArea {
-    private static final Logger LOG = LoggerFactory.getLogger(CardCatalogControlArea.class);
+public class CardCatalogControlPanel extends JPanel {
+    private static final Logger LOG = LoggerFactory.getLogger(CardCatalogControlPanel.class);
 
     private final JButton buildPdfButton;
     private final JPanel selectConverterPanel;
-    private final CatalogPreviewArea previewArea;
+    private final CatalogPreviewPanel previewArea;
     private final JProgressBar conversionProgress;
 
     private final CardProject cardProject;
 
-    public CardCatalogControlArea(CardProject cardProject) {
+    public CardCatalogControlPanel(CardProject cardProject) {
         this.cardProject = cardProject;
         this.buildPdfButton = new JButton("Build PDF");
         this.selectConverterPanel = buildConverterSelectionPanel();
-        this.previewArea = new CatalogPreviewArea();
+        this.previewArea = new CatalogPreviewPanel();
         this.conversionProgress = new JProgressBar(0, 100);
         this.conversionProgress.setVisible(false);
-    }
-
-    public JPanel packToPanel() {
-        JPanel controlPanel = new JPanel();
-        controlPanel.setLayout(new GridLayout(4, 2, 10, 10));
-        controlPanel.setBorder(createCompoundBorder(
+        setLayout(new GridLayout(4, 2, 10, 10));
+        setBorder(createCompoundBorder(
                 createEmptyBorder(10, 10, 10, 10), createTitledBorder("Project catalog control"))
         );
         previewArea.refresh(cardProject.getSelectedCatalog());
-        controlPanel.add(previewArea.packToPanel());
-        controlPanel.add(new JLabel());
-        controlPanel.add(buildPdfButton);
-        controlPanel.add(selectConverterPanel);
+        add(previewArea);
+        add(new JLabel());
+        add(buildPdfButton);
+        add(selectConverterPanel);
         buildPdfButton.addActionListener(e -> preparePdfWorker().execute());
-        controlPanel.add(conversionProgress);
-        return controlPanel;
+        add(conversionProgress);
     }
 
     private JPanel buildConverterSelectionPanel() {

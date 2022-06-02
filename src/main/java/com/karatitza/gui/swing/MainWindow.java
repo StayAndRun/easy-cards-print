@@ -1,8 +1,8 @@
 package com.karatitza.gui.swing;
 
-import com.karatitza.gui.swing.areas.CardCatalogControlArea;
-import com.karatitza.gui.swing.areas.SpotControlArea;
-import com.karatitza.gui.swing.areas.SpotsLayoutPreviewArea;
+import com.karatitza.gui.swing.panels.CardCatalogControlPanel;
+import com.karatitza.gui.swing.panels.SpotControlPanel;
+import com.karatitza.gui.swing.panels.SpotsLayoutPreviewPanel;
 import com.karatitza.project.CardProject;
 
 import javax.swing.*;
@@ -64,10 +64,11 @@ public class MainWindow extends JFrame {
             setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             setLayout(new GridLayout(1, 2));
 
-            SpotsLayoutPreviewArea spotsLayoutPreviewArea = new SpotsLayoutPreviewArea(cardProject);
-            JPanel layoutPreviewPanel = spotsLayoutPreviewArea.packToPanel();
-            JPanel spotControlPanel = new SpotControlArea(spotsLayoutPreviewArea).packToPanel();
-            JPanel catalogControlPanel = new CardCatalogControlArea(cardProject).packToPanel();
+            SpotsLayoutPreviewPanel layoutPreviewPanel = new SpotsLayoutPreviewPanel(cardProject);
+            SpotControlPanel spotControlPanel = new SpotControlPanel();
+            spotControlPanel.setSpotsLayoutPreview(layoutPreviewPanel);
+            spotControlPanel.setInitialSpots(cardProject.getSpotsLayout());
+            JPanel catalogControlPanel = new CardCatalogControlPanel(cardProject);
 
             JPanel controlPanel = new JPanel(new GridLayout(2, 1));
 

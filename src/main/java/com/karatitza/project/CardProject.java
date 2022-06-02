@@ -67,6 +67,7 @@ public class CardProject {
     }
 
     public SpotsPreview selectSpots(PageFormat pageFormat, SpotSize spotSize) {
+        LOG.info("Selected spots: {}, format: {}", spotSize, pageFormat);
         this.spotsLayout = new SpotsLayout(pageFormat, spotSize);
         return new SpotsPreview(spotsLayout);
     }

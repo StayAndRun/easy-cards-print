@@ -1,9 +1,10 @@
-package com.karatitza.gui.swing.areas;
+package com.karatitza.gui.swing.panels;
 
 import com.karatitza.project.CardProject;
 import com.karatitza.project.compose.SpotsPreview;
 import com.karatitza.project.layout.PageFormat;
 import com.karatitza.project.layout.spots.SpotSize;
+import com.karatitza.project.layout.spots.SpotsLayout;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
@@ -15,31 +16,35 @@ import java.io.IOException;
 
 import static javax.swing.BorderFactory.*;
 
-public class SpotsLayoutPreviewArea {
+public class SpotsLayoutPreviewPanel extends JPanel implements SpotsLayoutPreview {
 
     private final JLabel preview;
     private final CardProject cardProject;
 
-    public SpotsLayoutPreviewArea(CardProject cardProject) {
+    public SpotsLayoutPreviewPanel(CardProject cardProject) {
         this.cardProject = cardProject;
         this.preview = new JLabel();
-    }
-
-    public JPanel packToPanel() {
-        JPanel previewPanel = new JPanel();
-        previewPanel.setBorder(createCompoundBorder(
+        setBorder(createCompoundBorder(
                 createEmptyBorder(10, 10, 10, 10),
                 createTitledBorder("Preview of card spots disposition"))
         );
         preview.setPreferredSize(new Dimension(600, 900));
         preview.setVerticalAlignment(JLabel.CENTER);
         preview.setHorizontalAlignment(JLabel.CENTER);
-        previewPanel.add(preview);
-        return previewPanel;
+        add(preview);
     }
 
+    @Override
     public void refresh(Integer height, Integer width, Integer space, PageFormat pageFormat) {
-        SpotsPreview spotsPreview = cardProject.selectSpots(pageFormat, SpotSize.millimeters(height, width, space));
+        SpotsPreview spotsPreview = new SpotsPreview(
+                new SpotsLayout(pageFormat, SpotSize.millimeters(height, width, space)));
+        ImageIcon imageIcon = buildImageFromStream(spotsPreview);
+        preview.setIcon(resizeImageIcon(imageIcon));
+    }
+
+    @Override
+    public void refresh() {
+        SpotsPreview spotsPreview = new SpotsPreview(cardProject.getSpotsLayout());
         ImageIcon imageIcon = buildImageFromStream(spotsPreview);
         preview.setIcon(resizeImageIcon(imageIcon));
     }

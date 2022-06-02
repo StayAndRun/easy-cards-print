@@ -1,24 +1,19 @@
-package com.karatitza.gui.swing.areas;
+package com.karatitza.gui.swing.panels;
 
 import com.karatitza.project.catalog.Deck;
 import com.karatitza.project.catalog.DecksCatalog;
 
 import javax.swing.*;
 
-public class CatalogPreviewArea {
+public class CatalogPreviewPanel extends JPanel{
 
     private final JTextArea catalogInfo;
 
-    public CatalogPreviewArea() {
+    public CatalogPreviewPanel() {
         catalogInfo = new JTextArea("No data");
         catalogInfo.setEditable(false);
-    }
-
-    public JPanel packToPanel() {
-        JPanel previewAreaPanel = new JPanel();
-        previewAreaPanel.setBorder(BorderFactory.createTitledBorder("Selected catalog info"));
-        previewAreaPanel.add(catalogInfo);
-        return previewAreaPanel;
+        setBorder(BorderFactory.createTitledBorder("Selected catalog info"));
+        add(catalogInfo);
     }
 
     public void refresh(DecksCatalog catalog) {

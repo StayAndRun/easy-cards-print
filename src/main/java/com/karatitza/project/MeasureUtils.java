@@ -1,19 +1,14 @@
 package com.karatitza.project;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 
 public class MeasureUtils {
-
     public static final int SCALE_BIG_DECIMAL = 10;
+
     public static final int ROUNDING_MODE = BigDecimal.ROUND_HALF_UP;
 
-    public static float round(float value) {
-        return round(BigDecimal.valueOf(value)).floatValue();
-    }
-
-    public static BigDecimal round(BigDecimal value) {
-        return value.setScale(3, ROUNDING_MODE);
+    public static float inchesToPoints(float value) {
+        return value * 72.0F;
     }
 
     public static float millimetersToPoints(float value) {
@@ -24,12 +19,25 @@ public class MeasureUtils {
         return round(inchesToMillimeters(pointsToInches((value))));
     }
 
+    public static int pointsToMillimetersRound(float value) {
+        float millimeters = inchesToMillimeters(pointsToInches((value)));
+        return Math.round(millimeters);
+    }
+
     public static BigDecimal millimetersToPoints(BigDecimal value) {
         return round(inchesToPoints(millimetersToInches(value)));
     }
 
     public static BigDecimal pointsToMillimeters(BigDecimal value) {
         return round(inchesToMillimeters(pointsToInches(value)));
+    }
+
+    public static BigDecimal round(BigDecimal value) {
+        return value.setScale(3, ROUNDING_MODE);
+    }
+
+    public static float round(float value) {
+        return round(BigDecimal.valueOf(value)).floatValue();
     }
 
     private static BigDecimal inchesToPoints(BigDecimal value) {
@@ -58,9 +66,5 @@ public class MeasureUtils {
 
     private static float inchesToMillimeters(float value) {
         return value * 25.4F;
-    }
-
-    public static float inchesToPoints(float value) {
-        return value * 72.0F;
     }
 }
