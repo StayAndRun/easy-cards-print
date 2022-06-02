@@ -4,7 +4,6 @@ import com.karatitza.gui.swing.areas.CardCatalogControlArea;
 import com.karatitza.gui.swing.areas.SpotControlArea;
 import com.karatitza.gui.swing.areas.SpotsLayoutPreviewArea;
 import com.karatitza.project.CardProject;
-import com.karatitza.project.CardProjectConfig;
 
 import javax.swing.*;
 import java.awt.*;
@@ -42,7 +41,7 @@ public class MainWindow extends JFrame {
                 int selectedOption = projectChooser.showOpenDialog(MainWindow.this);
                 if (selectedOption == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = projectChooser.getSelectedFile();
-                    CardProject openedProject = CardProject.fromConfiguration(new CardProjectConfig(selectedFile));
+                    CardProject openedProject = CardProject.openFromDir(selectedFile);
                     JPanel openedProjectWindow = new CardProjectWindow(openedProject).open();
                     currentProjectPanel.setVisible(false);
                     MainWindow.this.remove(currentProjectPanel);

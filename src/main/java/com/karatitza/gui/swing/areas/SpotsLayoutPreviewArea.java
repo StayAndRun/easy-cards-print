@@ -39,7 +39,7 @@ public class SpotsLayoutPreviewArea {
     }
 
     public void refresh(Integer height, Integer width, Integer space, PageFormat pageFormat) {
-        SpotsPreview spotsPreview = cardProject.defineSpots(pageFormat, SpotSize.millimeters(height, width, space));
+        SpotsPreview spotsPreview = cardProject.selectSpots(pageFormat, SpotSize.millimeters(height, width, space));
         ImageIcon imageIcon = buildImageFromStream(spotsPreview);
         preview.setIcon(resizeImageIcon(imageIcon));
     }

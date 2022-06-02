@@ -31,6 +31,10 @@ public class SpotSize {
         );
     }
 
+    public static SpotSize points(float height, float width, float space) {
+        return new SpotSize(height, width, space);
+    }
+
     private SpotSize(float high, float width, float space) {
         this.high = high;
         this.width = width;

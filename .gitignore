@@ -25,3 +25,4 @@ target/
 /src/test/resources/pdf-doc-build/print/
 /src/test/resources/multi-project/print/
 /src/test/resources/conversion/temp/
+/src/test/resources/svg-project/config.json

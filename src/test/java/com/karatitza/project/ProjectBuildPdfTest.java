@@ -31,7 +31,7 @@ public class ProjectBuildPdfTest extends TempFilesTest {
     void acceptBuildFromPdfCatalog() {
         CardProject cardProject = new CardProject();
         cardProject.selectCatalog(new File(PDF_PROJECT_PATH));
-        cardProject.defineSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
+        cardProject.selectSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
         cardProject.snapshot().buildFinalPdf();
         File actualFile = searchTempPdfFile("pdf-project.pdf", PDF_PROJECT_PATH);
         assertPdfFilesEquals(EXPECTED_PROJECT_PDF, actualFile.getPath());
@@ -41,7 +41,7 @@ public class ProjectBuildPdfTest extends TempFilesTest {
     void acceptBuildFromSvgCatalog() {
         CardProject cardProject = new CardProject();
         cardProject.selectCatalog(new File(SVG_PROJECT_PATH));
-        cardProject.defineSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
+        cardProject.selectSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
         cardProject.snapshot().buildFinalPdf(progress -> System.out.println("Progress percentage: " + progress));
         File actualFile = searchTempPdfFile("svg-project.pdf", SVG_PROJECT_PATH);
         assertPdfFilesEquals(EXPECTED_PROJECT_PDF, actualFile.getPath());
@@ -51,7 +51,7 @@ public class ProjectBuildPdfTest extends TempFilesTest {
     void acceptBuildFromSvgCatalogWithInkscapeConversion() {
         CardProject cardProject = new CardProject();
         cardProject.selectCatalog(new File(SVG_PROJECT_PATH));
-        cardProject.defineSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
+        cardProject.selectSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
         cardProject.selectConverterFactory(new ConversionFactory.InkscapeConversionFactory());
         cardProject.snapshot().buildFinalPdf(progress -> System.out.println("Progress percentage: " + progress));
         File actualFile = searchTempPdfFile("svg-project.pdf", SVG_PROJECT_PATH);
