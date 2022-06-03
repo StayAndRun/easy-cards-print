@@ -45,12 +45,4 @@ public enum CommonPageFormat implements PageFormat{
     public float getHeight() {
         return height;
     }
-
-    @Override
-    public String toString() {
-        return name() + " (" +
-                "width=" + width + " pt" +
-                ", height=" + height + " pt" +
-                ')';
-    }
 }

@@ -110,7 +110,6 @@ public class InkscapeSvgToPdfConverter extends AbstractImageConverter {
                     copyImage(sourceImage, tempImage);
                 }
                 convertedImages.add(tempImage);
-
             }
         }
         return convertedImages;

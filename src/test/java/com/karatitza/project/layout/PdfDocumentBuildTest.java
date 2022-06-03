@@ -2,6 +2,8 @@ package com.karatitza.project.layout;
 
 import com.karatitza.project.compose.PdfDocumentComposer;
 import com.karatitza.project.compose.PdfPagesComposer;
+import com.karatitza.project.layout.spots.SpotSize;
+import com.karatitza.project.layout.spots.SpotsLayout;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +23,11 @@ public class PdfDocumentBuildTest {
     @Test
     void acceptFinalDocCreatedFromPages() {
         DocumentLayout documentLayout = mock(DocumentLayout.class);
+        SpotsLayout spotsLayout = mock(SpotsLayout.class);
+        when(spotsLayout.getSpotSize()).thenReturn(SpotSize.millimeters(40, 40));
+        when(spotsLayout.getPageFormat()).thenReturn(CommonPageFormat.A1);
+        when(documentLayout.getSpots()).thenReturn(spotsLayout);
+
         PdfPagesComposer pageComposer = mock(PdfPagesComposer.class);
         List<File> testFiles = Arrays.asList(Objects.requireNonNull(new File(PROJECT_TEMP_PATH).listFiles()));
         when(pageComposer.composeByLayout(documentLayout)).thenReturn(testFiles);
@@ -29,7 +36,7 @@ public class PdfDocumentBuildTest {
         File resultFile = composer.compose(documentLayout);
 
         Assertions.assertTrue(resultFile.exists());
-        Assertions.assertEquals("pdf-doc-build.pdf", resultFile.getName());
+        Assertions.assertEquals("pdf-doc-build(A1-40x40-0).pdf", resultFile.getName());
     }
 }
 

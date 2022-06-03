@@ -33,6 +33,10 @@ public class InkscapeShell implements AutoCloseable {
     }
 
     public void exportToPdfFile(File sourceFile, File targetFile) {
+        if (targetFile.exists() && !targetFile.delete()) {
+            LOG.error("Failed to delete old file: {}, conversion skipped!", targetFile);
+            return;
+        }
         FileAcceptListener listener = new FileAcceptListener(targetFile);
         shellOutput.println("file-open:" + getCanonicalPath(sourceFile));
         shellOutput.println("export-filename:" + getCanonicalPath(targetFile));

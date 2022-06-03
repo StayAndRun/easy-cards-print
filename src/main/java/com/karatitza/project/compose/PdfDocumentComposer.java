@@ -4,14 +4,18 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.utils.PdfMerger;
+import com.karatitza.project.MeasureUtils;
 import com.karatitza.project.PathConstants;
 import com.karatitza.project.catalog.ImageFormat;
 import com.karatitza.project.layout.DocumentLayout;
+import com.karatitza.project.layout.spots.SpotSize;
+import com.karatitza.project.layout.spots.SpotsLayout;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 public class PdfDocumentComposer {
 
@@ -30,7 +34,7 @@ public class PdfDocumentComposer {
 
     public File compose(DocumentLayout documentLayout) {
         List<File> pages = pagesComposer.composeByLayout(documentLayout);
-        File finalPdfFile = buildFinalPdfFileName();
+        File finalPdfFile = buildFinalPdfFile(documentLayout.getSpots());
         try (PdfDocument finalPdfDocument = createFinalPdfDocument(finalPdfFile)) {
             PdfMerger pdfMerger = new PdfMerger(finalPdfDocument);
             for (File page : pages) {
@@ -59,11 +63,28 @@ public class PdfDocumentComposer {
         }
     }
 
-    private File buildFinalPdfFileName() {
-        String projectName = projectPath.getName();
-        return new File(
-                projectPath.getPath() + PathConstants.PROJECT_PRINT_PATH
-                        + File.separator + projectName + ImageFormat.PDF.getExtension()
-        );
+    private File buildFinalPdfFile(SpotsLayout spots) {
+        String documentName = buildFileName(spots);
+        return new File(projectPath.getPath() + PathConstants.PROJECT_PRINT_PATH, documentName);
+    }
+
+    private String buildFileName(SpotsLayout spots) {
+        try {
+            SpotSize spotSize = spots.getSpotSize();
+            return "%s(%s-%sx%s-%s)%s".formatted(
+                    projectPath.getName(),
+                    spots.getPageFormat(),
+                    MeasureUtils.pointsToMillimetersRound(spotSize.getHeight()),
+                    MeasureUtils.pointsToMillimetersRound(spotSize.getWidth()),
+                    MeasureUtils.pointsToMillimetersRound(spotSize.getSpace()),
+                    ImageFormat.PDF.getExtension()
+            );
+        } catch (Exception exception) {
+            return "%s-%s%s".formatted(
+                    projectPath.getName(),
+                    UUID.randomUUID().toString(),
+                    ImageFormat.PDF.getExtension()
+            );
+        }
     }
 }

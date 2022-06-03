@@ -19,7 +19,9 @@ public class ProjectBuildPdfTest extends TempFilesTest {
 
     public static final String PDF_PROJECT_PATH = "./src/test/resources/pdf-project";
     public static final String SVG_PROJECT_PATH = "./src/test/resources/svg-project";
+    public static final String SVG_PROJECT_WITH_TEMP_PATH = "./src/test/resources/svg-project";
     public static final String EXPECTED_PROJECT_PDF = "./src/test/resources/expected/spot-91x59/expected-project.pdf";
+    public static final String EXPECTED_PROJECT_INKSCAPE_PDF = "./src/test/resources/expected/spot-91x59/expected-project-inkscape.pdf";
 
     @BeforeEach
     void setUp() {
@@ -33,7 +35,7 @@ public class ProjectBuildPdfTest extends TempFilesTest {
         cardProject.selectCatalog(new File(PDF_PROJECT_PATH));
         cardProject.selectSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
         cardProject.snapshot().buildFinalPdf();
-        File actualFile = searchTempPdfFile("pdf-project.pdf", PDF_PROJECT_PATH);
+        File actualFile = searchTempPdfFile("pdf-project(A4-91x59-0).pdf", PDF_PROJECT_PATH);
         assertPdfFilesEquals(EXPECTED_PROJECT_PDF, actualFile.getPath());
     }
 
@@ -43,7 +45,7 @@ public class ProjectBuildPdfTest extends TempFilesTest {
         cardProject.selectCatalog(new File(SVG_PROJECT_PATH));
         cardProject.selectSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
         cardProject.snapshot().buildFinalPdf(progress -> System.out.println("Progress percentage: " + progress));
-        File actualFile = searchTempPdfFile("svg-project.pdf", SVG_PROJECT_PATH);
+        File actualFile = searchTempPdfFile("svg-project(A4-91x59-0).pdf", SVG_PROJECT_PATH);
         assertPdfFilesEquals(EXPECTED_PROJECT_PDF, actualFile.getPath());
     }
 
@@ -54,9 +56,23 @@ public class ProjectBuildPdfTest extends TempFilesTest {
         cardProject.selectSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
         cardProject.selectConverterFactory(new ConversionFactory.InkscapeConversionFactory());
         cardProject.snapshot().buildFinalPdf(progress -> System.out.println("Progress percentage: " + progress));
-        File actualFile = searchTempPdfFile("svg-project.pdf", SVG_PROJECT_PATH);
-        //TODO Check diff at text conversion
-//        assertPdfFilesEquals(EXPECTED_PROJECT_PDF, actualFile.getPath());
+        File actualFile = searchTempPdfFile("svg-project(A4-91x59-0).pdf", SVG_PROJECT_PATH);
+        assertPdfFilesEquals(EXPECTED_PROJECT_INKSCAPE_PDF, actualFile.getPath());
+    }
+
+    @Test
+    void acceptBuildFromSvgCatalogWithExistingTempFiles() {
+        CardProject cardProject = new CardProject();
+        cardProject.selectCatalog(new File(SVG_PROJECT_PATH));
+        cardProject.selectConverterFactory(new ConversionFactory.InkscapeConversionFactory());
+        cardProject.selectSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
+
+        cardProject.snapshot().buildFinalPdf(progress -> System.out.println("Progress percentage: " + progress));
+        searchTempPdfFile("svg-project(A4-91x59-0).pdf", SVG_PROJECT_PATH);
+
+        cardProject.selectSpots(CommonPageFormat.A4, SpotSize.millimeters(89, 57));
+        cardProject.snapshot().buildFinalPdf(progress -> System.out.println("Progress percentage: " + progress));
+        searchTempPdfFile("svg-project(A4-89x57-0).pdf", SVG_PROJECT_PATH);
     }
 
     private File searchTempPdfFile(String expectedFileName, String projectDir) {
@@ -66,8 +82,8 @@ public class ProjectBuildPdfTest extends TempFilesTest {
         File[] tempFiles = Objects.requireNonNull(printDir.listFiles());
         Optional<File> foundFile = Arrays.stream(tempFiles)
                 .filter(file -> file.getName().equals(expectedFileName)).findFirst();
-        if (!foundFile.isPresent()) {
-            Assertions.fail("Not found expected file: " + expectedFileName);
+        if (foundFile.isEmpty()) {
+            Assertions.fail("Not found expected file: " + expectedFileName + ", but found: " + Arrays.toString(tempFiles));
         }
         return foundFile.get();
     }
