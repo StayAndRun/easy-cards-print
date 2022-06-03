@@ -28,3 +28,4 @@ target/
 /src/test/resources/conversion/temp/
 /src/test/resources/svg-project/config.json
 /src/test/resources/pdf-project/config.json
+/latest.json

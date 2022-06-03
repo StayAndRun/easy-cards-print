@@ -12,17 +12,15 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 import static com.karatitza.Main.SOURCE_FILES_RELATE_PATH;
 import static com.karatitza.Main.TEMP_FILES_RELATE_PATH;
 
-public class InkscapeSvgToPlainSvgConverter implements ImageConverter {
+public class InkscapeSvgToPlainSvgConverter extends AbstractImageConverter implements ImageConverter {
     public static final Logger LOG = LoggerFactory.getLogger(InkscapeSvgToPlainSvgConverter.class);
 
     private final TempFileProvider imageFactory;
     private final List<Image> images = new ArrayList<>();
-    private Consumer<File> fileCreationListener = defaultFileListener();
 
     public InkscapeSvgToPlainSvgConverter(TempFileProvider imageFactory) {
         this.imageFactory = imageFactory;
@@ -31,19 +29,19 @@ public class InkscapeSvgToPlainSvgConverter implements ImageConverter {
     @Override
     public Image convert(Image sourceImage) {
         Image targetImage = imageFactory.create(sourceImage, outputFormat());
-        File convertedImagePath = convertToPlainSvg(
-                sourceImage.getLocation().getAbsolutePath(), targetImage.getLocation().getAbsolutePath()
-        );
-        defaultFileListener().accept(targetImage.getLocation());
+        if (sourceImage.getFormat() == inputFormat()) {
+            convertToPlainSvg(
+                    sourceImage.getLocation().getAbsolutePath(), targetImage.getLocation().getAbsolutePath());
+        } else {
+            LOG.warn("Not supported input format {}, conversion skipped", sourceImage.getName());
+            copyImage(sourceImage, targetImage);
+        }
+        fileCreationListener.accept(targetImage.getLocation());
         return targetImage;
     }
 
     @Override
     public Image addToBatch(Image sourceImage) {
-        if (sourceImage.getFormat() != inputFormat()) {
-            LOG.warn("Not supported input format {}, conversion skipped", sourceImage.getName());
-            return sourceImage;
-        }
         images.add(sourceImage);
         return imageFactory.create(sourceImage, outputFormat());
     }
@@ -61,11 +59,6 @@ public class InkscapeSvgToPlainSvgConverter implements ImageConverter {
     @Override
     public ImageFormat outputFormat() {
         return ImageFormat.SVG;
-    }
-
-    @Override
-    public void listenFileCreation(Consumer<File> fileCreationListener) {
-        this.fileCreationListener = fileCreationListener;
     }
 
     private File convertToPlainSvg(String sourceSvgFileName, String targetSvgFileName) {

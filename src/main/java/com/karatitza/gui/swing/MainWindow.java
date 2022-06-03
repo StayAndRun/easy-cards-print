@@ -13,22 +13,41 @@ import java.io.File;
 
 public class MainWindow extends JFrame {
 
-    private JPanel currentProjectPanel;
+    private CardProjectWindow currentProjectWindow;
 
     public static void main(String[] args) {
         new MainWindow().open();
     }
 
     public void open() {
-        currentProjectPanel = new CardProjectWindow(new CardProject()).open();
+        currentProjectWindow = new CardProjectWindow(new CardProject());
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(openProjectButton());
+        menuBar.add(selectLatestProjectMenu());
         setJMenuBar(menuBar);
         setTitle("Easy Card Print");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        add(currentProjectPanel, BorderLayout.CENTER);
+        add(currentProjectWindow, BorderLayout.CENTER);
         pack();
         setVisible(true);
+    }
+
+    private JMenu selectLatestProjectMenu() {
+        JMenu menu = new JMenu("Select latest project");
+        menu.add(buildLatestProjectItem(new File("C:\\GitRepo\\EasyCardsPrint\\src\\test\\resources\\svg-project")));
+        menu.add(buildLatestProjectItem(new File("C:\\GitRepo\\EasyCardsPrint\\src\\test\\resources\\pdf-project")));
+        return menu;
+    }
+
+    private JMenuItem buildLatestProjectItem(File projectRoot) {
+        JMenuItem menuItem = new JMenuItem(projectRoot.getName());
+        menuItem.addActionListener(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                openProjectWindow(projectRoot);
+            }
+        });
+        return menuItem;
     }
 
     private JButton openProjectButton() {
@@ -40,27 +59,24 @@ public class MainWindow extends JFrame {
                 projectChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 int selectedOption = projectChooser.showOpenDialog(MainWindow.this);
                 if (selectedOption == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = projectChooser.getSelectedFile();
-                    CardProject openedProject = CardProject.openFromDir(selectedFile);
-                    JPanel openedProjectWindow = new CardProjectWindow(openedProject).open();
-                    currentProjectPanel.setVisible(false);
-                    MainWindow.this.remove(currentProjectPanel);
-                    MainWindow.this.add(openedProjectWindow);
+                    openProjectWindow(projectChooser.getSelectedFile());
                 }
             }
         });
         return open;
     }
 
+    private void openProjectWindow(File projectRoot) {
+        CardProject openedProject = CardProject.openFromDir(projectRoot);
+        JPanel openedProjectWindow = new CardProjectWindow(openedProject);
+        currentProjectWindow.setVisible(false);
+        MainWindow.this.remove(currentProjectWindow);
+        MainWindow.this.add(openedProjectWindow);
+    }
+
     public static class CardProjectWindow extends JPanel{
 
-        private final CardProject cardProject;
-
         public CardProjectWindow(CardProject cardProject) {
-            this.cardProject = cardProject;
-        }
-
-        public JPanel open() {
             setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             setLayout(new GridLayout(1, 2));
 
@@ -77,7 +93,6 @@ public class MainWindow extends JFrame {
 
             add(layoutPreviewPanel);
             add(controlPanel);
-            return this;
         }
     }
 

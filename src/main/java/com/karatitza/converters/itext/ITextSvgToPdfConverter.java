@@ -2,8 +2,8 @@ package com.karatitza.converters.itext;
 
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.svg.converter.SvgConverter;
-import com.karatitza.converters.ImageConverter;
 import com.karatitza.converters.TempFileProvider;
+import com.karatitza.converters.inkscape.AbstractImageConverter;
 import com.karatitza.project.catalog.Image;
 import com.karatitza.project.catalog.ImageFormat;
 import org.slf4j.Logger;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ITextSvgToPdfConverter implements ImageConverter {
+public class ITextSvgToPdfConverter extends AbstractImageConverter {
     public static final Logger LOG = LoggerFactory.getLogger(ITextSvgToPdfConverter.class);
 
     private final TempFileProvider tempFileProvider;
@@ -29,23 +29,27 @@ public class ITextSvgToPdfConverter implements ImageConverter {
     @Override
     public Image convert(Image sourceImage) {
         Image targetImage = tempFileProvider.create(sourceImage, outputFormat());
-        tryCreateFile(targetImage.getLocation());
+        if (sourceImage.getFormat() == inputFormat()) {
+            tryCreateFile(targetImage.getLocation());
+            tryConvert(sourceImage, targetImage);
+        } else {
+            LOG.warn("Not supported input format {}, conversion skipped", sourceImage.getName());
+            copyImage(sourceImage, targetImage);
+        }
+        return targetImage;
+    }
+
+    private void tryConvert(Image sourceImage, Image targetImage) {
         try {
             SvgConverter.createPdf(sourceImage.getLocation(), targetImage.getLocation());
+            fileCreationListener.accept(targetImage.getLocation());
         } catch (IOException e) {
-//          TODO exception details
-            throw new RuntimeException(e);
+            LOG.error("Failed conversion: ", e);
         }
-        fileCreationListener.accept(targetImage.getLocation());
-        return targetImage;
     }
 
     @Override
     public Image addToBatch(Image sourceImage) {
-        if (sourceImage.getFormat() != inputFormat()) {
-            LOG.warn("Not supported input format {}, conversion skipped", sourceImage.getName());
-            return sourceImage;
-        }
         images.add(sourceImage);
         return tempFileProvider.create(sourceImage, outputFormat());
     }

@@ -36,12 +36,12 @@ public class DecksCatalog {
         return decks;
     }
 
-    public DecksCatalog convert(ImageConverter converter) {
-        return convert(converter, null);
-    }
-
     public CatalogStatistic getCatalogStatistic() {
         return new CatalogStatistic();
+    }
+
+    public DecksCatalog convert(ImageConverter converter) {
+        return convert(converter, null);
     }
 
     public DecksCatalog convert(ImageConverter converter, Consumer<Integer> progressListener) {

@@ -74,9 +74,16 @@ public class CardProject {
 
     public CardProjectSnapshot snapshot() {
         saveProjectConfig();
+        updateLatestProjects();
         return new CardProjectSnapshot(
                 getCurrentProjectPath(), spotsLayout, getSelectedCatalog(), conversionFactory
         );
+    }
+
+    private void updateLatestProjects() {
+        LatestProjectsConfig latestConfig = LatestProjectsConfig.loadFromFile();
+        latestConfig.addLatestProject(projectRoot);
+        latestConfig.saveToFile();
     }
 
     private void saveProjectConfig() {

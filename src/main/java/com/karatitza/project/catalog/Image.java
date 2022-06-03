@@ -56,4 +56,12 @@ public class Image {
         }
         throw new FileNotFoundException("Not found supported image format for file: " + location);
     }
+
+    @Override
+    public String toString() {
+        return "Image{" +
+                "name='" + name + "', " +
+                "deck='" + deckLocation.getName() + '\'' +
+                '}';
+    }
 }

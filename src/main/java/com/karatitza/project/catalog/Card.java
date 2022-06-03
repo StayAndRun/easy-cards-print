@@ -1,7 +1,5 @@
 package com.karatitza.project.catalog;
 
-import com.karatitza.project.catalog.Image;
-
 import java.util.Optional;
 
 public class Card {
@@ -24,5 +22,13 @@ public class Card {
 
     public Optional<Image> getBackSide() {
         return Optional.ofNullable(backSide);
+    }
+
+    @Override
+    public String toString() {
+        return "Card{" +
+                "front=" + frontSide +
+                ", back=" + backSide +
+                '}';
     }
 }

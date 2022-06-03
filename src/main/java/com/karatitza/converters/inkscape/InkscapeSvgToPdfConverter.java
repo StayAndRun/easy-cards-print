@@ -1,6 +1,5 @@
 package com.karatitza.converters.inkscape;
 
-import com.karatitza.converters.ImageConverter;
 import com.karatitza.converters.TempFileProvider;
 import com.karatitza.converters.inkscape.console.InkscapeCommandBuilder;
 import com.karatitza.converters.inkscape.console.InkscapeShell;
@@ -18,7 +17,7 @@ import java.util.function.Consumer;
 import static com.karatitza.Main.SOURCE_FILES_RELATE_PATH;
 import static com.karatitza.Main.TEMP_FILES_RELATE_PATH;
 
-public class InkscapeSvgToPdfConverter implements ImageConverter {
+public class InkscapeSvgToPdfConverter extends AbstractImageConverter {
 
     public static final Logger LOG = LoggerFactory.getLogger(InkscapeSvgToPdfConverter.class);
 
@@ -51,10 +50,6 @@ public class InkscapeSvgToPdfConverter implements ImageConverter {
 
     @Override
     public Image addToBatch(Image sourceImage) {
-        if (sourceImage.getFormat() != inputFormat()) {
-            LOG.warn("Not supported input format {}, conversion skipped", sourceImage.getName());
-            return sourceImage;
-        }
         batchImages.add(sourceImage);
         return imageFactory.create(sourceImage, outputFormat());
     }
@@ -107,9 +102,15 @@ public class InkscapeSvgToPdfConverter implements ImageConverter {
         try (InkscapeShell inkscapeShell = new InkscapeShell()) {
             for (Image sourceImage : sourceImages) {
                 Image tempImage = imageFactory.create(sourceImage, outputFormat());
-                inkscapeShell.exportToPdfFile(sourceImage.getLocation(), tempImage.getLocation());
+                if (sourceImage.getFormat() == inputFormat()) {
+                    inkscapeShell.exportToPdfFile(sourceImage.getLocation(), tempImage.getLocation());
+                    fileCreationListener.accept(tempImage.getLocation());
+                } else {
+                    LOG.warn("Not supported input format {}, conversion skipped", sourceImage.getName());
+                    copyImage(sourceImage, tempImage);
+                }
                 convertedImages.add(tempImage);
-                fileCreationListener.accept(tempImage.getLocation());
+
             }
         }
         return convertedImages;
