@@ -4,6 +4,7 @@ import com.karatitza.gui.swing.panels.CardCatalogControlPanel;
 import com.karatitza.gui.swing.panels.SpotControlPanel;
 import com.karatitza.gui.swing.panels.SpotsLayoutPreviewPanel;
 import com.karatitza.project.CardProject;
+import com.karatitza.project.LatestProjectsConfig;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +24,7 @@ public class MainWindow extends JFrame {
         currentProjectWindow = new CardProjectWindow(new CardProject());
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(openProjectButton());
-        menuBar.add(selectLatestProjectMenu());
+        menuBar.add(buildLatestProjectMenu());
         setJMenuBar(menuBar);
         setTitle("Easy Card Print");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -32,10 +33,12 @@ public class MainWindow extends JFrame {
         setVisible(true);
     }
 
-    private JMenu selectLatestProjectMenu() {
+    private JMenu buildLatestProjectMenu() {
         JMenu menu = new JMenu("Select latest project");
-        menu.add(buildLatestProjectItem(new File("C:\\GitRepo\\EasyCardsPrint\\src\\test\\resources\\svg-project")));
-        menu.add(buildLatestProjectItem(new File("C:\\GitRepo\\EasyCardsPrint\\src\\test\\resources\\pdf-project")));
+        LatestProjectsConfig config = LatestProjectsConfig.loadFromFile();
+        for (File latestProject : config.getLatestProjects()) {
+            menu.add(buildLatestProjectItem(latestProject));
+        }
         return menu;
     }
 
