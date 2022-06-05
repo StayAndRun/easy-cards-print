@@ -5,6 +5,8 @@ import com.karatitza.gui.swing.panels.SpotControlPanel;
 import com.karatitza.gui.swing.panels.SpotsLayoutPreviewPanel;
 import com.karatitza.project.CardProject;
 import com.karatitza.project.LatestProjectsConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 
 public class MainWindow extends JFrame {
+    public static final Logger LOG = LoggerFactory.getLogger(MainWindow.class);
 
     private CardProjectWindow currentProjectWindow;
 
@@ -21,16 +24,24 @@ public class MainWindow extends JFrame {
     }
 
     public void open() {
-        currentProjectWindow = new CardProjectWindow(new CardProject());
+        setSystemView();
+        setTitle("Easy Card Print");
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(openProjectButton());
         menuBar.add(buildLatestProjectMenu());
         setJMenuBar(menuBar);
-        setTitle("Easy Card Print");
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        add(currentProjectWindow, BorderLayout.CENTER);
+        openProjectWindow(new CardProject());
         pack();
         setVisible(true);
+    }
+
+    private void setSystemView() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            LOG.warn("System view is not set: ", e);
+        }
     }
 
     private JMenu buildLatestProjectMenu() {
@@ -69,24 +80,30 @@ public class MainWindow extends JFrame {
         return open;
     }
 
-    private void openProjectWindow(File projectRoot) {
-        CardProject openedProject = CardProject.openFromDir(projectRoot);
-        JPanel openedProjectWindow = new CardProjectWindow(openedProject);
-        currentProjectWindow.setVisible(false);
-        MainWindow.this.remove(currentProjectWindow);
-        MainWindow.this.add(openedProjectWindow);
+    private CardProjectWindow openProjectWindow(File projectRoot) {
+        return openProjectWindow(CardProject.openFromDir(projectRoot));
     }
 
-    public static class CardProjectWindow extends JPanel{
+    private CardProjectWindow openProjectWindow(CardProject openedProject) {
+        CardProjectWindow openedProjectWindow = new CardProjectWindow(openedProject);
+        if (currentProjectWindow != null) {
+            currentProjectWindow.setVisible(false);
+            remove(currentProjectWindow);
+        }
+        add(openedProjectWindow, BorderLayout.CENTER);
+        currentProjectWindow = openedProjectWindow;
+        return openedProjectWindow;
+    }
+
+    public static class CardProjectWindow extends JPanel {
 
         public CardProjectWindow(CardProject cardProject) {
             setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
             setLayout(new GridLayout(1, 2));
 
             SpotsLayoutPreviewPanel layoutPreviewPanel = new SpotsLayoutPreviewPanel(cardProject);
-            SpotControlPanel spotControlPanel = new SpotControlPanel();
-            spotControlPanel.setSpotsLayoutPreview(layoutPreviewPanel);
-            spotControlPanel.setInitialSpots(cardProject.getSpotsLayout());
+            SpotControlPanel spotControlPanel = new SpotControlPanel(cardProject);
+            spotControlPanel.addLayoutsChangeListener(layoutPreviewPanel);
             JPanel catalogControlPanel = new CardCatalogControlPanel(cardProject);
 
             JPanel controlPanel = new JPanel(new GridLayout(2, 1));

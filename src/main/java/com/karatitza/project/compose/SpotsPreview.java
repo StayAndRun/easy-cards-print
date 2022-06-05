@@ -82,4 +82,10 @@ public class SpotsPreview {
         return debugFile;
     }
 
+    @Override
+    public String toString() {
+        return "SpotsPreview{" +
+                "spotsLayout=" + spotsLayout +
+                '}';
+    }
 }

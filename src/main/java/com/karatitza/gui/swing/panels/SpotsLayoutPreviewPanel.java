@@ -7,16 +7,21 @@ import com.karatitza.project.layout.spots.SpotSize;
 import com.karatitza.project.layout.spots.SpotsLayout;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 import java.awt.*;
+import java.awt.event.ItemEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import static javax.swing.BorderFactory.*;
 
-public class SpotsLayoutPreviewPanel extends JPanel implements SpotsLayoutPreview {
+public class SpotsLayoutPreviewPanel extends JPanel implements SpotsLayoutListener {
+    public static final Logger LOG = LoggerFactory.getLogger(SpotsLayoutPreviewPanel.class);
 
     private final JLabel preview;
     private final CardProject cardProject;
@@ -32,9 +37,9 @@ public class SpotsLayoutPreviewPanel extends JPanel implements SpotsLayoutPrevie
         preview.setVerticalAlignment(JLabel.CENTER);
         preview.setHorizontalAlignment(JLabel.CENTER);
         add(preview);
+        refresh();
     }
 
-    @Override
     public void refresh(Integer height, Integer width, Integer space, PageFormat pageFormat) {
         SpotsPreview spotsPreview = new SpotsPreview(
                 new SpotsLayout(pageFormat, SpotSize.millimeters(height, width, space)));
@@ -42,9 +47,9 @@ public class SpotsLayoutPreviewPanel extends JPanel implements SpotsLayoutPrevie
         preview.setIcon(resizeImageIcon(imageIcon));
     }
 
-    @Override
     public void refresh() {
         SpotsPreview spotsPreview = new SpotsPreview(cardProject.getSpotsLayout());
+        LOG.info("Refresh page preview: {}", spotsPreview);
         ImageIcon imageIcon = buildImageFromStream(spotsPreview);
         preview.setIcon(resizeImageIcon(imageIcon));
     }
@@ -88,4 +93,15 @@ public class SpotsLayoutPreviewPanel extends JPanel implements SpotsLayoutPrevie
         }
     }
 
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        LOG.info("Preview - Listen event: {}", e);
+        refresh();
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        LOG.info("Preview - Listen event: {}", e);
+        refresh();
+    }
 }
