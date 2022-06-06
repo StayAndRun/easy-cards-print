@@ -5,17 +5,12 @@ import com.karatitza.converters.inkscape.console.InkscapeCommandBuilder;
 import com.karatitza.converters.inkscape.console.InkscapeShell;
 import com.karatitza.project.catalog.Image;
 import com.karatitza.project.catalog.ImageFormat;
-import org.bouncycastle.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
-
-import static com.karatitza.Main.SOURCE_FILES_RELATE_PATH;
-import static com.karatitza.Main.TEMP_FILES_RELATE_PATH;
 
 public class InkscapeSvgToPdfConverter extends AbstractImageConverter {
 
@@ -23,7 +18,6 @@ public class InkscapeSvgToPdfConverter extends AbstractImageConverter {
 
     private final TempFileProvider imageFactory;
     private final List<Image> batchImages = new ArrayList<>();
-    private Consumer<File> fileCreationListener = defaultFileListener();
 
     public InkscapeSvgToPdfConverter(TempFileProvider imageFactory) {
         this.imageFactory = imageFactory;
@@ -57,6 +51,24 @@ public class InkscapeSvgToPdfConverter extends AbstractImageConverter {
     @Override
     public List<Image> convertBatch() {
         return executeConvertBatch(batchImages);
+    }
+
+    public List<Image> executeConvertBatch(List<Image> sourceImages) {
+        List<Image> convertedImages = new ArrayList<>(sourceImages.size());
+        try (InkscapeShell inkscapeShell = new InkscapeShell()) {
+            for (Image sourceImage : sourceImages) {
+                Image tempImage = imageFactory.create(sourceImage, outputFormat());
+                if (sourceImage.getFormat() == inputFormat()) {
+                    inkscapeShell.exportToPdfFile(sourceImage.getLocation(), tempImage.getLocation());
+                    fileCreationListener.accept(tempImage.getLocation());
+                } else {
+                    LOG.warn("Not supported input format {}, conversion skipped", sourceImage.getName());
+                    copyImage(sourceImage, tempImage);
+                }
+                convertedImages.add(tempImage);
+            }
+        }
+        return convertedImages;
     }
 
     private File convertFile(String sourceSvgFile, String targetFileName) {
@@ -96,37 +108,4 @@ public class InkscapeSvgToPdfConverter extends AbstractImageConverter {
             bufferedErrorReader.lines().forEach(LOG::warn);
         }
     }
-
-    public List<Image> executeConvertBatch(List<Image> sourceImages) {
-        List<Image> convertedImages = new ArrayList<>(sourceImages.size());
-        try (InkscapeShell inkscapeShell = new InkscapeShell()) {
-            for (Image sourceImage : sourceImages) {
-                Image tempImage = imageFactory.create(sourceImage, outputFormat());
-                if (sourceImage.getFormat() == inputFormat()) {
-                    inkscapeShell.exportToPdfFile(sourceImage.getLocation(), tempImage.getLocation());
-                    fileCreationListener.accept(tempImage.getLocation());
-                } else {
-                    LOG.warn("Not supported input format {}, conversion skipped", sourceImage.getName());
-                    copyImage(sourceImage, tempImage);
-                }
-                convertedImages.add(tempImage);
-            }
-        }
-        return convertedImages;
-    }
-
-    @Override
-    public void listenFileCreation(Consumer<File> fileCreationListener) {
-        this.fileCreationListener = fileCreationListener;
-    }
-
-    private String generateTargetPdfFileName(File back) {
-        return back.getParent() + File.separator + Strings.split(back.getName(), '.')[0] + outputFormat().getExtension();
-    }
-
-    private String buildTempPdfFileName(File file) {
-        return file.getParent().replace(SOURCE_FILES_RELATE_PATH, TEMP_FILES_RELATE_PATH)
-                + File.separator + Strings.split(file.getName(), '.')[0] + outputFormat().getExtension();
-    }
-
 }

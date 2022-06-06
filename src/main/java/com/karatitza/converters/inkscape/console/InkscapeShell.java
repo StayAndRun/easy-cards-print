@@ -50,6 +50,24 @@ public class InkscapeShell implements AutoCloseable {
         shellOutput.println("file-close");
     }
 
+    public void exportToPngFile(File sourceFile, File targetFile) {
+        if (targetFile.exists() && !targetFile.delete()) {
+            LOG.error("Failed to delete old file: {}, conversion skipped!", targetFile);
+            return;
+        }
+        FileAcceptListener listener = new FileAcceptListener(targetFile);
+        shellOutput.println("file-open:" + getCanonicalPath(sourceFile));
+        shellOutput.println("export-filename:" + getCanonicalPath(targetFile));
+        shellOutput.println("export-type:png");
+        shellOutput.println("export-dpi:450");
+        shellOutput.println("export-do");
+        LOG.info("Export actions was enter for file {}", targetFile);
+        if (!listener.accept()) {
+            LOG.error("Accept Timeout exceeded for file: {}", targetFile);
+        }
+        shellOutput.println("file-close");
+    }
+
     private Process enterToInkscapeShell() {
         ProcessBuilder inkscapeBuilder = new ProcessBuilder("inkscape", "--shell");
         redirectOutput(inkscapeBuilder);

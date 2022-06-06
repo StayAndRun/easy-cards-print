@@ -2,7 +2,8 @@ package com.karatitza.project.catalog;
 
 public enum ImageFormat {
     SVG (".svg"),
-    PDF (".pdf");
+    PDF (".pdf"),
+    PNG(".png");
 
     private final String extension;
 
