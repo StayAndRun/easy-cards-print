@@ -1,6 +1,8 @@
 package com.karatitza.gui.swing;
 
+import com.karatitza.gui.swing.logging.SwingAppender;
 import com.karatitza.gui.swing.panels.CardCatalogControlPanel;
+import com.karatitza.gui.swing.panels.CatalogPreviewPanel;
 import com.karatitza.gui.swing.panels.SpotControlPanel;
 import com.karatitza.gui.swing.panels.SpotsLayoutPreviewPanel;
 import com.karatitza.project.CardProject;
@@ -17,7 +19,7 @@ import java.io.File;
 public class MainWindow extends JFrame {
     public static final Logger LOG = LoggerFactory.getLogger(MainWindow.class);
 
-    private CardProjectWindow currentProjectWindow;
+    private final JPanel currentProjectWindowTab = new JPanel(new BorderLayout());
 
     public static void main(String[] args) {
         new MainWindow().open();
@@ -26,10 +28,12 @@ public class MainWindow extends JFrame {
     public void open() {
         setSystemView();
         setTitle("Easy Card Print");
+        setPreferredSize(new Dimension(1500, 1000));
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(openProjectButton());
         menuBar.add(buildLatestProjectMenu());
+        addTabs();
         setJMenuBar(menuBar);
         openProjectWindow(new CardProject());
         pack();
@@ -42,6 +46,13 @@ public class MainWindow extends JFrame {
         } catch (Exception e) {
             LOG.warn("System view is not set: ", e);
         }
+    }
+
+    private void addTabs() {
+        final JTabbedPane tabs = new JTabbedPane(SwingConstants.LEFT);
+        tabs.addTab("Current project", currentProjectWindowTab);
+        tabs.addTab("Logs", SwingAppender.getLogsArea());
+        add(tabs);
     }
 
     private JMenu buildLatestProjectMenu() {
@@ -86,12 +97,9 @@ public class MainWindow extends JFrame {
 
     private CardProjectWindow openProjectWindow(CardProject openedProject) {
         CardProjectWindow openedProjectWindow = new CardProjectWindow(openedProject);
-        if (currentProjectWindow != null) {
-            currentProjectWindow.setVisible(false);
-            remove(currentProjectWindow);
-        }
-        add(openedProjectWindow, BorderLayout.CENTER);
-        currentProjectWindow = openedProjectWindow;
+        currentProjectWindowTab.removeAll();
+        currentProjectWindowTab.setSize(new Dimension(1000, 1000));
+        currentProjectWindowTab.add(openedProjectWindow, BorderLayout.CENTER);
         return openedProjectWindow;
     }
 
@@ -105,10 +113,12 @@ public class MainWindow extends JFrame {
             SpotControlPanel spotControlPanel = new SpotControlPanel(cardProject);
             spotControlPanel.addLayoutsChangeListener(layoutPreviewPanel);
             JPanel catalogControlPanel = new CardCatalogControlPanel(cardProject);
+            CatalogPreviewPanel catalogPreviewPanel = new CatalogPreviewPanel(cardProject.getSelectedCatalog());
 
-            JPanel controlPanel = new JPanel(new GridLayout(2, 1));
+            JPanel controlPanel = new JPanel(new GridLayout(3, 1));
 
             controlPanel.add(spotControlPanel);
+            controlPanel.add(catalogPreviewPanel);
             controlPanel.add(catalogControlPanel);
 
             add(layoutPreviewPanel);

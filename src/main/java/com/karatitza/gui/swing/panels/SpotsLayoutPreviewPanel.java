@@ -36,7 +36,7 @@ public class SpotsLayoutPreviewPanel extends JPanel implements SpotsLayoutListen
         preview.setPreferredSize(new Dimension(600, 900));
         preview.setVerticalAlignment(JLabel.CENTER);
         preview.setHorizontalAlignment(JLabel.CENTER);
-        add(preview);
+        add(preview, BorderLayout.CENTER);
         refresh();
     }
 

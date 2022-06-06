@@ -18,32 +18,36 @@ public class CardCatalogControlPanel extends JPanel {
 
     private final JButton buildPdfButton;
     private final JPanel selectConverterPanel;
-    private final CatalogPreviewPanel previewArea;
     private final JProgressBar conversionProgress;
 
     private final CardProject cardProject;
 
     public CardCatalogControlPanel(CardProject cardProject) {
         this.cardProject = cardProject;
-        this.buildPdfButton = new JButton("Build PDF");
-        this.selectConverterPanel = buildConverterSelectionPanel();
-        this.previewArea = new CatalogPreviewPanel();
-        this.conversionProgress = new JProgressBar(0, 100);
-        this.conversionProgress.setVisible(false);
-        setLayout(new GridLayout(4, 2, 10, 10));
+        setLayout(new GridLayout(3, 1, 10, 10));
         setBorder(createCompoundBorder(
-                createEmptyBorder(10, 10, 10, 10), createTitledBorder("Project catalog control"))
+                createEmptyBorder(10, 10, 10, 10), createTitledBorder("Build pdf control"))
         );
-        previewArea.refresh(cardProject.getSelectedCatalog());
-        add(previewArea);
-        add(new JLabel());
-        add(buildPdfButton);
-        add(selectConverterPanel);
-        buildPdfButton.addActionListener(e -> preparePdfWorker().execute());
-        add(conversionProgress);
+        this.selectConverterPanel = addConverterSelectionPanel();
+        this.buildPdfButton = addBuildPdfButton();
+        this.conversionProgress = addConversionProgressBar();
     }
 
-    private JPanel buildConverterSelectionPanel() {
+    private JProgressBar addConversionProgressBar() {
+        JProgressBar conversionProgress = new JProgressBar(0, 100);
+        conversionProgress.setVisible(false);
+        add(conversionProgress);
+        return conversionProgress;
+    }
+
+    private JButton addBuildPdfButton() {
+        JButton buildPdfButton = new JButton("Build PDF");
+        buildPdfButton.addActionListener(e -> preparePdfWorker().execute());
+        add(buildPdfButton);
+        return buildPdfButton;
+    }
+
+    private JPanel addConverterSelectionPanel() {
         JRadioButton selectITextConverterButton = new JRadioButton("IText", true);
         selectITextConverterButton.addActionListener(e ->
                 cardProject.selectConverterFactory(new ConversionFactory.ITextConversionFactory()));
@@ -58,6 +62,7 @@ public class CardCatalogControlPanel extends JPanel {
         selectConverterPanel.add(new JLabel("Select SVG converter:"));
         selectConverterPanel.add(selectITextConverterButton);
         selectConverterPanel.add(selectInkscapeConverterButton);
+        add(selectConverterPanel);
         return selectConverterPanel;
     }
 

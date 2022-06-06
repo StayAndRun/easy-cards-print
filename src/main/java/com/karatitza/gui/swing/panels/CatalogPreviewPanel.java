@@ -5,18 +5,27 @@ import com.karatitza.project.catalog.DecksCatalog;
 
 import javax.swing.*;
 
-public class CatalogPreviewPanel extends JPanel{
+import static javax.swing.BorderFactory.createCompoundBorder;
+import static javax.swing.BorderFactory.createEmptyBorder;
+
+public class CatalogPreviewPanel extends JPanel {
 
     private final JTextArea catalogInfo;
+    private final DecksCatalog catalog;
 
-    public CatalogPreviewPanel() {
+
+    public CatalogPreviewPanel(DecksCatalog catalog) {
+        this.catalog = catalog;
         catalogInfo = new JTextArea("No data");
         catalogInfo.setEditable(false);
-        setBorder(BorderFactory.createTitledBorder("Selected catalog info"));
+        setBorder(createCompoundBorder(
+                createEmptyBorder(10, 10, 10, 10),
+                BorderFactory.createTitledBorder("Selected catalog stats")));
         add(catalogInfo);
+        setCatalogStats();
     }
 
-    public void refresh(DecksCatalog catalog) {
+    public void setCatalogStats() {
         StringBuilder infoBuilder = new StringBuilder();
         for (Deck deck : catalog.getDecks()) {
             infoBuilder.append(deck.getName())
