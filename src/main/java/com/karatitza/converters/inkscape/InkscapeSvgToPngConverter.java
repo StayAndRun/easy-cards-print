@@ -14,11 +14,11 @@ public class InkscapeSvgToPngConverter extends AbstractImageConverter {
 
     public static final Logger LOG = LoggerFactory.getLogger(InkscapeSvgToPngConverter.class);
 
-    private final TempFileProvider imageFactory;
+    private final TempFileProvider tempProvider;
     private final List<Image> batchImages = new ArrayList<>();
 
-    public InkscapeSvgToPngConverter(TempFileProvider imageFactory) {
-        this.imageFactory = imageFactory;
+    public InkscapeSvgToPngConverter(TempFileProvider tempProvider) {
+        this.tempProvider = tempProvider;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class InkscapeSvgToPngConverter extends AbstractImageConverter {
     @Override
     public Image addToBatch(Image sourceImage) {
         batchImages.add(sourceImage);
-        return imageFactory.create(sourceImage, outputFormat());
+        return tempProvider.create(sourceImage, outputFormat());
     }
 
     @Override
@@ -49,9 +49,9 @@ public class InkscapeSvgToPngConverter extends AbstractImageConverter {
 
     public List<Image> executeConvertBatch(List<Image> sourceImages) {
         List<Image> convertedImages = new ArrayList<>(sourceImages.size());
-        try (InkscapeShell inkscapeShell = new InkscapeShell()) {
+        try (InkscapeShell inkscapeShell = new InkscapeShell(tempProvider.createConversionLogDir())) {
             for (Image sourceImage : sourceImages) {
-                Image tempImage = imageFactory.create(sourceImage, outputFormat());
+                Image tempImage = tempProvider.create(sourceImage, outputFormat());
                 if (sourceImage.getFormat() == inputFormat()) {
                     inkscapeShell.exportToPngFile(sourceImage.getLocation(), tempImage.getLocation());
                     fileCreationListener.accept(tempImage.getLocation());

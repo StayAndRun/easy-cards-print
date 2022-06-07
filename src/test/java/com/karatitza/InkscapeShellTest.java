@@ -42,7 +42,7 @@ public class InkscapeShellTest extends TempFilesTest {
     void acceptHugeFileExportToPdf() {
         File sourceFile = new File("./src/test/resources/conversion/source/svg-huge/back.svg");
         File targetFile = buildTempPdfFile(sourceFile);
-        try (InkscapeShell inkscapeShell = new InkscapeShell()) {
+        try (InkscapeShell inkscapeShell = new InkscapeShell(new File(TEMP_PDF_DIR).getParentFile())) {
             inkscapeShell.exportToPdfFile(sourceFile, targetFile);
         }
         Assertions.assertTrue(targetFile.exists(), "File should exists: " + targetFile);

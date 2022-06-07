@@ -18,7 +18,6 @@ import static com.karatitza.project.MeasureUtils.pointsToMillimetersRound;
 import static javax.swing.BorderFactory.*;
 
 public class SpotControlPanel extends JPanel implements ChangeListener, ItemListener {
-    public static final String SPOT_LAYOUTS_PROPERTY = "spot_layouts_property";
 
     private final CardProject cardProject;
     private final JSpinner spotHeight;

@@ -23,13 +23,7 @@ public class InkscapeShell implements AutoCloseable {
         this.logsDir = logsDir;
         this.shellProcess = enterToInkscapeShell();
         LOG.info("Enter to Inkscape shell accepted");
-        this.shellOutput = new PrintWriter(shellProcess.getOutputStream(), true) {
-            @Override
-            public void close() {
-                LOG.info("Shell output closed");
-                super.close();
-            }
-        };
+        this.shellOutput = new PrintWriter(shellProcess.getOutputStream(), true);
     }
 
     public void exportToPdfFile(File sourceFile, File targetFile) {
@@ -79,31 +73,35 @@ public class InkscapeShell implements AutoCloseable {
         }
     }
 
-    private void redirectErrors(ProcessBuilder inkscapeBuilder) {
-        if (logsDir != null) {
-            try {
-                logsDir.mkdirs();
-                inkscapeBuilder.redirectError(createConversionErrorLog(logsDir));
-            } catch (IOException e) {
-                LOG.warn("Redirect inkscape shell errors to file failed: ", e);
-                inkscapeBuilder.redirectError(ProcessBuilder.Redirect.DISCARD);
-            }
-        } else {
-            inkscapeBuilder.redirectError(ProcessBuilder.Redirect.DISCARD);
-        }
-    }
-
     private void redirectOutput(ProcessBuilder inkscapeBuilder) {
         if (logsDir != null) {
             try {
                 logsDir.mkdirs();
-                inkscapeBuilder.redirectOutput(createConversionOutputLog(logsDir));
+                File conversionOutputLog = createConversionOutputLog(logsDir);
+                inkscapeBuilder.redirectOutput(conversionOutputLog);
+                LOG.info("Created inkscape output log file: {}", conversionOutputLog);
             } catch (IOException e) {
                 LOG.warn("Redirect inkscape shell output to file failed: ", e);
                 inkscapeBuilder.redirectOutput(ProcessBuilder.Redirect.DISCARD);
             }
         } else {
             inkscapeBuilder.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+        }
+    }
+
+    private void redirectErrors(ProcessBuilder inkscapeBuilder) {
+        if (logsDir != null) {
+            try {
+                logsDir.mkdirs();
+                File conversionErrorLog = createConversionErrorLog(logsDir);
+                inkscapeBuilder.redirectError(conversionErrorLog);
+                LOG.info("Created inkscape error log file: {}", conversionErrorLog);
+            } catch (IOException e) {
+                LOG.warn("Redirect inkscape shell errors to file failed: ", e);
+                inkscapeBuilder.redirectError(ProcessBuilder.Redirect.DISCARD);
+            }
+        } else {
+            inkscapeBuilder.redirectError(ProcessBuilder.Redirect.DISCARD);
         }
     }
 

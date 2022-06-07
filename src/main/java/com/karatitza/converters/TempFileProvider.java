@@ -4,7 +4,6 @@ import com.karatitza.project.catalog.Image;
 import com.karatitza.project.catalog.ImageFormat;
 
 import java.io.File;
-import java.io.IOException;
 
 import static java.text.MessageFormat.format;
 
@@ -34,10 +33,5 @@ public class TempFileProvider {
             conversionLogsDir.mkdir();
         }
         return conversionLogsDir;
-    }
-
-    public static void main(String[] args) throws IOException {
-        File file = new File("C:\\GitRepo\\EasyCardsPrint\\src\\test\\resources\\svg-project\\print\\temp");
-        new File(file, File.separator + "test" + File.separator).mkdirs();
     }
 }

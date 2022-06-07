@@ -16,11 +16,11 @@ public class InkscapeSvgToPdfConverter extends AbstractImageConverter {
 
     public static final Logger LOG = LoggerFactory.getLogger(InkscapeSvgToPdfConverter.class);
 
-    private final TempFileProvider imageFactory;
+    private final TempFileProvider tempProvider;
     private final List<Image> batchImages = new ArrayList<>();
 
-    public InkscapeSvgToPdfConverter(TempFileProvider imageFactory) {
-        this.imageFactory = imageFactory;
+    public InkscapeSvgToPdfConverter(TempFileProvider tempProvider) {
+        this.tempProvider = tempProvider;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class InkscapeSvgToPdfConverter extends AbstractImageConverter {
 
     @Override
     public Image convert(Image sourceImage) {
-        Image targetImage = imageFactory.create(sourceImage, outputFormat());
+        Image targetImage = tempProvider.create(sourceImage, outputFormat());
         File convertedImagePath = convertFile(
                 getCanonicalPath(sourceImage.getLocation()), getCanonicalPath(targetImage.getLocation())
         );
@@ -45,7 +45,7 @@ public class InkscapeSvgToPdfConverter extends AbstractImageConverter {
     @Override
     public Image addToBatch(Image sourceImage) {
         batchImages.add(sourceImage);
-        return imageFactory.create(sourceImage, outputFormat());
+        return tempProvider.create(sourceImage, outputFormat());
     }
 
     @Override
@@ -55,9 +55,9 @@ public class InkscapeSvgToPdfConverter extends AbstractImageConverter {
 
     public List<Image> executeConvertBatch(List<Image> sourceImages) {
         List<Image> convertedImages = new ArrayList<>(sourceImages.size());
-        try (InkscapeShell inkscapeShell = new InkscapeShell()) {
+        try (InkscapeShell inkscapeShell = new InkscapeShell(tempProvider.createConversionLogDir())) {
             for (Image sourceImage : sourceImages) {
-                Image tempImage = imageFactory.create(sourceImage, outputFormat());
+                Image tempImage = tempProvider.create(sourceImage, outputFormat());
                 if (sourceImage.getFormat() == inputFormat()) {
                     inkscapeShell.exportToPdfFile(sourceImage.getLocation(), tempImage.getLocation());
                     fileCreationListener.accept(tempImage.getLocation());
