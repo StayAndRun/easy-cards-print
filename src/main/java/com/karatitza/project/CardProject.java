@@ -57,17 +57,17 @@ public class CardProject {
     public DecksCatalog selectCatalog(File projectRoot) {
         this.projectRoot = projectRoot;
         this.selectedCatalog = selectCatalogDir(projectRoot).map(DecksCatalog::new).orElse(DecksCatalog.empty());
-        LOG.info("Selected Catalog: " + selectedCatalog);
+        LOG.debug("Selected Catalog: " + selectedCatalog);
         return selectedCatalog;
     }
 
     public void selectConverterFactory(ConversionFactory factory) {
         this.conversionFactory = factory;
-        LOG.info("Selected converter factory: " + factory);
+        LOG.debug("Selected converter factory: " + factory);
     }
 
     public SpotsPreview selectSpots(PageFormat pageFormat, SpotSize spotSize) {
-        LOG.info("Selected spots: {}, format: {}", spotSize, pageFormat);
+        LOG.debug("Selected spots: {}, format: {}", spotSize, pageFormat);
         this.spotsLayout = new SpotsLayout(pageFormat, spotSize);
         return new SpotsPreview(spotsLayout);
     }

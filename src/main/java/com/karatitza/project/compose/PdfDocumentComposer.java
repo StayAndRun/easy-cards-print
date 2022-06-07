@@ -10,6 +10,8 @@ import com.karatitza.project.catalog.ImageFormat;
 import com.karatitza.project.layout.DocumentLayout;
 import com.karatitza.project.layout.spots.SpotSize;
 import com.karatitza.project.layout.spots.SpotsLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class PdfDocumentComposer {
+    public static final Logger LOG = LoggerFactory.getLogger(DocumentLayout.class);
 
     private final PdfPagesComposer pagesComposer;
     private final File projectPath;
@@ -35,15 +38,18 @@ public class PdfDocumentComposer {
     public File compose(DocumentLayout documentLayout) {
         List<File> pages = pagesComposer.composeByLayout(documentLayout);
         File finalPdfFile = buildFinalPdfFile(documentLayout.getSpots());
+        LOG.info("Start merge pages to final PDF file: {}", finalPdfFile);
         try (PdfDocument finalPdfDocument = createFinalPdfDocument(finalPdfFile)) {
             PdfMerger pdfMerger = new PdfMerger(finalPdfDocument);
             for (File page : pages) {
                 try (PdfDocument pdfPageDocument = readPageDocument(page)) {
                     pdfMerger.merge(pdfPageDocument, 1, 1);
+                    LOG.debug("Merged page: {}", page);
                 }
             }
             pdfMerger.close();
         }
+        LOG.info("Final PDF file successfully built: {}", finalPdfFile);
         return finalPdfFile;
     }
 

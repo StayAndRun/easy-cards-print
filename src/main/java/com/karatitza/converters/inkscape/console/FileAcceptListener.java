@@ -1,5 +1,8 @@
 package com.karatitza.converters.inkscape.console;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -13,6 +16,7 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 class FileAcceptListener {
+    public static final Logger LOG = LoggerFactory.getLogger(FileAcceptListener.class);
 
     private final File targetFile;
     private final WatchService watchService;
@@ -45,8 +49,8 @@ class FileAcceptListener {
             for (WatchEvent<?> watchEvent : watchedKey.pollEvents()) {
                 WatchEvent.Kind<?> actualEventKind = watchEvent.kind();
                 String eventContext = String.valueOf(watchEvent.context());
-                InkscapeShell.LOG.info("Accept file Event kind: {}", actualEventKind);
-                InkscapeShell.LOG.info("Accept file Event context: {}", eventContext);
+                LOG.trace("Accept file Event kind: {}", actualEventKind);
+                LOG.trace("Accept file Event context: {}", eventContext);
                 if (eventContext.equals(targetFile.getName()) && ENTRY_CREATE.equals(actualEventKind)) {
                     acceptFileCreated = true;
                     if (watchEvent.count() > 1) InkscapeShell.LOG.warn("Multiple file creation {}", targetFile);

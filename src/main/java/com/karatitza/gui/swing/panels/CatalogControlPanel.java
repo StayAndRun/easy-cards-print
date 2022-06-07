@@ -26,7 +26,7 @@ public class CatalogControlPanel extends JPanel {
         this.cardProject = cardProject;
         setLayout(new GridLayout(3, 1, 10, 10));
         setBorder(createCompoundBorder(
-                createEmptyBorder(10, 10, 10, 10), createTitledBorder("Build pdf control"))
+                createEmptyBorder(10, 10, 10, 10), createTitledBorder("Build final PDF control"))
         );
         this.selectConverterPanel = addConverterSelectionPanel();
         this.buildPdfButton = addBuildPdfButton();
@@ -65,7 +65,7 @@ public class CatalogControlPanel extends JPanel {
         selectConverterButtonGroup.add(selectInkscapePngConverterButton);
         selectConverterButtonGroup.add(selectInkscapePdfConverterButton);
 
-        JPanel selectConverterPanel = new JPanel(new GridLayout(0, 1));
+        JPanel selectConverterPanel = new JPanel(new GridLayout(1, 3));
         selectConverterPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         selectConverterPanel.add(new JLabel("Select SVG converter:"));
         selectConverterPanel.add(selectITextConverterButton);
@@ -80,7 +80,6 @@ public class CatalogControlPanel extends JPanel {
         worker.addPropertyChangeListener(event -> {
             if ("progress".equals(event.getPropertyName())) {
                 conversionProgress.setValue((Integer) event.getNewValue());
-                LOG.info("Incoming progress: {}", event.getNewValue());
             }
         });
         worker.addPropertyChangeListener(event -> {

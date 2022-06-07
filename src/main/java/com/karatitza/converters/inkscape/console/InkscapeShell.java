@@ -45,7 +45,7 @@ public class InkscapeShell implements AutoCloseable {
         shellOutput.println("export-do");
         LOG.info("Export actions was enter for file {}", targetFile);
         if (!listener.accept()) {
-            LOG.error("Accept Timeout exceeded for file: {}", targetFile);
+            LOG.trace("Failed conversion: Timeout exceeded for file: {}", targetFile);
         }
         shellOutput.println("file-close");
     }
@@ -61,9 +61,9 @@ public class InkscapeShell implements AutoCloseable {
         shellOutput.println("export-type:png");
         shellOutput.println("export-dpi:450");
         shellOutput.println("export-do");
-        LOG.info("Export actions was enter for file {}", targetFile);
+        LOG.trace("Export actions was enter for file {}", targetFile);
         if (!listener.accept()) {
-            LOG.error("Accept Timeout exceeded for file: {}", targetFile);
+            LOG.error("Failed conversion: Timeout exceeded for file: {}", targetFile);
         }
         shellOutput.println("file-close");
     }

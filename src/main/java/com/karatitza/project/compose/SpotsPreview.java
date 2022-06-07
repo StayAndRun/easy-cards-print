@@ -85,7 +85,7 @@ public class SpotsPreview {
     @Override
     public String toString() {
         return "SpotsPreview{" +
-                "spotsLayout=" + spotsLayout +
+                "spotsSize=" + spotsLayout.getSpotSize() +
                 '}';
     }
 }

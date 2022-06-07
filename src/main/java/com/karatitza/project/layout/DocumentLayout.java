@@ -6,6 +6,8 @@ import com.karatitza.project.layout.cards.ImageLayout;
 import com.karatitza.project.layout.spots.Spot;
 import com.karatitza.project.layout.spots.SpotSize;
 import com.karatitza.project.layout.spots.SpotsLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -13,6 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 
 public class DocumentLayout implements Iterable<DocumentLayout.PageLayout> {
+    public static final Logger LOG = LoggerFactory.getLogger(DocumentLayout.class);
+
     private final List<CardsLayout> cardPages = new ArrayList<>();
     private final SpotsLayout spots;
 
@@ -23,6 +27,7 @@ public class DocumentLayout implements Iterable<DocumentLayout.PageLayout> {
     public CardsLayout createPage() {
         CardsLayout layout = new CardsLayout(spots.getRowSize(), spots.getColumnSize());
         cardPages.add(layout);
+        LOG.info("Composed page layout: {}", cardPages.size());
         return layout;
     }
 

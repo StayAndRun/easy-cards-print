@@ -29,6 +29,7 @@ public class PdfPagesComposerByIText extends PdfPagesComposer {
     public List<File> composeByLayout(DocumentLayout layout) {
         int pageNumber = 1;
         for (DocumentLayout.PageLayout pageLayout : layout) {
+            LOG.info("Start PDF page {} compose", pageNumber);
             String pdfPageFilePath = buildTempPdfPageFileName(pageNumber);
             PdfWriter pdfWriter = createPdfWriter(pdfPageFilePath);
             try (PdfDocument mainPdfDocument = new PdfDocument(pdfWriter)) {
@@ -37,6 +38,7 @@ public class PdfPagesComposerByIText extends PdfPagesComposer {
                 placeLayoutToPdfPage(pageLayout, mainPdfDocument);
             }
             pageNumber++;
+            LOG.info("PDF page successfully created: {}", pdfPageFilePath);
             pdfPageFiles.add(new File(pdfPageFilePath));
         }
         return pdfPageFiles;
@@ -48,6 +50,7 @@ public class PdfPagesComposerByIText extends PdfPagesComposer {
             Image image = imageSpot.getValue();
             Spot spot = imageSpot.getKey();
             pageComposer.placeImageToSpot(image, spot);
+            LOG.info("Page: {}, placed image {}", pdfPageFiles.size() + 1, image.getName());
         }
     }
 

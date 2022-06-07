@@ -15,6 +15,7 @@ public class PdfBuildWorker extends SwingWorker<File, File> {
 
     @Override
     protected File doInBackground() {
+        this.setProgress(0);
         return projectSnapshot.buildFinalPdf(this::setProgress);
     }
 

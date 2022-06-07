@@ -4,8 +4,11 @@ import com.karatitza.project.catalog.Card;
 import com.karatitza.project.catalog.Deck;
 import com.karatitza.project.catalog.DecksCatalog;
 import com.karatitza.project.layout.cards.CardsLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LayoutComposer {
+    public static final Logger LOG = LoggerFactory.getLogger(LayoutComposer.class);
 
     private final DocumentLayout documentLayout;
 
@@ -23,6 +26,7 @@ public class LayoutComposer {
                 currentCardsLayout.place(card);
             }
         }
+        LOG.info("Composed document layout, total pages: {}", documentLayout.size());
         return documentLayout;
     }
 

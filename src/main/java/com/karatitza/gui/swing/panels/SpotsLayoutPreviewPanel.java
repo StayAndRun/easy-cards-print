@@ -50,7 +50,7 @@ public class SpotsLayoutPreviewPanel extends JPanel implements SpotsLayoutListen
 
     public void refresh() {
         SpotsPreview spotsPreview = new SpotsPreview(cardProject.getSpotsLayout());
-        LOG.info("Refresh page preview: {}", spotsPreview);
+        LOG.debug("Refresh page preview: {}", spotsPreview);
         ImageIcon imageIcon = buildImageFromStream(spotsPreview);
         preview.setIcon(resizeImageIcon(imageIcon));
     }
@@ -96,13 +96,11 @@ public class SpotsLayoutPreviewPanel extends JPanel implements SpotsLayoutListen
 
     @Override
     public void itemStateChanged(ItemEvent e) {
-        LOG.info("Preview - Listen event: {}", e);
         refresh();
     }
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        LOG.info("Preview - Listen event: {}", e);
         refresh();
     }
 }
