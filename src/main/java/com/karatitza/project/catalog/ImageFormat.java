@@ -3,7 +3,11 @@ package com.karatitza.project.catalog;
 public enum ImageFormat {
     SVG (".svg"),
     PDF (".pdf"),
-    PNG(".png");
+    PNG(".png"),
+    JPEG(".jpeg"),
+    TIFF(".tiff"),
+    BMP(".bmp"),
+    GIF(".gif");
 
     private final String extension;
 

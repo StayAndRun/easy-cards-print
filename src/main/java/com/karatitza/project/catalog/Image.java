@@ -26,7 +26,7 @@ public class Image {
         try {
             return Optional.of(new Image(imageFile, deckLocation));
         } catch (FileNotFoundException e) {
-            LOG.warn("Found not supported image format: {}", imageFile.getName());
+            LOG.warn("Found not supported image format: {}, was skipped!", imageFile.getName());
             return Optional.empty();
         }
     }
