@@ -11,6 +11,8 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.karatitza.project.MeasureUtils.pointsToMillimetersRound;
 import static javax.swing.BorderFactory.*;
@@ -23,6 +25,7 @@ public class SpotControlPanel extends JPanel implements ChangeListener, ItemList
     private final JSpinner spotWidth;
     private final JSpinner spotSpace;
     private final JComboBox<PageFormat> pageSizeJComboBox;
+    private final List<SpotsLayoutListener> layoutListeners = new ArrayList<>();
 
     public SpotControlPanel(CardProject cardProject) {
         this.cardProject = cardProject;
@@ -77,18 +80,21 @@ public class SpotControlPanel extends JPanel implements ChangeListener, ItemList
     @Override
     public void stateChanged(ChangeEvent e) {
         updateProjectLayout();
+        fireLayoutChangedEvent();
     }
 
     @Override
     public void itemStateChanged(ItemEvent e) {
         updateProjectLayout();
+        fireLayoutChangedEvent();
     }
 
     public void addLayoutsChangeListener(SpotsLayoutListener listener) {
-        spotHeight.addChangeListener(listener);
-        spotWidth.addChangeListener(listener);
-        spotSpace.addChangeListener(listener);
-        pageSizeJComboBox.addItemListener(listener);
+        layoutListeners.add(listener);
+    }
+
+    private void fireLayoutChangedEvent() {
+        layoutListeners.forEach(SpotsLayoutListener::layoutChanged);
     }
 
     private void updateProjectLayout() {

@@ -11,9 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
 import java.awt.*;
-import java.awt.event.ItemEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -95,12 +93,7 @@ public class SpotsLayoutPreviewPanel extends JPanel implements SpotsLayoutListen
     }
 
     @Override
-    public void itemStateChanged(ItemEvent e) {
-        refresh();
-    }
-
-    @Override
-    public void stateChanged(ChangeEvent e) {
+    public void layoutChanged() {
         refresh();
     }
 }
