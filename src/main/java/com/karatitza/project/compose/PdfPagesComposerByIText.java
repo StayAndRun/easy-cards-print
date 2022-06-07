@@ -4,23 +4,22 @@ import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfPage;
-import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.karatitza.Main;
 import com.karatitza.project.catalog.Image;
 import com.karatitza.project.layout.DocumentLayout;
 import com.karatitza.project.layout.spots.Spot;
 import com.karatitza.project.layout.spots.SpotSize;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.List;
 
 public class PdfPagesComposerByIText extends PdfPagesComposer {
+    public static final Logger LOG = LoggerFactory.getLogger(PdfPagesComposerByIText.class);
 
     public PdfPagesComposerByIText(File projectPath) {
         super(projectPath);
@@ -32,10 +31,10 @@ public class PdfPagesComposerByIText extends PdfPagesComposer {
         for (DocumentLayout.PageLayout pageLayout : layout) {
             String pdfPageFilePath = buildTempPdfPageFileName(pageNumber);
             PdfWriter pdfWriter = createPdfWriter(pdfPageFilePath);
-            try (PdfDocument pdfDocument = new PdfDocument(pdfWriter)) {
-                pdfDocument.setDefaultPageSize(
+            try (PdfDocument mainPdfDocument = new PdfDocument(pdfWriter)) {
+                mainPdfDocument.setDefaultPageSize(
                         new PageSize(pageLayout.getPageFormat().getWidth(), pageLayout.getPageFormat().getHeight()));
-                placeLayoutToPdfDocument(pageLayout, pdfDocument);
+                placeLayoutToPdfPage(pageLayout, mainPdfDocument);
             }
             pageNumber++;
             pdfPageFiles.add(new File(pdfPageFilePath));
@@ -43,26 +42,12 @@ public class PdfPagesComposerByIText extends PdfPagesComposer {
         return pdfPageFiles;
     }
 
-    private void placeLayoutToPdfDocument(DocumentLayout.PageLayout pageLayout, PdfDocument pdfDocument) {
-        PdfPage newPdfPage = pdfDocument.addNewPage();
+    private void placeLayoutToPdfPage(DocumentLayout.PageLayout pageLayout, PdfDocument mainPdfDocument) {
+        PdfPageComposer pageComposer = new PdfPageComposer(mainPdfDocument.addNewPage());
         for (AbstractMap.SimpleImmutableEntry<Spot, Image> imageSpot : pageLayout) {
             Image image = imageSpot.getValue();
             Spot spot = imageSpot.getKey();
-            if (image == null) {
-                continue;
-            }
-            try (PdfDocument pdfImage = new PdfDocument(createPdfReader(image.getLocation().getPath()))) {
-                PdfFormXObject imageObject = pasteImageToPdfDocument(pdfDocument, pdfImage);
-                PdfCanvas canvas = new PdfCanvas(newPdfPage).addXObjectAt(
-                        imageObject,
-                        spot.getCenterAlignX(imageObject.getWidth()),
-                        spot.getCenterAlignY(imageObject.getHeight())
-                );
-                if (isDrawDebugMesh) {
-                    drawDebugMesh(canvas, pageLayout.getSpotSize(), spot);
-                }
-                canvas.release();
-            }
+            pageComposer.placeImageToSpot(image, spot);
         }
     }
 
@@ -75,24 +60,6 @@ public class PdfPagesComposerByIText extends PdfPagesComposer {
             }
         }
         return String.format("%s%spage-%d.pdf", tempDirPath, File.separator, pageNumber);
-    }
-
-    private PdfFormXObject pasteImageToPdfDocument(PdfDocument pdfDocument, PdfDocument pdfImage) {
-        try {
-            return pdfImage.getFirstPage().copyAsFormXObject(pdfDocument);
-        } catch (IOException e) {
-            // TODO custom exception
-            throw new RuntimeException(e);
-        }
-    }
-
-    private PdfReader createPdfReader(String filename) {
-        try {
-            return new PdfReader(filename);
-        } catch (Exception e) {
-            // TODO custom exception
-            throw new RuntimeException("Failed to read pdf file: " + filename);
-        }
     }
 
     private PdfWriter createPdfWriter(String filename) {

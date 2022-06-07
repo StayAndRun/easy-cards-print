@@ -1,7 +1,7 @@
 package com.karatitza.gui.swing;
 
 import com.karatitza.gui.swing.logging.SwingAppender;
-import com.karatitza.gui.swing.panels.CardCatalogControlPanel;
+import com.karatitza.gui.swing.panels.CatalogControlPanel;
 import com.karatitza.gui.swing.panels.CatalogPreviewPanel;
 import com.karatitza.gui.swing.panels.SpotControlPanel;
 import com.karatitza.gui.swing.panels.SpotsLayoutPreviewPanel;
@@ -112,7 +112,7 @@ public class MainWindow extends JFrame {
             SpotsLayoutPreviewPanel layoutPreviewPanel = new SpotsLayoutPreviewPanel(cardProject);
             SpotControlPanel spotControlPanel = new SpotControlPanel(cardProject);
             spotControlPanel.addLayoutsChangeListener(layoutPreviewPanel);
-            JPanel catalogControlPanel = new CardCatalogControlPanel(cardProject);
+            JPanel catalogControlPanel = new CatalogControlPanel(cardProject);
             CatalogPreviewPanel catalogPreviewPanel = new CatalogPreviewPanel(cardProject.getSelectedCatalog());
 
             JPanel controlPanel = new JPanel(new GridLayout(3, 1));

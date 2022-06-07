@@ -22,8 +22,8 @@ public class SpotsPreview {
         this.spotsLayout = spotsLayout;
     }
 
-    public File composeToFile() {
-        File debugFile = createDebugFile("./src/test/resources");
+    public File composeToFile(File directory) {
+        File debugFile = createDebugFile(directory);
         createPdfDocument(getPdfWriterToFile(debugFile));
         return debugFile;
     }
@@ -76,8 +76,8 @@ public class SpotsPreview {
         }
     }
 
-    private File createDebugFile(String projectPath) {
-        File debugFile = new File(projectPath + File.separator + "debug.pdf");
+    private File createDebugFile(File dir) {
+        File debugFile = new File(dir, "debug.pdf");
         debugFile.getParentFile().mkdirs();
         return debugFile;
     }

@@ -19,8 +19,10 @@ public class ProjectBuildPdfTest extends TempFilesTest {
 
     public static final String PDF_PROJECT_PATH = "./src/test/resources/pdf-project";
     public static final String SVG_PROJECT_PATH = "./src/test/resources/svg-project";
+    public static final String PNG_PROJECT_PATH = "./src/test/resources/png-project";
     public static final String SVG_PROJECT_WITH_TEMP_PATH = "./src/test/resources/svg-project";
     public static final String EXPECTED_PROJECT_PDF = "./src/test/resources/expected/spot-91x59/expected-project.pdf";
+    public static final String EXPECTED_PNG_PROJECT_PDF = "./src/test/resources/expected/spot-91x59/png-project(A4-91x59-0).pdf";
     public static final String EXPECTED_PROJECT_INKSCAPE_PDF = "./src/test/resources/expected/spot-91x59/expected-project-inkscape.pdf";
 
     @BeforeEach
@@ -50,11 +52,21 @@ public class ProjectBuildPdfTest extends TempFilesTest {
     }
 
     @Test
+    void acceptBuildFromPngCatalog() {
+        CardProject cardProject = new CardProject();
+        cardProject.selectCatalog(new File(PNG_PROJECT_PATH));
+        cardProject.selectSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
+        cardProject.snapshot().buildFinalPdf(progress -> System.out.println("Progress percentage: " + progress));
+        File actualFile = searchTempPdfFile("png-project(A4-91x59-0).pdf", PNG_PROJECT_PATH);
+        assertPdfFilesEquals(EXPECTED_PNG_PROJECT_PDF, actualFile.getPath());
+    }
+
+    @Test
     void acceptBuildFromSvgCatalogWithInkscapeConversion() {
         CardProject cardProject = new CardProject();
         cardProject.selectCatalog(new File(SVG_PROJECT_PATH));
         cardProject.selectSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
-        cardProject.selectConverterFactory(new ConversionFactory.InkscapeConversionFactory());
+        cardProject.selectConverterFactory(new ConversionFactory.InkscapePdfConversionFactory());
         cardProject.snapshot().buildFinalPdf(progress -> System.out.println("Progress percentage: " + progress));
         File actualFile = searchTempPdfFile("svg-project(A4-91x59-0).pdf", SVG_PROJECT_PATH);
         assertPdfFilesEquals(EXPECTED_PROJECT_INKSCAPE_PDF, actualFile.getPath());
@@ -64,7 +76,7 @@ public class ProjectBuildPdfTest extends TempFilesTest {
     void acceptBuildFromSvgCatalogWithExistingTempFiles() {
         CardProject cardProject = new CardProject();
         cardProject.selectCatalog(new File(SVG_PROJECT_PATH));
-        cardProject.selectConverterFactory(new ConversionFactory.InkscapeConversionFactory());
+        cardProject.selectConverterFactory(new ConversionFactory.InkscapePdfConversionFactory());
         cardProject.selectSpots(CommonPageFormat.A4, SpotSize.millimeters(91, 59));
 
         cardProject.snapshot().buildFinalPdf(progress -> System.out.println("Progress percentage: " + progress));

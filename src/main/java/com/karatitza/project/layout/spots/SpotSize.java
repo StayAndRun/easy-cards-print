@@ -7,10 +7,14 @@ public class SpotSize {
     private final float width;
     private final float space;
 
-    public static SpotSize millimeters(float square) {
+    public static SpotSize defaultSize() {
+        return SpotSize.millimeters(50, 50);
+    }
+
+    public static SpotSize squareMillimeters(float size) {
         return new SpotSize(
-                MeasureUtils.millimetersToPoints(square),
-                MeasureUtils.millimetersToPoints(square),
+                MeasureUtils.millimetersToPoints(size),
+                MeasureUtils.millimetersToPoints(size),
                 0
         );
     }

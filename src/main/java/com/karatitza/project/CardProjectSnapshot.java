@@ -4,6 +4,7 @@ import com.karatitza.converters.ConversionFactory;
 import com.karatitza.converters.ImageConverter;
 import com.karatitza.converters.TempFileProvider;
 import com.karatitza.project.catalog.DecksCatalog;
+import com.karatitza.project.catalog.ImageFormat;
 import com.karatitza.project.compose.PdfDocumentComposer;
 import com.karatitza.project.layout.DocumentLayout;
 import com.karatitza.project.layout.LayoutComposer;
@@ -44,6 +45,11 @@ public class CardProjectSnapshot {
     }
 
     private DecksCatalog prepareCatalog(Consumer<Integer> progressConsumer) {
-        return catalog.convert(converter, progressConsumer);
+        int svgCount = catalog.getCatalogStatistic().countImagesByFormat(ImageFormat.SVG);
+        if (svgCount == 0) {
+            return catalog;
+        } else {
+            return catalog.convert(converter, progressConsumer);
+        }
     }
 }

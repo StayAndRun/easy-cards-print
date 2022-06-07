@@ -29,3 +29,5 @@ target/
 /src/test/resources/svg-project/config.json
 /src/test/resources/pdf-project/config.json
 /latest.json
+/src/test/resources/png-project/config.json
+/src/test/resources/png-project/print/

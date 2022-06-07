@@ -16,6 +16,7 @@ import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 
 import static javax.swing.BorderFactory.*;
@@ -70,7 +71,7 @@ public class SpotsLayoutPreviewPanel extends JPanel implements SpotsLayoutListen
     private ImageIcon buildImageFromFile(SpotsPreview spotsPreview) {
         try {
             BufferedImage bufferedImage;
-            try (PDDocument document = PDDocument.load(spotsPreview.composeToFile())) {
+            try (PDDocument document = PDDocument.load(spotsPreview.composeToFile(new File("./src/test/resources")))) {
                 PDFRenderer pdfRenderer = new PDFRenderer(document);
                 bufferedImage = pdfRenderer.renderImage(0);
             }

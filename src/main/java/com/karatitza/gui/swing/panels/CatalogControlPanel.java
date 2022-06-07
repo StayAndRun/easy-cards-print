@@ -13,8 +13,8 @@ import static javax.swing.BorderFactory.*;
 import static javax.swing.SwingWorker.StateValue.DONE;
 import static javax.swing.SwingWorker.StateValue.STARTED;
 
-public class CardCatalogControlPanel extends JPanel {
-    private static final Logger LOG = LoggerFactory.getLogger(CardCatalogControlPanel.class);
+public class CatalogControlPanel extends JPanel {
+    private static final Logger LOG = LoggerFactory.getLogger(CatalogControlPanel.class);
 
     private final JButton buildPdfButton;
     private final JPanel selectConverterPanel;
@@ -22,7 +22,7 @@ public class CardCatalogControlPanel extends JPanel {
 
     private final CardProject cardProject;
 
-    public CardCatalogControlPanel(CardProject cardProject) {
+    public CatalogControlPanel(CardProject cardProject) {
         this.cardProject = cardProject;
         setLayout(new GridLayout(3, 1, 10, 10));
         setBorder(createCompoundBorder(
@@ -51,17 +51,26 @@ public class CardCatalogControlPanel extends JPanel {
         JRadioButton selectITextConverterButton = new JRadioButton("IText", true);
         selectITextConverterButton.addActionListener(e ->
                 cardProject.selectConverterFactory(new ConversionFactory.ITextConversionFactory()));
-        JRadioButton selectInkscapeConverterButton = new JRadioButton("Inkscape");
-        selectInkscapeConverterButton.addActionListener(e ->
-                cardProject.selectConverterFactory(new ConversionFactory.InkscapeConversionFactory()));
+
+        JRadioButton selectInkscapePdfConverterButton = new JRadioButton("PDF Inkscape");
+        selectInkscapePdfConverterButton.addActionListener(e ->
+                cardProject.selectConverterFactory(new ConversionFactory.InkscapePdfConversionFactory()));
+
+        JRadioButton selectInkscapePngConverterButton = new JRadioButton("PNG Inkscape");
+        selectInkscapePngConverterButton.addActionListener(e ->
+                cardProject.selectConverterFactory(new ConversionFactory.InkscapePngConversionFactory()));
+
         ButtonGroup selectConverterButtonGroup = new ButtonGroup();
         selectConverterButtonGroup.add(selectITextConverterButton);
-        selectConverterButtonGroup.add(selectInkscapeConverterButton);
+        selectConverterButtonGroup.add(selectInkscapePngConverterButton);
+        selectConverterButtonGroup.add(selectInkscapePdfConverterButton);
+
         JPanel selectConverterPanel = new JPanel(new GridLayout(0, 1));
         selectConverterPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         selectConverterPanel.add(new JLabel("Select SVG converter:"));
         selectConverterPanel.add(selectITextConverterButton);
-        selectConverterPanel.add(selectInkscapeConverterButton);
+        selectConverterPanel.add(selectInkscapePngConverterButton);
+        selectConverterPanel.add(selectInkscapePdfConverterButton);
         add(selectConverterPanel);
         return selectConverterPanel;
     }

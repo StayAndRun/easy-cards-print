@@ -85,7 +85,7 @@ public class SpotsLayout implements Iterable<Spot> {
             float xSpotAbsCoordinate = xSpotCenterShift + xPageCenter;
             float ySpotAbsCoordinate = ySpotCenterShift + yPageCenter;
             table[columnCursor][rowCursor] = new Spot(
-                    MeasureUtils.round(xSpotAbsCoordinate), MeasureUtils.round(ySpotAbsCoordinate)
+                    MeasureUtils.round(xSpotAbsCoordinate), MeasureUtils.round(ySpotAbsCoordinate), spotSize
             );
         }
     }
@@ -112,7 +112,9 @@ public class SpotsLayout implements Iterable<Spot> {
             BigDecimal ySpotCenterShift = ySpotShift.subtract(ySpotsMeshCenterShift);
             BigDecimal xSpotAbsCoordinate = xSpotCenterShift.add(xPageCenter);
             BigDecimal ySpotAbsCoordinate = ySpotCenterShift.add(yPageCenter);
-            table[columnCursor][rowCursor] = new Spot(xSpotAbsCoordinate.floatValue(), ySpotAbsCoordinate.floatValue());
+            table[columnCursor][rowCursor] = new Spot(
+                    xSpotAbsCoordinate.floatValue(), ySpotAbsCoordinate.floatValue(), spotSize
+            );
         }
     }
 

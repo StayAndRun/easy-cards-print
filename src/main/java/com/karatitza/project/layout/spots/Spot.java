@@ -14,10 +14,18 @@ public class Spot {
 
     private final float x;
     private final float y;
+    private final SpotSize size;
 
     public Spot(float xPoints, float yPoints) {
         this.x = xPoints;
         this.y = yPoints;
+        this.size = SpotSize.defaultSize();
+    }
+
+    public Spot(float x, float y, SpotSize size) {
+        this.x = x;
+        this.y = y;
+        this.size = size;
     }
 
     public float getX() {
@@ -26,6 +34,10 @@ public class Spot {
 
     public float getY() {
         return y;
+    }
+
+    public SpotSize getSize() {
+        return size;
     }
 
     public float getCenterAlignX(float xSize) {
