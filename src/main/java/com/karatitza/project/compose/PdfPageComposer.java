@@ -8,6 +8,9 @@ import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.kernel.pdf.xobject.PdfFormXObject;
 import com.itextpdf.layout.Document;
+import com.karatitza.exceptions.ImageReadException;
+import com.karatitza.exceptions.PdfCopyException;
+import com.karatitza.exceptions.PdfPageWriteException;
 import com.karatitza.project.catalog.Image;
 import com.karatitza.project.layout.spots.Spot;
 import org.slf4j.Logger;
@@ -35,6 +38,7 @@ class PdfPageComposer {
             case PNG -> placePngImage(image.getLocation(), spot);
             default -> LOG.warn("Image format not supported for PDF placement: {}", image);
         }
+        LOG.info("Page: {}, placed image {}", pdfPage.getDocument().getPageNumber(pdfPage), image);
     }
 
     private void placePdfImage(File imageFile, Spot spot) {
@@ -52,38 +56,39 @@ class PdfPageComposer {
 
     private void placePngImage(File imageFile, Spot spot) {
         Document document = new Document(pdfPage.getDocument());
-        com.itextpdf.layout.element.Image pngImage = new com.itextpdf.layout.element.Image(createPngImageData(imageFile));
-        pngImage.setHeight(spot.getSize().getHeight());
-        pngImage.setFixedPosition(
+        com.itextpdf.layout.element.Image image = new com.itextpdf.layout.element.Image(createImageData(imageFile));
+        image.setHeight(spot.getSize().getHeight());
+        image.setFixedPosition(
                 spot.getCenterAlignX(spot.getSize().getWidth()),
                 spot.getCenterAlignY(spot.getSize().getHeight())
         );
-        document.add(pngImage);
+        document.add(image);
     }
 
     private PdfReader createPdfReader(String filename) {
         try {
             return new PdfReader(filename);
-        } catch (Exception e) {
-            // TODO custom exception
-            throw new RuntimeException("Failed to read pdf file: " + filename);
+        } catch (Exception cause) {
+            LOG.error("Failed PDF read: {}, cause {}", filename, cause.getMessage());
+            throw new PdfPageWriteException(new File(filename), cause);
         }
     }
 
-    private ImageData createPngImageData(File imageFile) {
+    private ImageData createImageData(File imageFile) {
         try {
             return ImageDataFactory.create(imageFile.getPath());
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
+        } catch (MalformedURLException cause) {
+            LOG.error("Failed read image file: {}, cause {}", imageFile, cause.getMessage());
+            throw new ImageReadException(imageFile, cause);
         }
     }
 
     private PdfFormXObject pasteImageToPdfDocument(PdfDocument pdfImage) {
         try {
             return pdfImage.getFirstPage().copyAsFormXObject(pdfPage.getDocument());
-        } catch (IOException e) {
-            // TODO custom exception
-            throw new RuntimeException(e);
+        } catch (IOException cause) {
+            LOG.error("Failed PDF image copy to page, cause: ", cause);
+            throw new PdfCopyException(pdfPage, pdfImage, cause);
         }
     }
 

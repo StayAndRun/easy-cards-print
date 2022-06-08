@@ -48,15 +48,15 @@ public class CatalogControlPanel extends JPanel {
     }
 
     private JPanel addConverterSelectionPanel() {
-        JRadioButton selectITextConverterButton = new JRadioButton("IText", true);
+        JRadioButton selectITextConverterButton = new JRadioButton("SVG -> PDF IText", true);
         selectITextConverterButton.addActionListener(e ->
                 cardProject.selectConverterFactory(new ConversionFactory.ITextConversionFactory()));
 
-        JRadioButton selectInkscapePdfConverterButton = new JRadioButton("PDF Inkscape");
+        JRadioButton selectInkscapePdfConverterButton = new JRadioButton("SVG -> PDF Inkscape");
         selectInkscapePdfConverterButton.addActionListener(e ->
                 cardProject.selectConverterFactory(new ConversionFactory.InkscapePdfConversionFactory()));
 
-        JRadioButton selectInkscapePngConverterButton = new JRadioButton("PNG Inkscape");
+        JRadioButton selectInkscapePngConverterButton = new JRadioButton("SVG -> PNG Inkscape");
         selectInkscapePngConverterButton.addActionListener(e ->
                 cardProject.selectConverterFactory(new ConversionFactory.InkscapePngConversionFactory()));
 

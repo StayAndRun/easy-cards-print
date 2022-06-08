@@ -48,7 +48,7 @@ public class DecksCatalog {
         countConversionProgress(converter, progressListener);
         List<Deck> convertedDecks = decks.stream().map(deck -> deck.convert(converter)).collect(Collectors.toList());
         converter.convertBatch();
-        LOG.info("Catalog conversion from {} to {} finished.", converter.outputFormat(), converter.outputFormat());
+        LOG.info("Catalog conversion from {} to {} finished.", converter.inputFormat(), converter.outputFormat());
         return new DecksCatalog(convertedDecks);
     }
 

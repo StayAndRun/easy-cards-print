@@ -7,6 +7,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.karatitza.Main;
+import com.karatitza.exceptions.PdfPageWriteException;
 import com.karatitza.project.catalog.Image;
 import com.karatitza.project.layout.DocumentLayout;
 import com.karatitza.project.layout.spots.Spot;
@@ -32,10 +33,10 @@ public class PdfPagesComposerByIText extends PdfPagesComposer {
             LOG.info("Start PDF page {} compose", pageNumber);
             String pdfPageFilePath = buildTempPdfPageFileName(pageNumber);
             PdfWriter pdfWriter = createPdfWriter(pdfPageFilePath);
-            try (PdfDocument mainPdfDocument = new PdfDocument(pdfWriter)) {
-                mainPdfDocument.setDefaultPageSize(
+            try (PdfDocument singlePagePdfDocument = new PdfDocument(pdfWriter)) {
+                singlePagePdfDocument.setDefaultPageSize(
                         new PageSize(pageLayout.getPageFormat().getWidth(), pageLayout.getPageFormat().getHeight()));
-                placeLayoutToPdfPage(pageLayout, mainPdfDocument);
+                placeLayoutToPdfPage(pageLayout, singlePagePdfDocument);
             }
             pageNumber++;
             LOG.info("PDF page successfully created: {}", pdfPageFilePath);
@@ -50,7 +51,6 @@ public class PdfPagesComposerByIText extends PdfPagesComposer {
             Image image = imageSpot.getValue();
             Spot spot = imageSpot.getKey();
             pageComposer.placeImageToSpot(image, spot);
-            LOG.info("Page: {}, placed image {}", pdfPageFiles.size() + 1, image.getName());
         }
     }
 
@@ -68,9 +68,9 @@ public class PdfPagesComposerByIText extends PdfPagesComposer {
     private PdfWriter createPdfWriter(String filename) {
         try {
             return new PdfWriter(filename);
-        } catch (Exception e) {
-            // TODO custom exception
-            throw new RuntimeException("Failed write to pdf file: " + filename);
+        } catch (Exception cause) {
+            LOG.error("Failed write PDF page to file: {}, cause: {}", filename, cause.getMessage());
+            throw new PdfPageWriteException(new File(filename), cause);
         }
     }
 

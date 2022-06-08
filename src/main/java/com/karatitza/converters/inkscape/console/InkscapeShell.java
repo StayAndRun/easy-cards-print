@@ -31,6 +31,7 @@ public class InkscapeShell implements AutoCloseable {
             LOG.error("Failed to delete old file: {}, conversion skipped!", targetFile);
             return;
         }
+        LOG.trace("Export to PDF, source file {}", sourceFile);
         FileAcceptListener listener = new FileAcceptListener(targetFile);
         shellOutput.println("file-open:" + getCanonicalPath(sourceFile));
         shellOutput.println("export-filename:" + getCanonicalPath(targetFile));
@@ -49,6 +50,7 @@ public class InkscapeShell implements AutoCloseable {
             LOG.error("Failed to delete old file: {}, conversion skipped!", targetFile);
             return;
         }
+        LOG.trace("Export to PNG, source file {}", sourceFile);
         FileAcceptListener listener = new FileAcceptListener(targetFile);
         shellOutput.println("file-open:" + getCanonicalPath(sourceFile));
         shellOutput.println("export-filename:" + getCanonicalPath(targetFile));
