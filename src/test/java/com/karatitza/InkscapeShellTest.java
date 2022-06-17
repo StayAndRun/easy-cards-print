@@ -5,6 +5,7 @@ import com.karatitza.converters.inkscape.console.InkscapeShell;
 import com.karatitza.project.catalog.TempFilesTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ public class InkscapeShellTest extends TempFilesTest {
     }
 
     @Test
+    @Disabled
     void acceptHugeFileExportToPdf() {
         File sourceFile = new File("./src/test/resources/conversion/source/svg-huge/back.svg");
         File targetFile = buildTempPdfFile(sourceFile);
