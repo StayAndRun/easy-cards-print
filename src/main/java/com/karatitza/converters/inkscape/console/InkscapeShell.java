@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 public class InkscapeShell implements AutoCloseable {
     public static final Logger LOG = LoggerFactory.getLogger(InkscapeShell.class);
@@ -23,7 +24,7 @@ public class InkscapeShell implements AutoCloseable {
         this.logsDir = logsDir;
         this.shellProcess = enterToInkscapeShell();
         LOG.info("Enter to Inkscape shell accepted");
-        this.shellOutput = new PrintWriter(shellProcess.getOutputStream(), true);
+        this.shellOutput = new PrintWriter(shellProcess.getOutputStream(), true, StandardCharsets.UTF_8);
     }
 
     public void exportToPdfFile(File sourceFile, File targetFile) {
