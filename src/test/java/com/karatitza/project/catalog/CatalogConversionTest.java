@@ -1,5 +1,6 @@
 package com.karatitza.project.catalog;
 
+import com.karatitza.TempFilesTest;
 import com.karatitza.converters.ImageConverter;
 import com.karatitza.converters.TempFileProvider;
 import com.karatitza.converters.inkscape.InkscapeSvgToPdfConverter;

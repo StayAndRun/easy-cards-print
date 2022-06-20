@@ -9,12 +9,13 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class DecksCatalog {
+public class DecksCatalog extends Selectable {
     public static final Logger LOG = LoggerFactory.getLogger(DecksCatalog.class);
 
     private final List<Deck> decks;
 
     public DecksCatalog(File rootDir) {
+        super(rootDir.getName());
         List<File> decksRoots = Arrays.asList(
                 Objects.requireNonNull(rootDir.listFiles(File::isDirectory), "Not found decks at dir: " + rootDir)
         );
@@ -22,9 +23,11 @@ public class DecksCatalog {
         for (File deckRoot : decksRoots) {
             decks.add(new Deck(deckRoot));
         }
+        enableChildSelectionSensitive();
     }
 
-    public DecksCatalog(List<Deck> decks) {
+    private DecksCatalog(List<Deck> decks) {
+        super("decks");
         this.decks = decks;
     }
 

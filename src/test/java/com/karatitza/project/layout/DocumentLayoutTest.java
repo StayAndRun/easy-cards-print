@@ -1,8 +1,8 @@
 package com.karatitza.project.layout;
 
 import com.itextpdf.kernel.utils.CompareTool;
+import com.karatitza.TempFilesTest;
 import com.karatitza.project.catalog.DecksCatalog;
-import com.karatitza.project.catalog.TempFilesTest;
 import com.karatitza.project.compose.PdfPagesComposer;
 import com.karatitza.project.compose.PdfPagesComposerByIText;
 import com.karatitza.project.layout.spots.SpotSize;

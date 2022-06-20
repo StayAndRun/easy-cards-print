@@ -1,8 +1,8 @@
 package com.karatitza.project;
 
 import com.itextpdf.kernel.utils.CompareTool;
+import com.karatitza.TempFilesTest;
 import com.karatitza.converters.ConversionFactory;
-import com.karatitza.project.catalog.TempFilesTest;
 import com.karatitza.project.layout.CommonPageFormat;
 import com.karatitza.project.layout.spots.SpotSize;
 import org.junit.jupiter.api.Assertions;

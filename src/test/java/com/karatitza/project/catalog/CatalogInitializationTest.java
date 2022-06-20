@@ -158,6 +158,52 @@ public class CatalogInitializationTest {
         Assertions.assertEquals(8, catalogStatistic.countImagesByFormat(ImageFormat.SVG));
     }
 
+    @Test
+    void acceptInitSvgCatalogWithoutBacks() {
+        String svgCatalogPath = "./src/test/resources/svg-project-without-backs/decks";
+        DecksCatalog svgCatalog = new DecksCatalog(new File(svgCatalogPath));
+        List<Deck> decks = svgCatalog.getDecks();
+        Assertions.assertEquals(5, decks.size());
+
+        Deck blueDeck = searchDeckByName(decks, "blue-deck");
+        List<Card> blueCards = blueDeck.getCards();
+        Assertions.assertEquals(2, blueCards.size());
+        Card bird = searchCardByName(blueCards, "bird.svg");
+        Assertions.assertTrue(bird.getBackSide().isEmpty());
+        Card elemental = searchCardByName(blueCards, "elemental.svg");
+        Assertions.assertTrue(elemental.getBackSide().isEmpty());
+
+        Deck greenDeck = searchDeckByName(decks, "green-deck");
+        List<Card> greenCards = greenDeck.getCards();
+        Assertions.assertEquals(2, greenDeck.getCards().size());
+        Card wolf = searchCardByName(greenCards, "wolf.svg");
+        Assertions.assertTrue(wolf.getBackSide().isEmpty());
+        Card spider = searchCardByName(greenCards, "spider.svg");
+        Assertions.assertTrue(spider.getBackSide().isEmpty());
+
+        Deck redDeck = searchDeckByName(decks, "red-deck");
+        List<Card> redCards = redDeck.getCards();
+        Assertions.assertEquals(2, redDeck.getCards().size());
+        Card goblin = searchCardByName(redCards, "goblin.svg");
+        Assertions.assertTrue(goblin.getBackSide().isEmpty());
+        Card dragon = searchCardByName(redCards, "dragon.svg");
+        Assertions.assertTrue(dragon.getBackSide().isEmpty());
+
+        Deck blackDeck = searchDeckByName(decks, "black-deck");
+        List<Card> blackCards = blackDeck.getCards();
+        Assertions.assertEquals(2, blackDeck.getCards().size());
+        Card zombie = searchCardByName(blackCards, "zombie.svg");
+        Assertions.assertTrue(zombie.getBackSide().isEmpty());
+        Card skeleton = searchCardByName(blackCards, "skeleton.svg");
+        Assertions.assertTrue(skeleton.getBackSide().isEmpty());
+
+        Deck yellowDeck = searchDeckByName(decks, "white-deck");
+        List<Card> yellowCards = yellowDeck.getCards();
+        Assertions.assertEquals(1, yellowDeck.getCards().size());
+        Card knight = searchCardByName(yellowCards, "knight.svg");
+        Assertions.assertTrue(knight.getBackSide().isEmpty());
+    }
+
     private Deck searchDeckByName(List<Deck> decks, String name) {
         Optional<Deck> foundDeck = decks.stream().filter(deck -> deck.getName().equals(name)).findFirst();
         return foundDeck.orElseThrow(() -> new AssertionFailedError("Not found deck: " + name));

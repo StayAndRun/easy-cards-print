@@ -1,6 +1,6 @@
 package com.karatitza.project;
 
-import com.karatitza.project.catalog.TempFilesTest;
+import com.karatitza.TempFilesTest;
 import com.karatitza.project.layout.CommonPageFormat;
 import com.karatitza.project.layout.spots.SpotSize;
 import org.junit.jupiter.api.Assertions;

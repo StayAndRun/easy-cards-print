@@ -1,8 +1,8 @@
-package com.karatitza;
+package com.karatitza.project.shell;
 
 import com.itextpdf.kernel.utils.CompareTool;
+import com.karatitza.TempFilesTest;
 import com.karatitza.converters.inkscape.console.InkscapeShell;
-import com.karatitza.project.catalog.TempFilesTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;

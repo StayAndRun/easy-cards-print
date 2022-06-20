@@ -1,4 +1,4 @@
-package com.karatitza.project.catalog;
+package com.karatitza;
 
 import com.karatitza.project.LatestProjectsConfig;
 import org.junit.jupiter.api.extension.TestInstantiationException;
@@ -7,7 +7,7 @@ import java.io.File;
 
 import static java.text.MessageFormat.format;
 
-public class TempFilesTest {
+public abstract class TempFilesTest {
 
     public static final String PROJECT_TEMP_FILES_RELATE_PATH = format("{0}print{0}temp", File.separator);
     public static final String PROJECT_PRINT_FILES_RELATE_PATH = format("{0}print", File.separator);

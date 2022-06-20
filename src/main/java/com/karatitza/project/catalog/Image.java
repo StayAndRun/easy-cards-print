@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Optional;
 
-public class Image {
+public class Image extends Selectable {
     private final static Logger LOG = LoggerFactory.getLogger(Image.class);
 
     private final String name;
@@ -16,6 +16,7 @@ public class Image {
     private final ImageFormat format;
 
     public Image(File location, File deckLocation) throws FileNotFoundException {
+        super(location.getName());
         this.name = location.getName();
         this.location = location;
         this.deckLocation = deckLocation;

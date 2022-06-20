@@ -4,25 +4,28 @@ import com.karatitza.converters.ImageConverter;
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 
-public class Deck {
+import static java.util.stream.Collectors.toList;
+
+public class Deck extends Selectable {
     public static final String BACKS_DIR_NAME = "backs";
 
     private final File root;
-    private final List<Image> cardsFiles;
-    private final List<Image> backsFiles;
+    private final List<Image> cardsImages;
+    private final BacksCatalog backs;
 
     public Deck(File root) {
+        super(root.getName());
         this.root = root;
-        this.cardsFiles = searchImages(root);
-        this.backsFiles = searchBacksDir(root).map(this::searchImages).orElseGet(Collections::emptyList);
+        this.cardsImages = searchImages(root);
+        this.backs = new BacksCatalog(new File(root, BACKS_DIR_NAME));
     }
 
-    private Deck(File root, List<Image> cardsFiles, List<Image> backsFiles) {
+    private Deck(File root, List<Image> cardsImages, List<Image> backsImages) {
+        super(root.getName());
         this.root = root;
-        this.cardsFiles = cardsFiles;
-        this.backsFiles = backsFiles;
+        this.cardsImages = cardsImages;
+        this.backs = new BacksCatalog(new File(root, BACKS_DIR_NAME), backsImages);
     }
 
     public String getName() {
@@ -30,12 +33,13 @@ public class Deck {
     }
 
     public List<Card> getCards() {
-        if (backsFiles.isEmpty()) {
-            return cardsFiles.stream().map(Card::new).collect(Collectors.toList());
+        List<Image> backsImages = backs.getBacksImages();
+        if (backsImages.isEmpty()) {
+            return cardsImages.stream().map(Card::new).collect(toList());
         } else {
-            List<Card> cards = new ArrayList<>(cardsFiles.size() * backsFiles.size());
-            for (Image backsFile : backsFiles) {
-                for (Image cardsFile : cardsFiles) {
+            List<Card> cards = new ArrayList<>(cardsImages.size() * backsImages.size());
+            for (Image backsFile : backsImages) {
+                for (Image cardsFile : cardsImages) {
                     cards.add(new Card(cardsFile, backsFile));
                 }
             }
@@ -44,8 +48,8 @@ public class Deck {
     }
 
     public Deck convert(ImageConverter converter) {
-        List<Image> convertedCards = cardsFiles.stream().map(converter::addToBatch).collect(Collectors.toList());
-        List<Image> convertedBacks = backsFiles.stream().map(converter::addToBatch).collect(Collectors.toList());
+        List<Image> convertedCards = cardsImages.stream().map(converter::addToBatch).collect(toList());
+        List<Image> convertedBacks = backs.getBacksImages().stream().map(converter::addToBatch).collect(toList());
         return new Deck(root, convertedCards, convertedBacks);
     }
 
@@ -53,10 +57,18 @@ public class Deck {
         return new DeckStatistic();
     }
 
+    @Override
+    protected List<? extends Selectable> children() {
+        List<Selectable> children = new ArrayList<>(cardsImages.size() + 1);
+        children.addAll(cardsImages);
+        children.add(backs);
+        return children;
+    }
+
     private List<Image> searchImages(File imagesDir) {
         return Arrays.stream(imagesDir.listFiles())
                 .filter(File::isFile)
-                .flatMap(file -> Image.fromFile(file, this.root).stream()).collect(Collectors.toList());
+                .flatMap(file -> Image.fromFile(file, this.root).stream()).collect(toList());
     }
 
     private Optional<File> searchBacksDir(File root) {
@@ -68,8 +80,8 @@ public class Deck {
     @Override
     public String toString() {
         return "Deck{" +
-                ", cardsFiles=" + cardsFiles +
-                ", backsFiles=" + backsFiles +
+                ", cardsFiles=" + cardsImages +
+                ", backsFiles=" + backs.getBacksImages() +
                 '}';
     }
 
@@ -79,13 +91,14 @@ public class Deck {
         private final EnumMap<ImageFormat, Integer> imageFormatsStats = new EnumMap<>(ImageFormat.class);
 
         public DeckStatistic() {
+            List<Image> backsImages = backs.getBacksImages();
             for (ImageFormat format : ImageFormat.values()) {
-                long cardImagesCount = cardsFiles.stream().filter(image -> image.getFormat() == format).count();
-                long backImagesCount = backsFiles.stream().filter(image -> image.getFormat() == format).count();
+                long cardImagesCount = cardsImages.stream().filter(image -> image.getFormat() == format).count();
+                long backImagesCount = backsImages.stream().filter(image -> image.getFormat() == format).count();
                 imageFormatsStats.put(format, Math.toIntExact(cardImagesCount + backImagesCount));
             }
-            totalImages = cardsFiles.size() + backsFiles.size();
-            totalCards = cardsFiles.size();
+            totalImages = cardsImages.size() + backsImages.size();
+            totalCards = cardsImages.size();
         }
 
         public int countImagesByFormat(ImageFormat format) {
