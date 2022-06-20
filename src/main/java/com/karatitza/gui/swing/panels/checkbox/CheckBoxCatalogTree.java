@@ -9,14 +9,21 @@ import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 import java.awt.*;
+import java.util.function.Consumer;
 
 public class CheckBoxCatalogTree extends JTree {
+
+    private Consumer<Selectable> listener = selectable -> {};
 
     public CheckBoxCatalogTree(DecksCatalog catalog) {
         super(convertSelectableToTreeNode(catalog));
         this.setToggleClickCount(0);
         this.setCellRenderer(new CheckBoxCellRenderer());
         this.setSelectionModel(new CheckBoxSelectionModel());
+    }
+
+    public void subscribe(Consumer<Selectable> listener) {
+        this.listener = listener;
     }
 
     private static DefaultMutableTreeNode convertSelectableToTreeNode(Selectable root) {
@@ -36,6 +43,7 @@ public class CheckBoxCatalogTree extends JTree {
             super();
             this.setLayout(new BorderLayout());
             this.checkBox = new JCheckBox();
+            this.checkBox.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
             this.add(checkBox, BorderLayout.CENTER);
             this.setOpaque(false);
         }
@@ -63,6 +71,7 @@ public class CheckBoxCatalogTree extends JTree {
                 selectable.select();
             }
             CheckBoxCatalogTree.this.repaint();
+            listener.accept(selectable);
         }
 
         public void addSelectionPath(TreePath path) {

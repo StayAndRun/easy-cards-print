@@ -31,6 +31,16 @@ public class DecksCatalog extends Selectable {
         this.decks = decks;
     }
 
+    public DecksCatalog selectedCatalog() {
+        if (!isSelected()) {
+            return empty();
+        }
+        List<Deck> selectedDecks = decks.stream()
+                .filter(Selectable::isSelected)
+                .map(Deck::selectedDeck).toList();
+        return new DecksCatalog(selectedDecks);
+    }
+
     public static DecksCatalog empty() {
         return new DecksCatalog(Collections.emptyList());
     }

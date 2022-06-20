@@ -15,34 +15,45 @@ public class CatalogPreviewPanel extends JPanel {
     private final JTextArea catalogInfo;
     private final DecksCatalog catalog;
 
-
     public CatalogPreviewPanel(DecksCatalog catalog) {
         setLayout(new GridLayout(1, 2));
         setBorder(createCompoundBorder(
                 createEmptyBorder(10, 10, 10, 10),
                 BorderFactory.createTitledBorder("Selected catalog stats")));
         this.catalog = catalog;
-        this.catalogInfo = emptyCatalogInfo();
+        this.catalogInfo = createSelectedCatalogStats();
         add(catalogInfo);
-        add(new CheckBoxCatalogTree(catalog));
-        setCatalogStats();
+        add(createCheckBoxCatalogTree(catalog));
     }
 
-    private JTextArea emptyCatalogInfo() {
+    private CheckBoxCatalogTree createCheckBoxCatalogTree(DecksCatalog catalog) {
+        CheckBoxCatalogTree catalogTree = new CheckBoxCatalogTree(catalog);
+        catalogTree.subscribe(selectable -> refreshStats(catalogInfo));
+        return catalogTree;
+    }
+
+    public JTextArea createSelectedCatalogStats() {
         final JTextArea catalogInfo;
-        catalogInfo = new JTextArea("No data");
+        catalogInfo = new JTextArea();
         catalogInfo.setEditable(false);
+        catalogInfo.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 14));
+        refreshStats(catalogInfo);
         return catalogInfo;
     }
 
-    public void setCatalogStats() {
-        StringBuilder infoBuilder = new StringBuilder();
-        for (Deck deck : catalog.getDecks()) {
-            infoBuilder.append(deck.getName())
+    private void refreshStats(JTextArea catalogInfo) {
+        StringBuilder infoBuilder = new StringBuilder("Selected Catalog Statistic: \n\n");
+        DecksCatalog selectedCatalog = this.catalog.selectedCatalog();
+        for (Deck deck : selectedCatalog.getDecks()) {
+            infoBuilder.append(" * ")
+                    .append(deck.getName())
                     .append(" (cards: ").append(deck.getCards().size()).append(")")
                     .append('\n');
         }
-        infoBuilder.append('\n').append("Total decks: ").append(catalog.getDecks().size());
+        infoBuilder.append('\n').append("Total decks: ")
+                .append(selectedCatalog.getDecks().size());
+        infoBuilder.append('\n').append("Total cards: ")
+                .append(selectedCatalog.getDecks().stream().mapToLong(deck -> deck.getCards().size()).sum());
         catalogInfo.setText(infoBuilder.toString());
     }
 }

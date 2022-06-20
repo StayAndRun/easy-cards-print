@@ -21,13 +21,13 @@ public class CardProjectSnapshot {
 
     private final File projectRoot;
     private final SpotsLayout spots;
-    private final DecksCatalog catalog;
+    private final DecksCatalog selectedCatalog;
     private final ImageConverter converter;
 
     public CardProjectSnapshot(File projectRoot, SpotsLayout spots, DecksCatalog catalog, ConversionFactory conversionFactory) {
         this.projectRoot = projectRoot;
         this.spots = spots;
-        this.catalog = catalog;
+        this.selectedCatalog = catalog.selectedCatalog();
         converter = conversionFactory.create(new TempFileProvider(projectRoot));
     }
 
@@ -56,18 +56,18 @@ public class CardProjectSnapshot {
     }
 
     private DecksCatalog prepareCatalog() {
-        return catalog.convert(converter);
+        return selectedCatalog.convert(converter);
     }
 
     private DecksCatalog prepareCatalog(Consumer<Integer> progressConsumer) {
         if (isSvgConversionNeed()) {
-            return catalog.convert(converter, progressConsumer);
+            return selectedCatalog.convert(converter, progressConsumer);
         } else {
-            return catalog;
+            return selectedCatalog;
         }
     }
 
     private boolean isSvgConversionNeed() {
-        return catalog.getCatalogStatistic().countImagesByFormat(ImageFormat.SVG) != 0;
+        return selectedCatalog.getCatalogStatistic().countImagesByFormat(ImageFormat.SVG) != 0;
     }
 }

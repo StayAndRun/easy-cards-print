@@ -28,6 +28,12 @@ public class Deck extends Selectable {
         this.backs = new BacksCatalog(new File(root, BACKS_DIR_NAME), backsImages);
     }
 
+    public Deck selectedDeck() {
+        List<Image> selectedImages = cardsImages.stream().filter(Selectable::isSelected).toList();
+        List<Image> selectedBacks = backs.getBacksImages().stream().filter(Selectable::isSelected).toList();
+        return new Deck(root, selectedImages, selectedBacks);
+    }
+
     public String getName() {
         return root.getName();
     }
@@ -68,7 +74,7 @@ public class Deck extends Selectable {
     private List<Image> searchImages(File imagesDir) {
         return Arrays.stream(imagesDir.listFiles())
                 .filter(File::isFile)
-                .flatMap(file -> Image.fromFile(file, this.root).stream()).collect(toList());
+                .flatMap(file -> Image.fromFile(file, imagesDir).stream()).collect(toList());
     }
 
     private Optional<File> searchBacksDir(File root) {
