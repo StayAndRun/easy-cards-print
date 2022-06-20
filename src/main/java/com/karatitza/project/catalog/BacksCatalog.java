@@ -29,7 +29,7 @@ public class BacksCatalog extends Selectable {
     }
 
     @Override
-    protected List<? extends Selectable> children() {
+    public List<? extends Selectable> children() {
         return backsImages;
     }
 

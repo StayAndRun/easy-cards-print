@@ -52,22 +52,36 @@ public abstract class Selectable {
         });
     }
 
+    public List<? extends Selectable> children() {
+        return Collections.emptyList();
+    }
+
     protected void subscribe(Consumer<Boolean> selectionListener) {
         this.selectionListener = selectionListener;
     }
 
-    protected List<? extends Selectable> children() {
-        return Collections.emptyList();
-    }
-
     private void childSelectionChangeEvent(boolean childSelected) {
         if (childSelected) {
-            this.select();
+            this.selectExceptChildren();
         } else {
             boolean isAllChildUnselected = children().stream().noneMatch(Selectable::isSelected);
             if (isAllChildUnselected) {
-                this.unselect();
+                this.unselectExceptChildren();
             }
+        }
+    }
+
+    private void selectExceptChildren() {
+        if (!selected) {
+            selected = true;
+            getSelectionListener().ifPresent(consumer -> consumer.accept(true));
+        }
+    }
+
+    public void unselectExceptChildren() {
+        if (selected) {
+            selected = false;
+            getSelectionListener().ifPresent(consumer -> consumer.accept(false));
         }
     }
 

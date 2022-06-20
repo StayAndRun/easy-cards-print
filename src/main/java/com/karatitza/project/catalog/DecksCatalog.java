@@ -55,6 +55,11 @@ public class DecksCatalog extends Selectable {
         return new DecksCatalog(convertedDecks);
     }
 
+    @Override
+    public List<? extends Selectable> children() {
+        return decks;
+    }
+
     private void countConversionProgress(ImageConverter converter, Consumer<Integer> progressListener) {
         if (progressListener != null) {
             converter.listenFileCreation(new Consumer<File>() {

@@ -58,7 +58,7 @@ public class Deck extends Selectable {
     }
 
     @Override
-    protected List<? extends Selectable> children() {
+    public List<? extends Selectable> children() {
         List<Selectable> children = new ArrayList<>(cardsImages.size() + 1);
         children.addAll(cardsImages);
         children.add(backs);
