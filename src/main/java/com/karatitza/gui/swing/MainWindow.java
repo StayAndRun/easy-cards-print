@@ -1,6 +1,6 @@
 package com.karatitza.gui.swing;
 
-import com.karatitza.gui.swing.logging.SwingAppender;
+import com.karatitza.gui.swing.logging.LogPaneSingleton;
 import com.karatitza.gui.swing.panels.CatalogControlPanel;
 import com.karatitza.gui.swing.panels.CatalogPreviewPanel;
 import com.karatitza.gui.swing.panels.SpotControlPanel;
@@ -44,14 +44,14 @@ public class MainWindow extends JFrame {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            LOG.warn("System view is not set: ", e);
+            LOG.warn("Failed to set System UI view: ", e);
         }
     }
 
     private void addTabs() {
         final JTabbedPane tabs = new JTabbedPane(SwingConstants.LEFT);
         tabs.addTab("Current project", currentProjectWindowTab);
-        tabs.addTab("Logs", SwingAppender.getLogsArea());
+        tabs.addTab("Debug logs", new JScrollPane(LogPaneSingleton.getInstance()));
         add(tabs);
     }
 

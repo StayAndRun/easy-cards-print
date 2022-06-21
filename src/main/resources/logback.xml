@@ -9,8 +9,9 @@
         <appender-ref ref="STDOUT" />
     </root>
 
-    <appender name="swing" class="com.karatitza.gui.swing.logging.SwingAppender"/>
+    <appender name="SWING" class="com.karatitza.gui.swing.logging.SwingAppender"/>
     <root level="trace">
-        <appender-ref ref="swing"/>
+        <appender-ref ref="SWING"/>
     </root>
+
 </configuration>
