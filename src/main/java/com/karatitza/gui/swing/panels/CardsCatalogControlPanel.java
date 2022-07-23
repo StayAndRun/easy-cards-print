@@ -10,12 +10,12 @@ import java.awt.*;
 import static javax.swing.BorderFactory.createCompoundBorder;
 import static javax.swing.BorderFactory.createEmptyBorder;
 
-public class CatalogPreviewPanel extends JPanel {
+public class CardsCatalogControlPanel extends JPanel {
 
     private final JTextArea catalogInfo;
     private final DecksCatalog catalog;
 
-    public CatalogPreviewPanel(DecksCatalog catalog) {
+    public CardsCatalogControlPanel(DecksCatalog catalog) {
         setLayout(new GridLayout(1, 2));
         setBorder(createCompoundBorder(
                 createEmptyBorder(10, 10, 10, 10),
@@ -26,15 +26,16 @@ public class CatalogPreviewPanel extends JPanel {
         add(createCheckBoxCatalogTree(catalog));
     }
 
-    private CheckBoxCatalogTree createCheckBoxCatalogTree(DecksCatalog catalog) {
+    private ScrollPane createCheckBoxCatalogTree(DecksCatalog catalog) {
         CheckBoxCatalogTree catalogTree = new CheckBoxCatalogTree(catalog);
         catalogTree.subscribe(selectable -> refreshStats(catalogInfo));
-        return catalogTree;
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.add(catalogTree);
+        return scrollPane;
     }
 
     public JTextArea createSelectedCatalogStats() {
-        final JTextArea catalogInfo;
-        catalogInfo = new JTextArea();
+        final JTextArea catalogInfo = new JTextArea();
         catalogInfo.setEditable(false);
         catalogInfo.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 14));
         refreshStats(catalogInfo);

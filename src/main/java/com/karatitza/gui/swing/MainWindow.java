@@ -1,8 +1,8 @@
 package com.karatitza.gui.swing;
 
 import com.karatitza.gui.swing.logging.LogPaneSingleton;
-import com.karatitza.gui.swing.panels.CatalogControlPanel;
-import com.karatitza.gui.swing.panels.CatalogPreviewPanel;
+import com.karatitza.gui.swing.panels.CardsCatalogControlPanel;
+import com.karatitza.gui.swing.panels.PdfBuildControlPanel;
 import com.karatitza.gui.swing.panels.SpotControlPanel;
 import com.karatitza.gui.swing.panels.SpotsLayoutPreviewPanel;
 import com.karatitza.project.CardProject;
@@ -112,14 +112,14 @@ public class MainWindow extends JFrame {
             SpotsLayoutPreviewPanel layoutPreviewPanel = new SpotsLayoutPreviewPanel(cardProject);
             SpotControlPanel spotControlPanel = new SpotControlPanel(cardProject);
             spotControlPanel.addLayoutsChangeListener(layoutPreviewPanel);
-            JPanel catalogControlPanel = new CatalogControlPanel(cardProject);
-            CatalogPreviewPanel catalogPreviewPanel = new CatalogPreviewPanel(cardProject.getSelectedCatalog());
+            JPanel pdfControlPanel = new PdfBuildControlPanel(cardProject);
+            CardsCatalogControlPanel catalogControlPanel = new CardsCatalogControlPanel(cardProject.getSelectedCatalog());
 
             JPanel controlPanel = new JPanel(new GridLayout(3, 1));
 
             controlPanel.add(spotControlPanel);
-            controlPanel.add(catalogPreviewPanel);
             controlPanel.add(catalogControlPanel);
+            controlPanel.add(pdfControlPanel);
 
             add(layoutPreviewPanel);
             add(controlPanel);

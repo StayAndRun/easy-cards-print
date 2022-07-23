@@ -13,8 +13,8 @@ import static javax.swing.BorderFactory.*;
 import static javax.swing.SwingWorker.StateValue.DONE;
 import static javax.swing.SwingWorker.StateValue.STARTED;
 
-public class CatalogControlPanel extends JPanel {
-    private static final Logger LOG = LoggerFactory.getLogger(CatalogControlPanel.class);
+public class PdfBuildControlPanel extends JPanel {
+    private static final Logger LOG = LoggerFactory.getLogger(PdfBuildControlPanel.class);
 
     private final JButton buildPdfButton;
     private final JPanel selectConverterPanel;
@@ -22,7 +22,7 @@ public class CatalogControlPanel extends JPanel {
 
     private final CardProject cardProject;
 
-    public CatalogControlPanel(CardProject cardProject) {
+    public PdfBuildControlPanel(CardProject cardProject) {
         this.cardProject = cardProject;
         setLayout(new GridLayout(3, 1, 10, 10));
         setBorder(createCompoundBorder(
