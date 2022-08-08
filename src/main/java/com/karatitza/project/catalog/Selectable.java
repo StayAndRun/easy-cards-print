@@ -11,6 +11,7 @@ public abstract class Selectable {
     private final String id = UUID.randomUUID().toString();
     private final String name;
     private boolean selected = true;
+    private short amount = 1;
     private Consumer<Boolean> selectionListener;
 
     public Selectable(String name) {
@@ -27,6 +28,14 @@ public abstract class Selectable {
 
     public boolean isSelected() {
         return selected;
+    }
+
+    public short getAmount() {
+        return amount;
+    }
+
+    public void setAmount(short amount) {
+        this.amount = amount;
     }
 
     public void select() {

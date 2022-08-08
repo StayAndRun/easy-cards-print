@@ -23,7 +23,9 @@ public class TempFileProvider {
         String newCatalogRelatePath = format("{0}print{0}temp{0}{1}{0}", File.separator, targetFormat);
         String targetImagePath = projectRoot.getPath() + newCatalogRelatePath + targetImageRelatePath;
         String targetDeckPath = projectRoot.getPath() + newCatalogRelatePath + sourceImage.getDeckLocation().getName();
-        return Image.fromFile(new File(targetImagePath), new File(targetDeckPath)).orElseThrow(
+        return Image.fromFile(new File(targetImagePath), new File(targetDeckPath))
+                .map(image -> {image.setAmount(sourceImage.getAmount()); return image;})
+                .orElseThrow(
                 () -> new UnsupportedOperationException("Unsupported image format: "  + targetFormat.getExtension()));
     }
 

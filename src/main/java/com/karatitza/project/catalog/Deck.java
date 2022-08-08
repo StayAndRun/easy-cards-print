@@ -40,17 +40,26 @@ public class Deck extends Selectable {
 
     public List<Card> getCards() {
         List<Image> backsImages = backs.getBacksImages();
+        List<Card> cards;
         if (backsImages.isEmpty()) {
-            return cardsImages.stream().map(Card::new).collect(toList());
-        } else {
-            List<Card> cards = new ArrayList<>(cardsImages.size() * backsImages.size());
-            for (Image backsFile : backsImages) {
-                for (Image cardsFile : cardsImages) {
-                    cards.add(new Card(cardsFile, backsFile));
+            cards = new ArrayList<>(cardsImages.size());
+            for (Image cardImage : cardsImages) {
+                for (int count = 1; count <= cardImage.getAmount(); count++) {
+                    Card card = new Card(cardImage);
+                    cards.add(card);
                 }
             }
-            return cards;
+        } else {
+            cards = new ArrayList<>(cardsImages.size() * backsImages.size());
+            for (Image backsFile : backsImages) {
+                for (Image cardImage : cardsImages) {
+                    for (int count = 1; count <= cardImage.getAmount(); count++) {
+                        cards.add(new Card(cardImage, backsFile));
+                    }
+                }
+            }
         }
+        return cards;
     }
 
     public Deck convert(ImageConverter converter) {
