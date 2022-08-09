@@ -11,6 +11,8 @@ import java.nio.charset.StandardCharsets;
 public class InkscapeShell implements AutoCloseable {
     public static final Logger LOG = LoggerFactory.getLogger(InkscapeShell.class);
     public static final int FILE_CREATION_WATCH_TIMEOUT_SECONDS = 15;
+    public static final String EXPORT_PNG_DPI_VALUE = "600";
+    public static final String EXPORT_PDF_VERSION = "1.5";
 
     private final Process shellProcess;
     private final PrintWriter shellOutput;
@@ -36,7 +38,7 @@ public class InkscapeShell implements AutoCloseable {
         FileAcceptListener listener = new FileAcceptListener(targetFile);
         shellOutput.println("file-open:" + getCanonicalPath(sourceFile));
         shellOutput.println("export-filename:" + getCanonicalPath(targetFile));
-        shellOutput.println("export-pdf-version:1.5");
+        shellOutput.println("export-pdf-version:" + EXPORT_PDF_VERSION);
         shellOutput.println("export-type:pdf");
         shellOutput.println("export-do");
         LOG.info("Export actions was enter for file {}", targetFile);
@@ -56,7 +58,7 @@ public class InkscapeShell implements AutoCloseable {
         shellOutput.println("file-open:" + getCanonicalPath(sourceFile));
         shellOutput.println("export-filename:" + getCanonicalPath(targetFile));
         shellOutput.println("export-type:png");
-        shellOutput.println("export-dpi:450");
+        shellOutput.println("export-dpi:" + EXPORT_PNG_DPI_VALUE);
         shellOutput.println("export-do");
         LOG.trace("Export actions was enter for file {}", targetFile);
         if (!listener.accept()) {
