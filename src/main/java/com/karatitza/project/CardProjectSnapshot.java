@@ -23,12 +23,16 @@ public class CardProjectSnapshot {
     private final SpotsLayout spots;
     private final DecksCatalog selectedCatalog;
     private final ImageConverter converter;
+    private final boolean enableBacks;
 
-    public CardProjectSnapshot(File projectRoot, SpotsLayout spots, DecksCatalog catalog, ConversionFactory conversionFactory) {
+    public CardProjectSnapshot(
+            File projectRoot, SpotsLayout spots, DecksCatalog catalog, ConversionFactory conversionFactory, boolean enableBacks) {
         this.projectRoot = projectRoot;
         this.spots = spots;
         this.selectedCatalog = catalog.selectedCatalog();
+        this.enableBacks = enableBacks;
         converter = conversionFactory.create(new TempFileProvider(projectRoot));
+
     }
 
     public File buildFinalPdf() {
@@ -48,10 +52,11 @@ public class CardProjectSnapshot {
         }
     }
 
-    private File tryToBuildFinalPdf(DecksCatalog progressConsumer) {
+    private File tryToBuildFinalPdf(DecksCatalog decksCatalog) {
         PdfDocumentComposer pdfDocumentComposer = new PdfDocumentComposer(projectRoot);
         LayoutComposer layoutComposer = new LayoutComposer(new DocumentLayout(spots));
-        DocumentLayout composedDocumentLayout = layoutComposer.compose(progressConsumer);
+        DocumentLayout composedDocumentLayout = layoutComposer.compose(decksCatalog);
+        composedDocumentLayout.disableBacks(enableBacks);
         return pdfDocumentComposer.compose(composedDocumentLayout);
     }
 

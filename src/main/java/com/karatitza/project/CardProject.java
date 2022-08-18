@@ -23,6 +23,7 @@ public class CardProject {
     private DecksCatalog selectedCatalog = DecksCatalog.empty();
     private SpotsLayout spotsLayout = defaultSpotLayout();
     private ConversionFactory conversionFactory = defaultConversionFactory();
+    private boolean enableBacks = true;
     private File projectRoot = new File("");
 
     public static CardProject openFromDir(File root) {
@@ -66,6 +67,10 @@ public class CardProject {
         LOG.debug("Selected converter factory: " + factory);
     }
 
+    public void enableBacks(boolean enable) {
+        this.enableBacks = enable;
+    }
+
     public SpotsPreview selectSpots(PageFormat pageFormat, SpotSize spotSize) {
         LOG.debug("Selected spots: {}, format: {}", spotSize, pageFormat);
         this.spotsLayout = new SpotsLayout(pageFormat, spotSize);
@@ -76,7 +81,7 @@ public class CardProject {
         saveProjectConfig();
         updateLatestProjects();
         return new CardProjectSnapshot(
-                getCurrentProjectPath(), spotsLayout, getSelectedCatalog(), conversionFactory
+                getCurrentProjectPath(), spotsLayout, getSelectedCatalog(), conversionFactory, enableBacks
         );
     }
 

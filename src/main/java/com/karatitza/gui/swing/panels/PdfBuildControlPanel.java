@@ -19,16 +19,18 @@ public class PdfBuildControlPanel extends JPanel {
     private final JButton buildPdfButton;
     private final JPanel selectConverterPanel;
     private final JProgressBar conversionProgress;
+    private final JCheckBox disableBacksCheckBox;
 
     private final CardProject cardProject;
 
     public PdfBuildControlPanel(CardProject cardProject) {
         this.cardProject = cardProject;
-        setLayout(new GridLayout(3, 1, 10, 10));
+        setLayout(new GridLayout(4, 1, 10, 10));
         setBorder(createCompoundBorder(
                 createEmptyBorder(10, 10, 10, 10), createTitledBorder("Build final PDF control"))
         );
         this.selectConverterPanel = addConverterSelectionPanel();
+        this.disableBacksCheckBox = addDisableBacksCheckBox();
         this.buildPdfButton = addBuildPdfButton();
         this.conversionProgress = addConversionProgressBar();
     }
@@ -38,6 +40,13 @@ public class PdfBuildControlPanel extends JPanel {
         conversionProgress.setVisible(false);
         add(conversionProgress);
         return conversionProgress;
+    }
+
+    private JCheckBox addDisableBacksCheckBox() {
+        JCheckBox checkBox = new JCheckBox("Disable backs");
+        checkBox.addActionListener(e -> cardProject.enableBacks(!checkBox.isSelected()));
+        add(checkBox);
+        return checkBox;
     }
 
     private JButton addBuildPdfButton() {

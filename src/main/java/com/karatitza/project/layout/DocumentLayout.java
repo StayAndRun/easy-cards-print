@@ -19,6 +19,7 @@ public class DocumentLayout implements Iterable<DocumentLayout.PageLayout> {
 
     private final List<CardsLayout> cardPages = new ArrayList<>();
     private final SpotsLayout spots;
+    private boolean enableBacks = true;
 
     public DocumentLayout(SpotsLayout spots) {
         this.spots = spots;
@@ -48,9 +49,15 @@ public class DocumentLayout implements Iterable<DocumentLayout.PageLayout> {
         List<PageLayout> pageLayouts = new ArrayList<>(cardPages.size()*2);
         for (CardsLayout cardPage : cardPages) {
             pageLayouts.add(new PageLayout(cardPage.getFrontLayout(), spots));
-            pageLayouts.add(new PageLayout(cardPage.getBackLayout(), spots));
+            if (enableBacks) {
+                pageLayouts.add(new PageLayout(cardPage.getBackLayout(), spots));
+            }
         }
         return pageLayouts.iterator();
+    }
+
+    public void disableBacks(boolean disableBacks) {
+        this.enableBacks = disableBacks;
     }
 
     public static class PageLayout implements Iterable<AbstractMap.SimpleImmutableEntry<Spot, Image>> {
